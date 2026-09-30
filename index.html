@@ -109,7 +109,9 @@
     .card p { margin: 0; color: var(--muted); font-size: clamp(13px, 1.1vw, 15px); }
     .card .n { color: var(--accent); }
     .work-head { max-width: 1100px; margin-bottom: 20px; }
-    .work-head h1 { font-size: clamp(28px, 4vw, 56px); }
+    .work-head h1 { font-size: clamp(22px, 2.6vw, 40px); max-width: 820px; line-height: 1.1; }
+    .card .more { display: inline-block; margin-top: 10px; color: var(--accent); }
+    .card .more:hover { color: var(--fg); }
 
     /* Page 3: Company */
     #company { align-content: center; }
@@ -181,11 +183,13 @@
 
     <section class="page" id="work" aria-label="Work">
       <div class="work-head">
-        <p class="eyebrow mono">Work</p>
-        <h1><span class="ai">a</span>ll <span class="ai">i</span>nc.</h1>
+        <p class="eyebrow mono">work</p>
+        <h1>at all inc. we build next generation tools &amp; communities for creatives all around the world</h1>
       </div>
       <div class="cards">
-        <div class="card"><span class="mono n">01</span><h2>user interfaces</h2></div>
+        <div class="card"><span class="mono n">01</span><h2>user interfaces</h2><a class="mono more" href="#">learn more <span aria-hidden="true">&rarr;</span></a></div>
+        <div class="card"><span class="mono n">02</span><h2>plugins &amp; tools</h2><a class="mono more" href="#">buy now <span aria-hidden="true">&rarr;</span></a></div>
+        <div class="card"><span class="mono n">03</span><h2>creative ecosystems</h2><a class="mono more" href="#">join waitlist <span aria-hidden="true">&rarr;</span></a></div>
       </div>
     </section>
 
