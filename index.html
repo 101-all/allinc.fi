@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>All Inc.</title>
   <meta name="description" content="All Inc. builds audio hardware and software. All Inc. Audio Ab, Porvoo, Finland. US & All Inc., Palo Alto, California.">
   <link rel="canonical" href="https://allinc.fi/">
@@ -15,22 +15,15 @@
       --bg: #050505;
       --fg: #f5f5f3;
       --muted: #8c8c88;
-      --dim: #3a3a38;
-      --line: #1c1c1b;
+      --line: #1e1e1d;
       --accent: #b8ff57;
+      --pad: clamp(20px, 4vw, 56px);
     }
     @media (prefers-color-scheme: light) {
-      :root {
-        --bg: #f7f7f4;
-        --fg: #0a0a0a;
-        --muted: #6a6a66;
-        --dim: #c9c9c4;
-        --line: #e2e2dd;
-        --accent: #4a9c00;
-      }
+      :root { --bg: #f7f7f4; --fg: #0a0a0a; --muted: #6a6a66; --line: #e2e2dd; --accent: #4a9c00; }
     }
     * { box-sizing: border-box; }
-    html, body { margin: 0; height: 100%; }
+    html, body { margin: 0; height: 100%; overflow: hidden; }
     body {
       background: var(--bg);
       color: var(--fg);
@@ -38,13 +31,13 @@
       -webkit-font-smoothing: antialiased;
       font-size: 15px;
       line-height: 1.5;
-      min-height: 100%;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
+      height: 100dvh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
     }
     a { color: inherit; text-decoration: none; }
-    a:hover { color: var(--accent); }
     .mono {
       font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
       font-size: 12px;
@@ -53,148 +46,231 @@
       color: var(--muted);
     }
 
-    header, footer, .info {
-      padding: 0 clamp(20px, 4vw, 56px);
-    }
+    /* Header with navigation */
     header {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
+      display: flex;
       align-items: center;
+      justify-content: space-between;
       height: 64px;
+      padding: 0 var(--pad);
       border-bottom: 1px solid var(--line);
     }
     .wordmark { font-weight: 600; letter-spacing: -0.02em; font-size: 16px; }
-    .clocks { display: flex; gap: 28px; justify-self: center; }
-    .clocks span b { color: var(--fg); font-weight: 500; }
-    .status { justify-self: end; display: flex; align-items: center; gap: 8px; }
-    .status i {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 0 0 var(--accent);
-      animation: pulse 2.4s ease-out infinite;
+    nav { display: flex; gap: 4px; }
+    nav a {
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: var(--muted);
+      transition: color .15s, background .15s;
     }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent); }
-      100% { box-shadow: 0 0 0 10px transparent; }
-    }
+    nav a:hover { color: var(--fg); }
+    nav a[aria-current="page"] { color: var(--fg); background: var(--line); }
 
-    .hero {
-      position: relative;
-      flex: 1;
-      display: grid;
-      align-content: end;
-      padding: clamp(80px, 14vh, 140px) clamp(20px, 4vw, 56px) clamp(40px, 6vh, 72px);
-      min-height: 72vh;
+    /* Pages: exactly one visible, each fills the middle row */
+    main { position: relative; overflow: hidden; }
+    .page {
+      position: absolute; inset: 0;
+      display: none;
+      padding: var(--pad);
+      animation: fade .35s ease both;
     }
+    .page.active { display: grid; }
+    @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+    /* Page 1: Home */
+    #home { align-content: end; }
+    #home .inner { position: relative; max-width: 1100px; }
     canvas#wave {
-      position: absolute;
-      left: 0; right: 0; top: 0;
-      width: 100%;
-      height: 58%;
-      display: block;
-      pointer-events: none;
+      position: absolute; left: 0; right: 0; top: 0;
+      width: 100%; height: 60%;
+      display: block; pointer-events: none;
       -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
       mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
     }
-    .hero .inner { position: relative; max-width: 1100px; }
-    .hero .eyebrow { margin: 0 0 20px; }
     h1 {
       margin: 0;
-      font-size: clamp(40px, 7.2vw, 108px);
+      font-size: clamp(36px, 6.4vw, 96px);
       line-height: 0.98;
       letter-spacing: -0.045em;
       font-weight: 600;
       text-wrap: balance;
     }
     h1 em { font-style: normal; color: var(--muted); }
-    .hero p.lede {
-      margin: 28px 0 0;
-      max-width: 540px;
-      font-size: clamp(16px, 1.4vw, 19px);
-      color: var(--muted);
-    }
+    .lede { margin: 20px 0 0; max-width: 540px; font-size: clamp(15px, 1.3vw, 18px); color: var(--muted); }
+    .cta { display: inline-flex; align-items: center; gap: 8px; margin-top: 26px; color: var(--fg); }
+    .cta:hover { color: var(--accent); }
+    .eyebrow { margin: 0 0 16px; }
 
-    .info {
-      border-top: 1px solid var(--line);
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 32px;
-      padding-top: 36px;
-      padding-bottom: 36px;
-    }
-    .info h2 { margin: 0 0 12px; }
-    .info p, .info address { margin: 0; font-style: normal; color: var(--muted); }
-    .info address b { color: var(--fg); font-weight: 500; display: block; }
-    .info address + address { margin-top: 18px; }
+    /* Page 2: Work */
+    #work { align-content: center; }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); max-width: 1100px; }
+    .card { background: var(--bg); padding: clamp(18px, 2.4vw, 32px); min-height: 0; }
+    .card h2 { margin: 12px 0 8px; font-size: clamp(18px, 1.8vw, 24px); letter-spacing: -0.02em; font-weight: 600; }
+    .card p { margin: 0; color: var(--muted); font-size: clamp(13px, 1.1vw, 15px); }
+    .card .n { color: var(--accent); }
+    .work-head { max-width: 1100px; margin-bottom: 20px; }
+    .work-head h1 { font-size: clamp(28px, 4vw, 56px); }
 
+    /* Page 3: Company */
+    #company { align-content: center; }
+    .offices { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 4vw, 64px); max-width: 1100px; }
+    .office { border-top: 1px solid var(--line); padding-top: 18px; }
+    .office .clock { float: right; }
+    .office .clock b { color: var(--fg); font-weight: 500; }
+    .office h2 { margin: 10px 0 6px; font-size: clamp(20px, 2.2vw, 30px); letter-spacing: -0.03em; font-weight: 600; }
+    .office address { font-style: normal; color: var(--muted); }
+    .company-head { max-width: 1100px; margin-bottom: 28px; }
+    .company-head h1 { font-size: clamp(28px, 4vw, 56px); }
+    .company-head p { margin: 12px 0 0; color: var(--muted); max-width: 560px; }
+
+    /* Footer */
     footer {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      height: 52px; padding: 0 var(--pad);
       border-top: 1px solid var(--line);
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-      padding-top: 18px;
-      padding-bottom: 22px;
     }
+    .status { display: flex; align-items: center; gap: 8px; }
+    .status i { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 2.4s ease-out infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent); } 100% { box-shadow: 0 0 0 10px transparent; } }
+    .pager { display: flex; gap: 6px; }
+    .pager a { width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; color: var(--muted); }
+    .pager a:hover { color: var(--fg); }
+    .pager a[aria-current="page"] { color: var(--fg); }
+    .pager a::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
     @media (max-width: 760px) {
-      header { grid-template-columns: 1fr auto; }
-      .clocks { display: none; }
-      .info { grid-template-columns: 1fr; gap: 28px; }
+      header { height: 56px; }
+      nav a { padding: 6px 10px; font-size: 14px; }
+      .cards { grid-template-columns: 1fr; }
+      .card { padding: 14px 16px; }
+      .card h2 { margin-top: 6px; font-size: 17px; }
+      .card p { font-size: 13px; }
+      .offices { grid-template-columns: 1fr; gap: 20px; }
+      .work-head, .company-head { margin-bottom: 14px; }
+      footer .hide-sm { display: none; }
+    }
+    @media (max-height: 560px) {
+      canvas#wave { height: 45%; }
+      .lede { display: none; }
     }
     @media (prefers-reduced-motion: reduce) {
       .status i { animation: none; }
+      .page { animation: none; }
     }
   </style>
 </head>
 <body>
   <header>
-    <a class="wordmark" href="/">All Inc.</a>
-    <div class="clocks mono">
-      <span>Porvoo <b id="t-fi">--:--</b></span>
-      <span>Palo Alto <b id="t-us">--:--</b></span>
-    </div>
-    <div class="status mono"><i></i> Now building</div>
+    <a class="wordmark" href="#home">All Inc.</a>
+    <nav aria-label="Pages">
+      <a href="#home" data-page="home">Home</a>
+      <a href="#work" data-page="work">Work</a>
+      <a href="#company" data-page="company">Company</a>
+    </nav>
   </header>
 
-  <section class="hero">
-    <canvas id="wave" aria-hidden="true"></canvas>
-    <div class="inner">
-      <p class="eyebrow mono">Audio &middot; Hardware &middot; Software</p>
-      <h1>Instruments for the way<br>music is made <em>now.</em></h1>
-      <p class="lede">All Inc. designs hardware and software for the space between the voice, the software and the record. Engineered in Porvoo. Grown in Palo Alto.</p>
-    </div>
-  </section>
+  <main>
+    <section class="page" id="home" aria-label="Home">
+      <canvas id="wave" aria-hidden="true"></canvas>
+      <div class="inner">
+        <p class="eyebrow mono">Audio &middot; Hardware &middot; Software</p>
+        <h1>Instruments for the way<br>music is made <em>now.</em></h1>
+        <p class="lede">All Inc. designs hardware and software for the space between the voice, the software and the record. Engineered in Porvoo. Grown in Palo Alto.</p>
+        <a class="cta" href="#work">See what we build <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </section>
 
-  <section class="info">
-    <div>
-      <h2 class="mono">What</h2>
-      <p>Physical controls, real-time pitch and signal tools, and the firmware and desktop software that tie them to the studio you already use.</p>
-    </div>
-    <div>
-      <h2 class="mono">Where</h2>
-      <address>
-        <b>All Inc. Audio Ab</b>
-        Urakoitsijantie 15<br>
-        Porvoo, Uusimaa, Finland
-      </address>
-      <address>
-        <b>US &amp; All Inc.</b>
-        470 Ramona St<br>
-        Palo Alto, California, United States
-      </address>
-    </div>
-    <div>
-      <h2 class="mono">When</h2>
-      <p>We are building in the open, one instrument at a time. Nothing to buy yet. That is the point.</p>
-    </div>
-  </section>
+    <section class="page" id="work" aria-label="Work">
+      <div class="work-head">
+        <p class="eyebrow mono">What we build</p>
+        <h1>Three layers, one instrument.</h1>
+      </div>
+      <div class="cards">
+        <div class="card">
+          <span class="mono n">01</span>
+          <h2>Control surfaces</h2>
+          <p>Physical, touch-first hardware that puts the parameters you actually reach for under your hands, not behind a menu.</p>
+        </div>
+        <div class="card">
+          <span class="mono n">02</span>
+          <h2>Real-time signal tools</h2>
+          <p>Pitch, level and timing readouts that run live on the desk, so the performance and the correction are visible at once.</p>
+        </div>
+        <div class="card">
+          <span class="mono n">03</span>
+          <h2>Firmware and desktop software</h2>
+          <p>The glue that connects our hardware to the studio you already use, over MIDI and USB, with nothing to reconfigure.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="company" aria-label="Company">
+      <div class="company-head">
+        <p class="eyebrow mono">Company</p>
+        <h1>Two offices, one team.</h1>
+        <p>All Inc. operates as two companies: an engineering and audio company in Finland and a United States company in California.</p>
+      </div>
+      <div class="offices">
+        <div class="office">
+          <span class="mono clock">Local <b id="t-fi">--:--</b></span>
+          <span class="mono">Finland</span>
+          <h2>All Inc. Audio Ab</h2>
+          <address>Urakoitsijantie 15<br>Porvoo, Uusimaa<br>Finland</address>
+        </div>
+        <div class="office">
+          <span class="mono clock">Local <b id="t-us">--:--</b></span>
+          <span class="mono">United States</span>
+          <h2>US &amp; All Inc.</h2>
+          <address>470 Ramona St<br>Palo Alto, California<br>United States</address>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <footer class="mono">
-    <span>&copy; 2026 All Inc. Audio Ab &middot; US &amp; All Inc.</span>
-    <span><a href="https://allinc.fi">allinc.fi</a></span>
+    <span class="status"><i></i> Now building</span>
+    <span class="pager" aria-label="Page indicator">
+      <a href="#home" data-page="home" title="Home"></a>
+      <a href="#work" data-page="work" title="Work"></a>
+      <a href="#company" data-page="company" title="Company"></a>
+    </span>
+    <span class="hide-sm">&copy; 2026 All Inc. &middot; allinc.fi</span>
   </footer>
 
   <script>
+    // Hash-routed pages. Exactly one is visible, nothing scrolls.
+    (function () {
+      var pages = ['home', 'work', 'company'];
+      function show(id) {
+        if (pages.indexOf(id) < 0) id = 'home';
+        document.querySelectorAll('.page').forEach(function (p) { p.classList.toggle('active', p.id === id); });
+        document.querySelectorAll('[data-page]').forEach(function (a) {
+          if (a.dataset.page === id) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+        });
+        if (id === 'home' && typeof resizeWave === 'function') resizeWave();
+      }
+      function fromHash() { show(location.hash.replace('#', '') || 'home'); }
+      addEventListener('hashchange', fromHash);
+      addEventListener('keydown', function (e) {
+        var i = pages.indexOf(location.hash.replace('#', '') || 'home');
+        if (e.key === 'ArrowRight' && i < pages.length - 1) location.hash = pages[i + 1];
+        if (e.key === 'ArrowLeft' && i > 0) location.hash = pages[i - 1];
+      });
+      // Swipe on touch devices.
+      var x0 = null;
+      addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+      addEventListener('touchend', function (e) {
+        if (x0 === null) return;
+        var dx = e.changedTouches[0].clientX - x0; x0 = null;
+        if (Math.abs(dx) < 60) return;
+        var i = pages.indexOf(location.hash.replace('#', '') || 'home');
+        if (dx < 0 && i < pages.length - 1) location.hash = pages[i + 1];
+        if (dx > 0 && i > 0) location.hash = pages[i - 1];
+      }, { passive: true });
+      window.showPage = show;
+      fromHash();
+    })();
+
     // Local time in both offices.
     (function () {
       var fi = document.getElementById('t-fi'), us = document.getElementById('t-us');
@@ -205,46 +281,46 @@
       tick(); setInterval(tick, 15000);
     })();
 
-    // Generative waveform: a few slow sines that breathe, drawn as thin lines.
+    // Generative waveform on the home page.
+    var resizeWave;
     (function () {
       var c = document.getElementById('wave'), ctx = c.getContext('2d');
       var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var dpr = Math.min(devicePixelRatio || 1, 2), W, H, t = 0;
-      var mx = 0.5, my = 0.5;
-      function size() {
+      var dpr = Math.min(devicePixelRatio || 1, 2), W = 0, H = 0, t = 0, mx = 0.5, my = 0.5;
+      resizeWave = function () {
         W = c.clientWidth; H = c.clientHeight;
+        if (!W || !H) return;
         c.width = W * dpr; c.height = H * dpr;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
-      addEventListener('resize', size); size();
+        if (reduce) draw();
+      };
+      addEventListener('resize', resizeWave); resizeWave();
       addEventListener('pointermove', function (e) { mx = e.clientX / innerWidth; my = e.clientY / innerHeight; }, { passive: true });
-      var fg = getComputedStyle(document.documentElement).getPropertyValue('--fg').trim();
-      var accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+      var cs = getComputedStyle(document.documentElement);
+      var fg = cs.getPropertyValue('--fg').trim(), accent = cs.getPropertyValue('--accent').trim();
       function draw() {
+        if (!W || !H) return;
         ctx.clearRect(0, 0, W, H);
         var lines = 9, base = H * 0.5, amp = Math.min(H, W) * 0.16;
         for (var i = 0; i < lines; i++) {
           var k = i / (lines - 1);
-          ctx.beginPath();
-          ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.lineWidth = 1;
           ctx.strokeStyle = i === lines - 1 ? accent : fg;
           ctx.globalAlpha = i === lines - 1 ? 0.55 : 0.05 + k * 0.12;
           for (var x = 0; x <= W; x += 4) {
-            var u = x / W;
-            var env = Math.sin(u * Math.PI);
+            var u = x / W, env = Math.sin(u * Math.PI);
             var y = base
               + Math.sin(u * 6.2 + t * 0.9 + i * 0.35) * amp * env * (0.4 + k)
               + Math.sin(u * 17 + t * 1.7 - i * 0.6) * amp * 0.25 * env
-              + (my - 0.5) * 40 * env
-              + (i - lines / 2) * 6;
+              + (my - 0.5) * 40 * env + (i - lines / 2) * 6;
             x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
           }
           ctx.stroke();
         }
         ctx.globalAlpha = 1;
       }
-      function loop() { t += 0.008 + mx * 0.004; draw(); requestAnimationFrame(loop); }
-      if (reduce) { draw(); } else { loop(); }
+      function loop() { if (document.getElementById('home').classList.contains('active')) { t += 0.008 + mx * 0.004; draw(); } requestAnimationFrame(loop); }
+      if (!reduce) loop();
     })();
   </script>
 </body>
