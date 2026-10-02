@@ -57,6 +57,7 @@
     /* ---------- Aluminium: header and footer ---------- */
     header, footer { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(20px, 3vw, 36px); }
     footer { display: grid; grid-template-columns: 1fr auto 1fr; }
+    footer > :first-child { visibility: hidden; }
     footer > :last-child { justify-self: end; }
     header { height: 56px; }
     .wordmark { font-weight: 600; font-size: 19px; letter-spacing: -0.02em; }
@@ -65,9 +66,6 @@
     nav a:hover { color: var(--ink); }
     nav a[aria-current="page"] { color: var(--ink); background: rgba(0,0,0,.07); box-shadow: inset 0 1px 2px rgba(0,0,0,.16), 0 1px 0 rgba(255,255,255,.6); }
     footer { height: 42px; font-size: 12px; color: var(--ink2); }
-    .status { display: flex; align-items: center; gap: 8px; }
-    .status i { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); animation: pulse 2.4s ease-out infinite; }
-    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(10,120,230,.5); } 100% { box-shadow: 0 0 0 9px rgba(10,120,230,0); } }
     .pager { display: flex; align-items: center; gap: 2px; height: 26px; padding: 0 8px; border-radius: 980px; background: rgba(0,0,0,.07); box-shadow: inset 0 1px 2px rgba(0,0,0,.16), 0 1px 0 rgba(255,255,255,.6); }
     .pager a { width: 16px; height: 22px; display: grid; place-items: center; transition: width .3s; }
     .pager a::before { content: ""; width: 6px; height: 6px; border-radius: 3px; background: var(--ink2); opacity: .55; transition: width .3s, opacity .3s, background .3s; }
@@ -81,7 +79,6 @@
       box-shadow: 0 0 0 1px rgba(0,0,0,.55), 0 1px 0 1px rgba(255,255,255,.75), 0 -1px 0 1px rgba(0,0,0,.12), 0 30px 60px -40px rgba(0,0,0,.6);
     }
     main::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 3; border-radius: inherit;
-      background: radial-gradient(800px circle at var(--mx) var(--my), rgba(255,255,255,.055), transparent 60%);
       box-shadow: inset 0 0 0 1px rgba(255,255,255,.07); }
     .page { position: absolute; inset: 0; display: none; flex-direction: column; gap: clamp(14px, 2.6vh, 30px); padding: var(--pp); animation: page .55s cubic-bezier(.2,.7,.2,1) both; }
     .page.active { display: flex; }
@@ -103,7 +100,7 @@
     .pill.line:hover { background: rgba(90,169,246,.12); }
     .pill .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: .5; transition: opacity .2s, box-shadow .2s; }
     .pill[aria-pressed="true"] .dot { opacity: 1; box-shadow: 0 0 0 4px rgba(90,169,246,.25); }
-    .tile, .wcard, .ocard { background: var(--card); border-radius: 22px; }
+    .ocard { background: var(--card); border-radius: 22px; }
 
     /* ---------- Home ---------- */
     #home { justify-content: flex-end; align-items: center; text-align: center; }
@@ -111,93 +108,56 @@
     #home .inner { position: relative; max-width: 980px; }
     #home h1 { font-size: clamp(32px, 5.4vw, 76px); }
     #home h1 .w { white-space: nowrap; }
-    #home h1 .k { display: inline-block; animation: pop .7s cubic-bezier(.2,1.4,.4,1) both; }
-    #home h1 .rest { animation: rest 1s ease .5s both; }
-    #home .lede { margin: clamp(10px, 1.6vh, 18px) auto 0; max-width: 30em; animation: rest 1s ease .8s both; }
-    @keyframes pop { from { opacity: 0; transform: scale(.5) translateY(.15em); } to { opacity: 1; transform: none; } }
+    #home .inner { animation: rest 1.1s ease .1s both; }
+    #home .lede { margin: clamp(10px, 1.6vh, 18px) auto 0; max-width: 30em; }
     @keyframes rest { from { opacity: 0; filter: blur(8px); } to { opacity: 1; filter: none; } }
     .actions { display: flex; justify-content: center; gap: 12px; margin-top: clamp(16px, 2.6vh, 28px); flex-wrap: wrap; }
 
     /* ---------- Platform ---------- */
-    .console { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-    .tile { display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: clamp(12px, 1.6vw, 22px); overflow: hidden; }
-    .tile > span { font-size: clamp(12px, 1.1vw, 15px); font-weight: 600; color: var(--fg); flex: none; }
-    .tile .fill { flex: 1; min-height: 0; margin-top: clamp(8px, 1.4vh, 16px); display: flex; flex-direction: column; }
-    .tc { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; font-size: clamp(20px, 2.5vw, 38px); font-weight: 600; letter-spacing: -0.02em; line-height: 1; flex: none; }
-    .bars { flex: 1; min-height: 0; display: flex; align-items: flex-end; gap: 2px; margin-top: 10px; }
-    .bars i { flex: 1; min-width: 0; border-radius: 2px; background: linear-gradient(var(--cyan), #2a62c8); transform-origin: bottom; animation: bar 1.1s ease-in-out infinite alternate; }
-    @keyframes bar { from { transform: scaleY(.12); } to { transform: scaleY(1); } }
-    .cues { list-style: none; margin: 0; padding: 0; flex: 1; min-height: 0; max-height: 330px; display: grid; grid-auto-rows: minmax(0, 1fr); gap: 2px; font-size: clamp(12px, 1.15vw, 15px); color: var(--muted); }
-    .cues li { display: flex; justify-content: space-between; align-items: center; padding: 0 .7em; border-radius: 8px; transition: background .3s, color .3s; }
-    .cues li.on { background: var(--blue); color: #fff; }
-    .tile canvas { flex: 1; min-height: 0; width: 100%; display: block; }
-    .note { flex: none; display: flex; justify-content: space-between; margin-top: 6px; font-size: clamp(12px, 1.15vw, 15px); color: var(--muted); font-variant-numeric: tabular-nums; }
-    .note b { color: var(--fg); font-weight: 600; }
-    .pads { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); gap: clamp(4px, .6vw, 8px); }
-    .pads i { border-radius: clamp(5px, .7vw, 10px); transition: background .35s, box-shadow .35s; }
-    .pads .r0 { background: linear-gradient(#12243a, #0c1727); } .pads .r0.on { background: linear-gradient(#6cdcea, #3aa9bd); box-shadow: 0 0 24px -6px rgba(98,214,230,.6); }
-    .pads .r1 { background: linear-gradient(#111d3a, #0b1328); } .pads .r1.on { background: linear-gradient(#4a90f7, #2a62c8); box-shadow: 0 0 24px -6px rgba(74,144,247,.6); }
-    .pads .r2 { background: linear-gradient(#1a1238, #100b24); } .pads .r2.on { background: linear-gradient(#6a58e6, #3b2ba6); box-shadow: 0 0 24px -6px rgba(106,88,230,.55); }
+    .pads { display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(3, 1fr); gap: clamp(6px, .8vw, 12px); }
+    .pads i { border-radius: clamp(8px, 1.1vw, 16px); background: #10151f; transition: background .6s ease; }
+    .pads .r0.on { background: linear-gradient(#8fc6ff, #5aa9f6); }
+    .pads .r1.on { background: linear-gradient(#4a90f7, #2a62c8); }
+    .pads .r2.on { background: linear-gradient(#2c58c4, #1b3b8e); }
 
     /* ---------- Work ---------- */
-    .cards { display: grid; grid-template-columns: 1fr; grid-auto-rows: minmax(0, 1fr); gap: 12px; }
-    .wcard { display: flex; flex-direction: row; align-items: center; gap: clamp(14px, 5vw, 56px); min-height: 0; padding: clamp(12px, 2vw, 28px) clamp(16px, 3vw, 40px); transition: background .25s; }
-    .wcard:hover { background: var(--card-hi); }
-    .wcard svg { flex: none; width: clamp(72px, 34%, 300px); height: 100%; max-height: 160px; fill: none; stroke: var(--fg); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; opacity: .9; }
-    .wcard svg .dim { opacity: .28; }
-    .wcard svg .hot { stroke: var(--link); }
-    .wcard svg .dot { fill: var(--link); stroke: none; }
-    .page.active .wcard svg .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.4s cubic-bezier(.4,0,.2,1) .15s forwards; }
-    @keyframes draw { to { stroke-dashoffset: 0; } }
-    .wcard .n { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
-    .wcard h2 { margin: 2px 0 6px; font-size: clamp(19px, 2vw, 28px); font-weight: 600; letter-spacing: -0.018em; line-height: 1.1; }
-    .wcard .more { font-size: clamp(15px, 1.3vw, 17px); color: var(--link); }
-    .wcard .more span { display: inline-block; transition: transform .2s; }
-    .wcard:hover .more span { transform: translateX(4px); }
-
-    @media (min-width: 900px) and (min-aspect-ratio: 5/4) {
-      .cards { grid-template-columns: repeat(3, 1fr); grid-auto-rows: auto; }
-      .wcard { flex-direction: column; align-items: stretch; gap: 0; padding: clamp(16px, 2vw, 28px); }
-      .wcard svg { flex: 1; width: 100%; max-height: none; }
-    }
+    .list { display: flex; flex-direction: column; justify-content: center; }
+    .row { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 4px 20px; padding: clamp(14px, 3.2vh, 36px) 0; border-top: 1px solid rgba(255,255,255,.14); }
+    .row:last-child { border-bottom: 1px solid rgba(255,255,255,.14); }
+    .row h2 { margin: 0; font-size: clamp(26px, 4.6vw, 64px); line-height: 1.05; font-weight: 600; letter-spacing: -0.022em; transition: transform .3s cubic-bezier(.2,.7,.2,1); }
+    .row:hover h2 { transform: translateX(8px); }
+    .row .more { font-size: clamp(15px, 1.4vw, 19px); color: var(--link); white-space: nowrap; }
 
     /* ---------- Company ---------- */
     .offices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .ocard { display: flex; flex-direction: column; min-height: 0; padding: clamp(16px, 2.2vw, 30px); }
-    .ocard .top { display: flex; justify-content: space-between; font-size: clamp(13px, 1.2vw, 17px); font-weight: 600; }
-    .ocard .top span:last-child { color: var(--muted); font-weight: 500; }
-    .clock { margin: auto 0; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; font-size: clamp(40px, 7vw, 112px); font-weight: 600; letter-spacing: -0.03em; line-height: 1; }
-    .clock i { font-style: normal; color: var(--muted); }
+    .ocard .top { font-size: clamp(13px, 1.2vw, 17px); font-weight: 600; }
+    .clock { margin: auto 0; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; font-size: clamp(36px, 5.4vw, 84px); font-weight: 600; letter-spacing: -0.03em; line-height: 1; }
     .ocard h2 { margin: 0 0 4px; font-size: clamp(17px, 1.7vw, 24px); font-weight: 600; letter-spacing: -0.015em; }
     .ocard address { font-style: normal; color: var(--muted); font-size: clamp(14px, 1.2vw, 17px); line-height: 1.4; }
 
     /* ---------- Narrow and portrait ---------- */
     @media (max-width: 899px), (max-aspect-ratio: 5/4) {
-      .console { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
       .copy.two { grid-template-columns: 1fr; gap: 8px; }
       .offices { grid-template-columns: 1fr; }
-      .clock { font-size: clamp(44px, 13vw, 120px); }
+      .clock { font-size: clamp(40px, 10vw, 96px); }
+      .pads { grid-template-columns: repeat(4, 1fr); }
+      .pads .x { display: none; }
     }
     @media (max-width: 699px) {
       header { height: 52px; padding: 0 16px; }
       footer { height: 40px; padding: 0 16px; }
       nav a { padding: 6px 8px; font-size: 13.5px; }
       main { margin: 0 8px; border-radius: 24px; }
-      .tile, .wcard, .ocard { border-radius: 16px; }
-      .console, .cards, .offices { gap: 8px; }
-      .cues li:nth-child(n+5) { display: none; }
-      .wcard svg { max-height: 64px; }
-      .wcard h2 { margin: 0 0 2px; }
-      .wcard .n { display: none; }
+      .ocard { border-radius: 16px; }
+      .offices { gap: 8px; }
       .pill { height: 40px; padding: 0 18px; font-size: 16px; }
       #home h1 { text-wrap: wrap; }
       #home h1 .ln { display: block; }
       footer .hide-sm { display: none; }
     }
-    @media (max-width: 699px) and (max-height: 640px) { #work .lede { display: none; } }
     @media (prefers-reduced-motion: reduce) {
-      .status i, .page, #home h1 .k, #home h1 .rest, #home .lede, .bars i, .page.active .wcard svg .draw { animation: none; }
-      .page.active .wcard svg .draw { stroke-dashoffset: 0; }
+      .page, #home .inner { animation: none; }
     }
   </style>
 </head>
@@ -220,76 +180,40 @@
         <h1 aria-label="advanced instruments for the artificial intelligence era."><span class="ln"><span class="w"><span class="k">a</span><span class="rest">dvanced</span></span> <span class="w"><span class="k">i</span><span class="rest">nstruments</span></span></span> <span class="ln"><span class="rest">for the</span> <span class="w"><span class="k">a</span><span class="rest">rtificial</span></span></span> <span class="ln"><span class="w"><span class="k">i</span><span class="rest">ntelligence</span></span> <span class="rest">era.</span></span></h1>
         <p class="lede">All Inc. builds software, user interfaces and connectivity for creatives.</p>
         <div class="actions">
-          <a class="pill fill" href="#platform">what we build</a>
           <button class="pill line" id="snd" type="button" aria-pressed="false"><span class="dot"></span><span id="snd-label">sound off</span></button>
         </div>
       </div>
     </section>
 
     <section class="page" id="platform" aria-label="Platform">
-      <div class="console visual" aria-label="Playback, showfiles, vocal processing and visuals">
-        <div class="tile"><span>playback</span><div class="fill"><div class="tc" id="tc">00:00:00:00</div><div class="bars" id="bars"></div></div></div>
-        <div class="tile"><span>showfiles</span><div class="fill"><ol class="cues" id="cues"><li class="on"><span>01 intro</span><span>go</span></li><li><span>02 opener</span><span></span></li><li><span>03 interlude</span><span></span></li><li><span>04 acoustic</span><span></span></li><li><span>05 finale</span><span></span></li><li><span>06 encore</span><span></span></li></ol></div></div>
-        <div class="tile"><span>vocal processing</span><div class="fill"><canvas id="pitch"></canvas><div class="note"><b id="note">a3</b><span id="cents">+0 ct</span></div></div></div>
-        <div class="tile"><span>visuals</span><div class="fill"><div class="pads" id="pads"></div></div></div>
-      </div>
+      <p class="eyebrow copy">platform</p>
+      <div class="pads visual" id="pads" aria-hidden="true"></div>
       <div class="copy two">
-        <div>
-          <p class="eyebrow">platform</p>
-          <h1>a full arena show from a single device.</h1>
-        </div>
-        <p class="lede">Our next-generation live performance platform: <b>playback, showfiles, vocal processing and visuals.</b></p>
+        <h1>a full arena show from a single device.</h1>
+        <p class="lede">Playback, showfiles, vocal processing and visuals.</p>
       </div>
     </section>
 
     <section class="page" id="work" aria-label="Work">
-      <div class="cards visual">
-        <a class="wcard" href="#work">
-          <svg viewBox="0 0 200 110" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
-            <circle class="draw" pathLength="1" cx="45" cy="52" r="24"/><path class="hot draw" pathLength="1" d="M45 52 L33 36"/>
-            <circle class="draw" pathLength="1" cx="100" cy="52" r="24"/><path class="hot draw" pathLength="1" d="M100 52 L100 31"/>
-            <circle class="draw" pathLength="1" cx="155" cy="52" r="24"/><path class="hot draw" pathLength="1" d="M155 52 L171 41"/>
-            <path class="dim" d="M21 94 H69 M76 94 H124 M131 94 H179"/>
-          </svg>
-          <div><span class="n">01</span><h2>user interfaces</h2><span class="more">learn more <span aria-hidden="true">&rsaquo;</span></span></div>
-        </a>
-        <a class="wcard" href="#work">
-          <svg viewBox="0 0 200 110" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
-            <path class="dim" d="M10 78 H190 M40 20 V94 M80 20 V94 M120 20 V94 M160 20 V94"/>
-            <path class="draw" pathLength="1" d="M10 78 C 30 78, 38 30, 62 34 S 92 90, 118 60 S 150 26, 190 46"/>
-            <circle class="dot" cx="62" cy="34" r="4"/><circle class="dot" cx="118" cy="60" r="4"/>
-          </svg>
-          <div><span class="n">02</span><h2>plugins &amp; tools</h2><span class="more">buy now <span aria-hidden="true">&rsaquo;</span></span></div>
-        </a>
-        <a class="wcard" href="#work">
-          <svg viewBox="0 0 200 110" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
-            <path class="draw" pathLength="1" d="M100 55 L40 26 M100 55 L160 24 M100 55 L30 82 M100 55 L170 84 M100 55 L100 14 M100 55 L104 98"/>
-            <path class="dim" d="M40 26 L100 14 L160 24 L170 84 L104 98 L30 82 Z"/>
-            <circle class="dot" cx="100" cy="55" r="6"/>
-            <g fill="#000"><circle cx="40" cy="26" r="4"/><circle cx="160" cy="24" r="4"/><circle cx="30" cy="82" r="4"/><circle cx="170" cy="84" r="4"/><circle cx="100" cy="14" r="4"/><circle cx="104" cy="98" r="4"/></g>
-          </svg>
-          <div><span class="n">03</span><h2>creative ecosystems</h2><span class="more">join waitlist <span aria-hidden="true">&rsaquo;</span></span></div>
-        </a>
+      <p class="eyebrow copy">work</p>
+      <div class="list visual">
+        <a class="row" href="#work"><h2>user interfaces</h2><span class="more">learn more &rsaquo;</span></a>
+        <a class="row" href="#work"><h2>plugins &amp; tools</h2><span class="more">buy now &rsaquo;</span></a>
+        <a class="row" href="#work"><h2>creative ecosystems</h2><span class="more">join waitlist &rsaquo;</span></a>
       </div>
-      <div class="copy two">
-        <div>
-          <p class="eyebrow">work</p>
-          <h1>software, user interfaces and connectivity.</h1>
-        </div>
-        <p class="lede">For live touring and creative ecosystems. Our applications are <b>built by the artists, producers and engineers who tour with them</b> and refine them daily in their own creative workflows.</p>
-      </div>
+      <p class="lede copy">Built by the artists, producers and engineers who tour with them.</p>
     </section>
 
     <section class="page" id="company" aria-label="Company">
       <p class="eyebrow copy">company</p>
       <div class="offices visual">
         <div class="ocard">
-          <div class="top"><span>Europe</span><span>local time</span></div>
+          <div class="top">Europe</div>
           <div class="clock" id="t-fi">--:--</div>
           <div><h2>All Inc. Audio Ab</h2><address>Urakoitsijantie 15<br>Porvoo, Uusimaa<br>Finland</address></div>
         </div>
         <div class="ocard">
-          <div class="top"><span>United States</span><span>local time</span></div>
+          <div class="top">United States</div>
           <div class="clock" id="t-us">--:--</div>
           <div><h2>US &amp; All Inc.</h2><address>470 Ramona St<br>Palo Alto, California<br>United States</address></div>
         </div>
@@ -298,7 +222,7 @@
   </main>
 
   <footer>
-    <span class="status"><i></i> Building</span>
+    <span></span>
     <span class="pager" aria-label="Page indicator">
       <a href="#home" data-page="home" title="Home"></a>
       <a href="#platform" data-page="platform" title="Platform"></a>
@@ -314,7 +238,7 @@
     var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     var pages = ['home', 'platform', 'work', 'company'];
     function current() { var h = location.hash.replace('#', ''); return pages.indexOf(h) < 0 ? 'home' : h; }
-    var LINK = '#5aa9f6', CYAN = '#62d6e6';
+    var LINK = '#5aa9f6';
 
     /* ---------- Sound: the page is a small instrument ---------- */
     var audio = (function () {
@@ -390,7 +314,7 @@
     function draw() {
       if (!W || !H) return;
       g.clearRect(0, 0, W, H);
-      var N = W < 600 ? 30 : 48, S = W < 600 ? 90 : 180, accRow = N - 8;
+      var N = W < 600 ? 20 : 30, S = W < 600 ? 90 : 180, accRow = N - 6;
       var amp = Math.min(A * 0.12, W * 0.09) * (0.75 + (1 - sy) * 0.5);
       var lvl = audio.level(), playing = !!lvl;
       for (var j = 0; j < N; j++) {
@@ -412,7 +336,7 @@
         g.globalAlpha = 1; g.fillStyle = '#000'; g.fill();
         g.beginPath(); g.moveTo(pts[0], pts[1]);
         for (p = 2; p < pts.length; p += 2) g.lineTo(pts[p], pts[p + 1]);
-        var hot = j === accRow, warm = playing && !hot && j % 6 === accRow % 6;
+        var hot = j === accRow, warm = false;
         g.strokeStyle = hot || warm ? LINK : '#fff';
         g.lineWidth = hot ? 2 : 1;
         g.globalAlpha = hot ? 1 : warm ? 0.55 : 0.07 + 0.42 * z;
@@ -425,50 +349,21 @@
     addEventListener('resize', resize);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(resize);
 
-    /* ---------- Platform: four live modules ---------- */
-    var bars = document.getElementById('bars'), padsEl = document.getElementById('pads'), i0, pads = [];
-    for (i0 = 0; i0 < 44; i0++) { var b = document.createElement('i'); b.style.height = (30 + Math.random() * 70) + '%'; b.style.animationDelay = (-Math.random() * 1.1).toFixed(2) + 's'; b.style.animationDuration = (0.6 + Math.random() * 0.9).toFixed(2) + 's'; bars.appendChild(b); }
-    for (i0 = 0; i0 < 12; i0++) { var q = document.createElement('i'); q.className = 'r' + Math.floor(i0 / 4); padsEl.appendChild(q); pads.push(q); }
-    var patterns = [[1, 0, 0, 0, 1, 0, 0, 1], [0, 0, 1, 1, 0, 0, 1, 1], [1, 0, 1, 0, 0, 1, 0, 0]], step = 0, lastStep = 0;
-    function setPads() { for (var n = 0; n < 12; n++) pads[n].classList.toggle('on', !!patterns[Math.floor(n / 4)][(n % 4 + step) % 8]); }
+    /* ---------- Platform: one slow pad grid ---------- */
+    var padsEl = document.getElementById('pads'), pads = [], i0;
+    for (i0 = 0; i0 < 24; i0++) { var q = document.createElement('i'); q.className = 'r' + Math.floor(i0 / 8) + (i0 % 8 > 3 ? ' x' : ''); padsEl.appendChild(q); pads.push(q); }
+    var patterns = [[1, 0, 0, 0, 1, 0, 0, 0], [0, 0, 1, 1, 0, 0, 1, 1], [1, 0, 0, 1, 0, 1, 0, 0]], step = 0, lastStep = 0;
+    function setPads() { for (var n = 0; n < 24; n++) pads[n].classList.toggle('on', !!patterns[Math.floor(n / 8)][(n % 8 + step) % 8]); }
     setPads();
-    var tc = document.getElementById('tc'), cues = document.getElementById('cues').children, cueI = 0, t0 = performance.now();
-    var pc = document.getElementById('pitch'), pg = pc.getContext('2d'), noteEl = document.getElementById('note'), centsEl = document.getElementById('cents');
-    var wob = 1, hist = [], notes = ['a3', 'c4', 'd4', 'e4', 'g4'], noteI = 0, lastCue = 0, lastTc = 0;
-    function two(n) { return (n < 10 ? '0' : '') + n; }
-    function platformFrame(now) {
-      var e = (now - t0) / 1000;
-      if (now - lastTc > 66) { lastTc = now; tc.textContent = two(Math.floor(e / 3600) % 24) + ':' + two(Math.floor(e / 60) % 60) + ':' + two(Math.floor(e) % 60) + ':' + two(Math.floor((e % 1) * 25)); }
-      if (now - lastStep > 520) { lastStep = now; step = (step + 1) % 8; setPads(); }
-      if (now - lastCue > 2600) {
-        lastCue = now; cues[cueI].classList.remove('on'); cues[cueI].lastChild.textContent = '';
-        var shown = 0; for (var ci = 0; ci < cues.length; ci++) if (cues[ci].offsetParent !== null) shown++;
-        cueI = (cueI + 1) % (shown || cues.length); cues[cueI].classList.add('on'); cues[cueI].lastChild.textContent = 'go';
-        noteI = (noteI + 1) % notes.length; noteEl.textContent = notes[noteI];
-      }
-      var w = pc.clientWidth, h = pc.clientHeight; if (!w || !h) return;
-      if (pc.width !== Math.round(w * dpr) || pc.height !== Math.round(h * dpr)) { pc.width = Math.round(w * dpr); pc.height = Math.round(h * dpr); }
-      pg.setTransform(dpr, 0, 0, dpr, 0, 0);
-      var settle = Math.min(1, (now - lastCue) / 900);
-      wob += ((1 - settle * 0.85) - wob) * 0.06;
-      var v = (Math.sin(e * 5.3) * 0.5 + Math.sin(e * 13.1) * 0.25) * wob;
-      hist.push(v); if (hist.length > 120) hist.shift();
-      centsEl.textContent = (v >= 0 ? '+' : '') + Math.round(v * 40) + ' ct';
-      pg.clearRect(0, 0, w, h);
-      pg.strokeStyle = 'rgba(255,255,255,.12)'; pg.lineWidth = 1; pg.beginPath(); pg.moveTo(0, h / 2); pg.lineTo(w, h / 2); pg.stroke();
-      pg.strokeStyle = CYAN; pg.lineWidth = 2; pg.lineJoin = 'round'; pg.shadowColor = CYAN; pg.shadowBlur = 10; pg.beginPath();
-      for (var n = 0; n < hist.length; n++) { var x = n / 119 * w, y = h / 2 - hist[n] * h * 0.42; n ? pg.lineTo(x, y) : pg.moveTo(x, y); }
-      pg.stroke(); pg.shadowBlur = 0;
-    }
+    function platformFrame(now) { if (now - lastStep > 1400) { lastStep = now; step = (step + 1) % 8; setPads(); } }
 
     /* ---------- Company: clocks ---------- */
     var fi = document.getElementById('t-fi'), us = document.getElementById('t-us');
     function fmt(tz) {
-      var s = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: tz }).format(new Date());
-      return s.slice(0, 5) + '<i>' + s.slice(5) + '</i>';
+      return new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: tz }).format(new Date());
     }
-    function tick() { fi.innerHTML = fmt('Europe/Helsinki'); us.innerHTML = fmt('America/Los_Angeles'); }
-    tick(); setInterval(tick, 1000);
+    function tick() { fi.textContent = fmt('Europe/Helsinki'); us.textContent = fmt('America/Los_Angeles'); }
+    tick(); setInterval(tick, 10000);
 
     /* ---------- Pages: one visible, nothing scrolls ---------- */
     function show(id) {
@@ -503,7 +398,7 @@
       root.style.setProperty('--mx', (sx * 100).toFixed(2) + '%');
       root.style.setProperty('--my', (sy * 100).toFixed(2) + '%');
       var cur = current();
-      if (cur === 'home') { t += 0.011; draw(); }
+      if (cur === 'home') { t += 0.007; draw(); }
       else if (cur === 'platform') platformFrame(performance.now());
       requestAnimationFrame(frame);
     }
