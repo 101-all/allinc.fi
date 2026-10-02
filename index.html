@@ -10,399 +10,205 @@
   <meta property="og:title" content="All Inc.">
   <meta property="og:description" content="Advanced Instruments for the Artificial Intelligence era.">
   <meta property="og:url" content="https://allinc.fi/">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d6d7d9'/%3E%3Cpath d='M14 40 L20 22 L26 44 L32 16 L38 46 L44 26 L50 40' fill='none' stroke='%231d1d1f' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d6d7d9'/%3E%3Cpath d='M12 34 C 22 14, 30 54, 40 30 S 50 30, 54 32' fill='none' stroke='%231d1d1f' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    :root {
-      /* aluminium body */
-      --alu: #d6d7d9; --alu-hi: #e2e3e5; --alu-lo: #c6c7ca;
-      --ink: #1d1d1f; --ink2: #5c5d61; --rule: #bfc0c3;
-      /* glass display */
-      --bg: #000; --card: #161617; --card-hi: #1d1d1f;
-      --fg: #f5f5f7; --muted: #86868b;
-      --blue: #0a78e6; --link: #5aa9f6;
-      --cyan: #62d6e6; --indigo: #5a48d8;
-      --pp: clamp(18px, 3vw, 44px);
-      --mx: 50%; --my: 0%;
-    }
+    :root { --ink: #1d1d1f; --ink2: #6a6b6f; --fg: #f5f5f7; --muted: #86868b; --blue: #5aa9f6; }
     * { box-sizing: border-box; }
     html, body { margin: 0; height: 100%; overflow: hidden; }
     body {
-      background: linear-gradient(180deg, var(--alu-hi) 0%, var(--alu) 50%, var(--alu-lo) 100%) fixed;
+      background: linear-gradient(180deg, #e2e3e5 0%, #d6d7d9 50%, #c6c7ca 100%) fixed;
       color: var(--ink);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Helvetica Neue", Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
-      font-size: 17px; line-height: 1.4;
+      font-size: 13px;
       height: 100dvh;
       display: grid; grid-template-rows: auto 1fr auto;
       padding-top: env(safe-area-inset-top);
       padding-bottom: env(safe-area-inset-bottom);
       text-transform: lowercase;
     }
-    /* Rough, bead-blasted aluminium: fine even grain and a broad soft light. */
-    body::before, body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0; }
-    body::before {
-      background: radial-gradient(1000px circle at var(--mx) var(--my), rgba(255,255,255,.7), rgba(255,255,255,0) 68%);
-      mix-blend-mode: soft-light;
-    }
+    /* rough aluminium grain */
     body::after {
+      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
       mix-blend-mode: soft-light; opacity: .5;
     }
     a { color: inherit; text-decoration: none; }
-    button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-transform: inherit; }
+    header, footer { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; padding: 0 clamp(20px, 3vw, 32px); color: var(--ink2); }
+    header { height: 48px; }
+    .wordmark { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
+    footer { height: 44px; justify-content: center; }
+    nav { display: flex; gap: clamp(20px, 4vw, 36px); }
+    nav a { padding: 8px 0; transition: color .25s; }
+    nav a:hover, nav a[aria-current="page"] { color: var(--ink); }
 
-    /* ---------- Aluminium: header and footer ---------- */
-    header, footer { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(20px, 3vw, 36px); }
-    footer { display: grid; grid-template-columns: 1fr auto 1fr; }
-    footer > :first-child { visibility: hidden; }
-    footer > :last-child { justify-self: end; }
-    header { height: 56px; }
-    .wordmark { font-weight: 600; font-size: 19px; letter-spacing: -0.02em; }
-    nav { display: flex; gap: 2px; }
-    nav a { padding: 6px 13px; border-radius: 980px; font-size: 14px; color: var(--ink2); transition: color .2s, background .2s, box-shadow .2s; }
-    nav a:hover { color: var(--ink); }
-    nav a[aria-current="page"] { color: var(--ink); background: rgba(0,0,0,.07); box-shadow: inset 0 1px 2px rgba(0,0,0,.16), 0 1px 0 rgba(255,255,255,.6); }
-    footer { height: 42px; font-size: 12px; color: var(--ink2); }
-    .pager { display: flex; align-items: center; gap: 2px; height: 26px; padding: 0 8px; border-radius: 980px; background: rgba(0,0,0,.07); box-shadow: inset 0 1px 2px rgba(0,0,0,.16), 0 1px 0 rgba(255,255,255,.6); }
-    .pager a { width: 16px; height: 22px; display: grid; place-items: center; transition: width .3s; }
-    .pager a::before { content: ""; width: 6px; height: 6px; border-radius: 3px; background: var(--ink2); opacity: .55; transition: width .3s, opacity .3s, background .3s; }
-    .pager a[aria-current="page"] { width: 30px; }
-    .pager a[aria-current="page"]::before { width: 22px; opacity: 1; background: var(--ink); }
-
-    /* ---------- Glass display ---------- */
     main {
       position: relative; z-index: 1; margin: 0 12px; overflow: hidden;
-      border-radius: 30px; background: var(--bg); color: var(--fg);
-      box-shadow: 0 0 0 1px rgba(0,0,0,.55), 0 1px 0 1px rgba(255,255,255,.75), 0 -1px 0 1px rgba(0,0,0,.12), 0 30px 60px -40px rgba(0,0,0,.6);
+      border-radius: 28px; background: #000; color: var(--fg);
+      box-shadow: 0 0 0 1px rgba(0,0,0,.55), 0 1px 0 1px rgba(255,255,255,.75), 0 30px 60px -40px rgba(0,0,0,.6);
+      display: grid; place-items: center; text-align: center;
+      padding: clamp(20px, 4vw, 56px);
+      touch-action: none; user-select: none; -webkit-user-select: none;
     }
-    main::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 3; border-radius: inherit;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.07); }
-    .page { position: absolute; inset: 0; display: none; flex-direction: column; gap: clamp(14px, 2.6vh, 30px); padding: var(--pp); animation: page .55s cubic-bezier(.2,.7,.2,1) both; }
-    .page.active { display: flex; }
-    @keyframes page { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+    .inner { position: relative; width: 100%; max-width: 560px; }
+    section { display: none; animation: in .7s ease both; }
+    section.active { display: block; }
+    @keyframes in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    h1 { margin: 0; font-size: clamp(22px, 2.8vw, 36px); line-height: 1.12; font-weight: 600; letter-spacing: -0.02em; text-wrap: balance; }
+    p { margin: 12px auto 0; max-width: 26em; font-size: clamp(14px, 1.2vw, 16px); line-height: 1.45; color: var(--muted); text-wrap: pretty; }
+    .rows { margin: 22px auto 0; max-width: 380px; font-size: clamp(14px, 1.2vw, 16px); text-align: left; }
+    .rows a { display: flex; justify-content: space-between; gap: 16px; padding: 11px 0; border-top: 1px solid rgba(255,255,255,.12); }
+    .rows a:last-child { border-bottom: 1px solid rgba(255,255,255,.12); }
+    .rows a span:last-child { color: var(--blue); }
+    .places { margin: 0 auto; display: grid; grid-template-columns: auto auto; justify-content: center; gap: clamp(28px, 6vw, 72px); font-size: clamp(13px, 1.1vw, 15px); line-height: 1.5; text-align: left; }
+    .places address { font-style: normal; color: var(--muted); }
+    .places b { display: block; font-weight: 500; color: var(--fg); }
 
-    /* ---------- Type ---------- */
-    .eyebrow { margin: 0 0 6px; font-size: clamp(15px, 1.5vw, 21px); font-weight: 600; letter-spacing: -0.01em; color: var(--fg); }
-    h1 { margin: 0; font-size: clamp(28px, 4.4vw, 60px); line-height: 1.06; font-weight: 600; letter-spacing: -0.022em; text-wrap: balance; }
-    .lede { margin: 0; font-size: clamp(15px, 1.5vw, 21px); line-height: 1.38; font-weight: 500; letter-spacing: -0.01em; color: var(--muted); text-wrap: pretty; }
-    .lede b { color: var(--fg); font-weight: inherit; }
-    .visual { flex: 1; min-height: 0; }
-    .copy { flex: none; }
-    .copy.two { display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(20px, 4vw, 72px); align-items: end; }
-    .pill { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 980px; font-size: 17px; transition: background .2s, box-shadow .2s, color .2s, transform .15s; }
-    .pill:active { transform: scale(.97); }
-    .pill.fill { background: var(--blue); color: #fff; }
-    .pill.fill:hover { background: #1a86f2; }
-    .pill.line { color: var(--link); box-shadow: inset 0 0 0 1px var(--link); }
-    .pill.line:hover { background: rgba(90,169,246,.12); }
-    .pill .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: .5; transition: opacity .2s, box-shadow .2s; }
-    .pill[aria-pressed="true"] .dot { opacity: 1; box-shadow: 0 0 0 4px rgba(90,169,246,.25); }
-    .ocard { background: var(--card); border-radius: 22px; }
-
-    /* ---------- Home ---------- */
-    #home { justify-content: flex-end; align-items: center; text-align: center; }
-    canvas#wave { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
-    #home .inner { position: relative; max-width: 980px; }
-    #home h1 { font-size: clamp(32px, 5.4vw, 76px); }
-    #home h1 .w { white-space: nowrap; }
-    #home .inner { animation: rest 1.1s ease .1s both; }
-    #home .lede { margin: clamp(10px, 1.6vh, 18px) auto 0; max-width: 30em; }
-    @keyframes rest { from { opacity: 0; filter: blur(8px); } to { opacity: 1; filter: none; } }
-    .actions { display: flex; justify-content: center; gap: 12px; margin-top: clamp(16px, 2.6vh, 28px); flex-wrap: wrap; }
-
-    /* ---------- Platform ---------- */
-    .pads { display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(3, 1fr); gap: clamp(6px, .8vw, 12px); }
-    .pads i { border-radius: clamp(8px, 1.1vw, 16px); background: #10151f; transition: background .6s ease; }
-    .pads .r0.on { background: linear-gradient(#8fc6ff, #5aa9f6); }
-    .pads .r1.on { background: linear-gradient(#4a90f7, #2a62c8); }
-    .pads .r2.on { background: linear-gradient(#2c58c4, #1b3b8e); }
-
-    /* ---------- Work ---------- */
-    .list { display: flex; flex-direction: column; justify-content: center; }
-    .row { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 4px 20px; padding: clamp(14px, 3.2vh, 36px) 0; border-top: 1px solid rgba(255,255,255,.14); }
-    .row:last-child { border-bottom: 1px solid rgba(255,255,255,.14); }
-    .row h2 { margin: 0; font-size: clamp(26px, 4.6vw, 64px); line-height: 1.05; font-weight: 600; letter-spacing: -0.022em; transition: transform .3s cubic-bezier(.2,.7,.2,1); }
-    .row:hover h2 { transform: translateX(8px); }
-    .row .more { font-size: clamp(15px, 1.4vw, 19px); color: var(--link); white-space: nowrap; }
-
-    /* ---------- Company ---------- */
-    .offices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .ocard { display: flex; flex-direction: column; min-height: 0; padding: clamp(16px, 2.2vw, 30px); }
-    .ocard .top { font-size: clamp(13px, 1.2vw, 17px); font-weight: 600; }
-    .clock { margin: auto 0; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; font-size: clamp(36px, 5.4vw, 84px); font-weight: 600; letter-spacing: -0.03em; line-height: 1; }
-    .ocard h2 { margin: 0 0 4px; font-size: clamp(17px, 1.7vw, 24px); font-weight: 600; letter-spacing: -0.015em; }
-    .ocard address { font-style: normal; color: var(--muted); font-size: clamp(14px, 1.2vw, 17px); line-height: 1.4; }
-
-    /* ---------- Narrow and portrait ---------- */
-    @media (max-width: 899px), (max-aspect-ratio: 5/4) {
-      .copy.two { grid-template-columns: 1fr; gap: 8px; }
-      .offices { grid-template-columns: 1fr; }
-      .clock { font-size: clamp(40px, 10vw, 96px); }
-      .pads { grid-template-columns: repeat(4, 1fr); }
-      .pads .x { display: none; }
-    }
     @media (max-width: 699px) {
-      header { height: 52px; padding: 0 16px; }
-      footer { height: 40px; padding: 0 16px; }
-      nav a { padding: 6px 8px; font-size: 13.5px; }
-      main { margin: 0 8px; border-radius: 24px; }
-      .ocard { border-radius: 16px; }
-      .offices { gap: 8px; }
-      .pill { height: 40px; padding: 0 18px; font-size: 16px; }
-      #home h1 { text-wrap: wrap; }
-      #home h1 .ln { display: block; }
-      footer .hide-sm { display: none; }
+      header { padding: 0 16px; }
+      main { margin: 0 8px; border-radius: 22px; }
+      .places { grid-template-columns: 1fr; gap: 16px; text-align: center; }
     }
-    @media (prefers-reduced-motion: reduce) {
-      .page, #home .inner { animation: none; }
-    }
+    @media (prefers-reduced-motion: reduce) { section { animation: none; } }
   </style>
 </head>
 <body>
   <header>
     <a class="wordmark" href="#home">all inc.</a>
-    <nav aria-label="Pages">
-      <a href="#home" data-page="home">Home</a>
-      <a href="#platform" data-page="platform">Platform</a>
-      <a href="#work" data-page="work">Work</a>
-      <a href="#company" data-page="company">Company</a>
-    </nav>
+    <span>ai for ai by ai</span>
   </header>
 
-  <main>
-    <section class="page" id="home" aria-label="Home">
-      <canvas id="wave" aria-hidden="true"></canvas>
-      <div class="inner">
-        <p class="eyebrow" id="hint">ai for ai by ai</p>
-        <h1 aria-label="advanced instruments for the artificial intelligence era."><span class="ln"><span class="w"><span class="k">a</span><span class="rest">dvanced</span></span> <span class="w"><span class="k">i</span><span class="rest">nstruments</span></span></span> <span class="ln"><span class="rest">for the</span> <span class="w"><span class="k">a</span><span class="rest">rtificial</span></span></span> <span class="ln"><span class="w"><span class="k">i</span><span class="rest">ntelligence</span></span> <span class="rest">era.</span></span></h1>
-        <p class="lede">All Inc. builds software, user interfaces and connectivity for creatives.</p>
-        <div class="actions">
-          <button class="pill line" id="snd" type="button" aria-pressed="false"><span class="dot"></span><span id="snd-label">sound off</span></button>
-        </div>
-      </div>
-    </section>
-
-    <section class="page" id="platform" aria-label="Platform">
-      <p class="eyebrow copy">platform</p>
-      <div class="pads visual" id="pads" aria-hidden="true"></div>
-      <div class="copy two">
+  <main id="stage">
+    <canvas id="line" aria-hidden="true"></canvas>
+    <div class="inner">
+      <section id="home">
+        <h1>advanced instruments for the artificial intelligence era.</h1>
+        <p>All Inc. builds software, user interfaces and connectivity for creatives.</p>
+      </section>
+      <section id="platform">
         <h1>a full arena show from a single device.</h1>
-        <p class="lede">Playback, showfiles, vocal processing and visuals.</p>
-      </div>
-    </section>
-
-    <section class="page" id="work" aria-label="Work">
-      <p class="eyebrow copy">work</p>
-      <div class="list visual">
-        <a class="row" href="#work"><h2>user interfaces</h2><span class="more">learn more &rsaquo;</span></a>
-        <a class="row" href="#work"><h2>plugins &amp; tools</h2><span class="more">buy now &rsaquo;</span></a>
-        <a class="row" href="#work"><h2>creative ecosystems</h2><span class="more">join waitlist &rsaquo;</span></a>
-      </div>
-      <p class="lede copy">Built by the artists, producers and engineers who tour with them.</p>
-    </section>
-
-    <section class="page" id="company" aria-label="Company">
-      <p class="eyebrow copy">company</p>
-      <div class="offices visual">
-        <div class="ocard">
-          <div class="top">Europe</div>
-          <div class="clock" id="t-fi">--:--</div>
-          <div><h2>All Inc. Audio Ab</h2><address>Urakoitsijantie 15<br>Porvoo, Uusimaa<br>Finland</address></div>
+        <p>Playback, showfiles, vocal processing and visuals.</p>
+      </section>
+      <section id="work">
+        <h1>software, user interfaces and connectivity.</h1>
+        <div class="rows">
+          <a href="#work"><span>user interfaces</span><span>learn more</span></a>
+          <a href="#work"><span>plugins &amp; tools</span><span>buy now</span></a>
+          <a href="#work"><span>creative ecosystems</span><span>join waitlist</span></a>
         </div>
-        <div class="ocard">
-          <div class="top">United States</div>
-          <div class="clock" id="t-us">--:--</div>
-          <div><h2>US &amp; All Inc.</h2><address>470 Ramona St<br>Palo Alto, California<br>United States</address></div>
+      </section>
+      <section id="company">
+        <div class="places">
+          <address><b>All Inc. Audio Ab</b>Urakoitsijantie 15<br>Porvoo, Uusimaa<br>Finland</address>
+          <address><b>US &amp; All Inc.</b>470 Ramona St<br>Palo Alto, California<br>United States</address>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </main>
 
   <footer>
-    <span></span>
-    <span class="pager" aria-label="Page indicator">
-      <a href="#home" data-page="home" title="Home"></a>
-      <a href="#platform" data-page="platform" title="Platform"></a>
-      <a href="#work" data-page="work" title="Work"></a>
-      <a href="#company" data-page="company" title="Company"></a>
-    </span>
-    <span class="hide-sm">&copy; 2026 All Inc.</span>
+    <nav aria-label="Sections">
+      <a href="#platform" data-page="platform">platform</a>
+      <a href="#work" data-page="work">work</a>
+      <a href="#company" data-page="company">company</a>
+    </nav>
   </footer>
 
   <script>
   (function () {
-    var root = document.documentElement;
-    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     var pages = ['home', 'platform', 'work', 'company'];
-    function current() { var h = location.hash.replace('#', ''); return pages.indexOf(h) < 0 ? 'home' : h; }
-    var LINK = '#5aa9f6';
+    var stage = document.getElementById('stage'), inner = document.querySelector('.inner');
+    var c = document.getElementById('line'), g = c.getContext('2d');
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var dpr = Math.min(devicePixelRatio || 1, 2), W = 0, H = 0, Y = 0, Yt = 0, t = 0;
+    var px = 0.5, py = 0.5, sx = 0.5, near = 0, bump = 0, level = 0;
 
-    /* ---------- Sound: the page is a small instrument ---------- */
-    var audio = (function () {
-      var AC = window.AudioContext || window.webkitAudioContext;
-      var ctx, master, filter, analyser, data, oscs = [], on = false, VOL = 0.13;
-      var scale = [110, 130.81, 146.83, 164.81, 196, 220, 261.63, 293.66, 329.63, 392, 440, 523.25];
-      function init() {
-        ctx = new AC();
-        master = ctx.createGain(); master.gain.value = 0;
-        filter = ctx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 900; filter.Q.value = 5;
-        analyser = ctx.createAnalyser(); analyser.fftSize = 1024; data = new Uint8Array(analyser.fftSize);
-        var delay = ctx.createDelay(1); delay.delayTime.value = 0.36;
-        var fb = ctx.createGain(); fb.gain.value = 0.38;
-        [[-8, 'sawtooth', 0.16], [0, 'triangle', 0.5], [8, 'sawtooth', 0.16]].forEach(function (d) {
-          var o = ctx.createOscillator(), g = ctx.createGain();
-          o.type = d[1]; o.detune.value = d[0]; o.frequency.value = 220; g.gain.value = d[2];
-          o.connect(g); g.connect(filter); o.start(); oscs.push(o);
+    /* Sound lives in the interaction, not in a button: press and drag on the display. */
+    var AC = window.AudioContext || window.webkitAudioContext, ctx, gain, filter, oscs = [];
+    var scale = [110, 130.81, 146.83, 164.81, 196, 220, 261.63, 293.66, 329.63, 392, 440, 523.25];
+    function note() {
+      if (!ctx) return;
+      var n = scale[Math.max(0, Math.min(scale.length - 1, Math.floor(px * scale.length)))], now = ctx.currentTime;
+      oscs.forEach(function (o) { o.frequency.setTargetAtTime(n, now, 0.05); });
+      filter.frequency.setTargetAtTime(300 + Math.pow(1 - py, 2) * 3000, now, 0.08);
+    }
+    function press(on) {
+      level = on ? 1 : 0;
+      if (!AC) return;
+      if (on && !ctx) {
+        ctx = new AC(); gain = ctx.createGain(); gain.gain.value = 0;
+        filter = ctx.createBiquadFilter(); filter.type = 'lowpass'; filter.Q.value = 4;
+        [[-7, 'sawtooth', 0.15], [0, 'triangle', 0.5], [7, 'sawtooth', 0.15]].forEach(function (d) {
+          var o = ctx.createOscillator(), v = ctx.createGain();
+          o.type = d[1]; o.detune.value = d[0]; v.gain.value = d[2]; o.connect(v); v.connect(filter); o.start(); oscs.push(o);
         });
-        filter.connect(master); filter.connect(delay); delay.connect(fb); fb.connect(delay); delay.connect(master);
-        master.connect(analyser); analyser.connect(ctx.destination);
+        filter.connect(gain); gain.connect(ctx.destination);
       }
-      return {
-        supported: !!AC,
-        isOn: function () { return on; },
-        toggle: function () {
-          if (!AC) return false;
-          if (!ctx) init();
-          if (ctx.state === 'suspended') ctx.resume();
-          on = !on;
-          master.gain.setTargetAtTime(on ? VOL : 0, ctx.currentTime, 0.15);
-          return on;
-        },
-        hold: function (paused) { if (ctx && on) master.gain.setTargetAtTime(paused ? 0 : VOL, ctx.currentTime, 0.1); },
-        play: function (x, y) {
-          if (!on) return;
-          var n = scale[Math.max(0, Math.min(scale.length - 1, Math.floor(x * scale.length)))], t = ctx.currentTime;
-          oscs.forEach(function (o) { o.frequency.setTargetAtTime(n, t, 0.05); });
-          filter.frequency.setTargetAtTime(280 + Math.pow(1 - y, 2) * 3400, t, 0.08);
-        },
-        level: function () { if (!on) return null; analyser.getByteTimeDomainData(data); return data; }
-      };
-    })();
-    var snd = document.getElementById('snd'), sndLabel = document.getElementById('snd-label'), hint = document.getElementById('hint');
-    if (!audio.supported) snd.style.display = 'none';
-    snd.addEventListener('click', function () {
-      var on = audio.toggle();
-      snd.setAttribute('aria-pressed', on ? 'true' : 'false');
-      sndLabel.textContent = on ? 'sound on' : 'sound off';
-      hint.textContent = on ? (matchMedia('(pointer: coarse)').matches ? 'drag to play' : 'move to play') : 'ai for ai by ai';
-    });
-    document.addEventListener('visibilitychange', function () { audio.hold(document.hidden || current() !== 'home'); });
+      if (!ctx) return;
+      if (ctx.state === 'suspended') ctx.resume();
+      note();
+      gain.gain.setTargetAtTime(on ? 0.1 : 0, ctx.currentTime, on ? 0.08 : 0.25);
+    }
+    function point(e) { px = e.clientX / innerWidth; var r = stage.getBoundingClientRect(); py = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height)); near = 1; if (level) note(); }
+    addEventListener('pointermove', point, { passive: true });
+    stage.addEventListener('pointerdown', function (e) { if (e.target.closest('a')) return; point(e); press(true); });
+    addEventListener('pointerup', function () { press(false); });
+    addEventListener('pointercancel', function () { press(false); });
+    document.addEventListener('pointerleave', function () { near = 0; press(false); });
+    document.addEventListener('visibilitychange', function () { if (document.hidden) press(false); });
 
-    /* ---------- Pointer ---------- */
-    var px = 0.5, py = 0.3, sx = 0.5, sy = 0.3, inside = 0, bump = 0;
-    function onPoint(e) { px = e.clientX / innerWidth; py = e.clientY / innerHeight; inside = 1; audio.play(px, py); }
-    addEventListener('pointermove', onPoint, { passive: true });
-    addEventListener('pointerdown', onPoint, { passive: true });
-    document.addEventListener('pointerleave', function () { inside = 0; });
-
-    /* ---------- Home: wave surface, sized to the space above the text ---------- */
-    var c = document.getElementById('wave'), g = c.getContext('2d'), inner = document.querySelector('#home .inner');
-    var dpr = Math.min(devicePixelRatio || 1, 2), W = 0, H = 0, A = 0, t = 0;
-    function resize() {
-      W = c.clientWidth; H = c.clientHeight;
-      if (!W || !H) return;
-      c.width = W * dpr; c.height = H * dpr;
-      g.setTransform(dpr, 0, 0, dpr, 0, 0);
-      A = Math.max(120, inner.getBoundingClientRect().top - c.getBoundingClientRect().top - 8);
-      var m = 'linear-gradient(to bottom, #000 ' + (A * 0.74).toFixed(0) + 'px, transparent ' + A.toFixed(0) + 'px)';
-      c.style.webkitMaskImage = m; c.style.maskImage = m;
-      if (reduce) draw();
+    /* One line of light. It drifts, leans toward the pointer, and swells when played. */
+    var swell = 0;
+    function size() {
+      W = c.clientWidth; H = c.clientHeight; if (!W || !H) return;
+      c.width = W * dpr; c.height = H * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      Yt = (inner.getBoundingClientRect().top - c.getBoundingClientRect().top) / 2;
+      if (!Y) Y = Yt;
+      if (reduce) { Y = Yt; draw(); }
     }
     function draw() {
-      if (!W || !H) return;
+      if (!W) return;
       g.clearRect(0, 0, W, H);
-      var N = W < 600 ? 20 : 30, S = W < 600 ? 90 : 180, accRow = N - 6;
-      var amp = Math.min(A * 0.12, W * 0.09) * (0.75 + (1 - sy) * 0.5);
-      var lvl = audio.level(), playing = !!lvl;
-      for (var j = 0; j < N; j++) {
-        var z = j / (N - 1);
-        var yb = A * 0.10 + Math.pow(z, 1.5) * A * 0.7;
-        var k = 0.44 + 0.7 * z, x0 = W * (1 - k) / 2, x1 = W - x0;
-        var a = amp * (0.16 + 0.84 * z), pts = [];
-        for (var i = 0; i <= S; i++) {
-          var u = i / S, x = x0 + (x1 - x0) * u, env = Math.pow(Math.sin(Math.PI * u), 1.4);
-          var h = Math.sin(u * 5.0 + t * 0.7 + z * 3.2) * 0.55 + Math.sin(u * 11.0 - t * 1.1 + z * 5.0) * 0.22 + Math.sin(u * 2.2 + t * 0.35 - z * 2.0) * 0.42;
-          var d = (x / W - sx) / 0.085;
-          var y = yb - h * env * a - Math.exp(-d * d) * bump * a * 1.5 * (0.35 + z);
-          if (playing && j >= accRow - 1) y += (lvl[(u * (lvl.length - 1)) | 0] - 128) / 128 * a * 1.4 * env;
-          pts.push(x, y);
-        }
-        g.beginPath(); g.moveTo(pts[0], pts[1]);
-        for (var p = 2; p < pts.length; p += 2) g.lineTo(pts[p], pts[p + 1]);
-        g.lineTo(x1, H + 2); g.lineTo(x0, H + 2); g.closePath();
-        g.globalAlpha = 1; g.fillStyle = '#000'; g.fill();
-        g.beginPath(); g.moveTo(pts[0], pts[1]);
-        for (p = 2; p < pts.length; p += 2) g.lineTo(pts[p], pts[p + 1]);
-        var hot = j === accRow, warm = false;
-        g.strokeStyle = hot || warm ? LINK : '#fff';
-        g.lineWidth = hot ? 2 : 1;
-        g.globalAlpha = hot ? 1 : warm ? 0.55 : 0.07 + 0.42 * z;
-        if (hot) { g.shadowColor = LINK; g.shadowBlur = 16; }
-        g.stroke();
-        g.shadowBlur = 0;
+      var a = Math.min(Y * 0.4, W * 0.05) * (1 + swell * 0.8);
+      g.beginPath();
+      for (var x = 0; x <= W; x += 3) {
+        var u = x / W, d = (u - sx) / 0.09;
+        var y = Y + (Math.sin(u * 5 + t * 0.7) * 0.55 + Math.sin(u * 2.2 + t * 0.35) * 0.45) * a
+              - Math.exp(-d * d) * bump * a * 1.1
+              + Math.sin(u * 60 + t * 24) * swell * a * 0.12 * Math.exp(-d * d * 0.2);
+        x ? g.lineTo(x, y) : g.moveTo(x, y);
       }
-      g.globalAlpha = 1;
+      g.strokeStyle = '#5aa9f6'; g.lineWidth = 1.5; g.shadowColor = '#5aa9f6'; g.shadowBlur = 14 + swell * 10; g.stroke();
     }
-    addEventListener('resize', resize);
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(resize);
-
-    /* ---------- Platform: one slow pad grid ---------- */
-    var padsEl = document.getElementById('pads'), pads = [], i0;
-    for (i0 = 0; i0 < 24; i0++) { var q = document.createElement('i'); q.className = 'r' + Math.floor(i0 / 8) + (i0 % 8 > 3 ? ' x' : ''); padsEl.appendChild(q); pads.push(q); }
-    var patterns = [[1, 0, 0, 0, 1, 0, 0, 0], [0, 0, 1, 1, 0, 0, 1, 1], [1, 0, 0, 1, 0, 1, 0, 0]], step = 0, lastStep = 0;
-    function setPads() { for (var n = 0; n < 24; n++) pads[n].classList.toggle('on', !!patterns[Math.floor(n / 8)][(n % 8 + step) % 8]); }
-    setPads();
-    function platformFrame(now) { if (now - lastStep > 1400) { lastStep = now; step = (step + 1) % 8; setPads(); } }
-
-    /* ---------- Company: clocks ---------- */
-    var fi = document.getElementById('t-fi'), us = document.getElementById('t-us');
-    function fmt(tz) {
-      return new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: tz }).format(new Date());
+    function frame() {
+      sx += (px - sx) * 0.1; bump += (near - bump) * 0.05; swell += (level - swell) * 0.08; Y += (Yt - Y) * 0.08;
+      t += 0.006 + swell * 0.01; draw(); requestAnimationFrame(frame);
     }
-    function tick() { fi.textContent = fmt('Europe/Helsinki'); us.textContent = fmt('America/Los_Angeles'); }
-    tick(); setInterval(tick, 10000);
 
-    /* ---------- Pages: one visible, nothing scrolls ---------- */
-    function show(id) {
-      document.querySelectorAll('.page').forEach(function (p) { p.classList.toggle('active', p.id === id); });
+    /* Sections swap in place. */
+    function current() { var h = location.hash.replace('#', ''); return pages.indexOf(h) < 0 ? 'home' : h; }
+    function show() {
+      var id = current();
+      pages.forEach(function (p) { document.getElementById(p).classList.toggle('active', p === id); });
       document.querySelectorAll('[data-page]').forEach(function (a) {
         if (a.dataset.page === id) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
       });
-      audio.hold(id !== 'home');
-      if (id === 'home') resize();
+      size();
     }
-    addEventListener('hashchange', function () { show(current()); });
+    addEventListener('hashchange', show);
+    addEventListener('resize', size);
     addEventListener('keydown', function (e) {
       var i = pages.indexOf(current());
       if (e.key === 'ArrowRight' && i < pages.length - 1) location.hash = pages[i + 1];
       if (e.key === 'ArrowLeft' && i > 0) location.hash = pages[i - 1];
     });
-    var tx = null;
-    addEventListener('touchstart', function (e) { tx = e.touches[0].clientX; }, { passive: true });
-    addEventListener('touchend', function (e) {
-      if (tx === null) return;
-      var dx = e.changedTouches[0].clientX - tx; tx = null;
-      if (Math.abs(dx) < 60 || audio.isOn()) return;
-      var i = pages.indexOf(current());
-      if (dx < 0 && i < pages.length - 1) location.hash = pages[i + 1];
-      if (dx > 0 && i > 0) location.hash = pages[i - 1];
-    }, { passive: true });
-    show(current());
-
-    /* ---------- Frame loop ---------- */
-    function frame() {
-      sx += (px - sx) * 0.12; sy += (py - sy) * 0.12; bump += (inside - bump) * 0.06;
-      root.style.setProperty('--mx', (sx * 100).toFixed(2) + '%');
-      root.style.setProperty('--my', (sy * 100).toFixed(2) + '%');
-      var cur = current();
-      if (cur === 'home') { t += 0.007; draw(); }
-      else if (cur === 'platform') platformFrame(performance.now());
-      requestAnimationFrame(frame);
-    }
-    if (reduce) { draw(); platformFrame(performance.now()); } else frame();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(size);
+    show();
+    if (!reduce) frame();
   })();
   </script>
 </body>
