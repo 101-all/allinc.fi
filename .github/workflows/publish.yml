@@ -1,0 +1,16 @@
+# the site is served from the gh-pages branch.
+# this keeps gh-pages identical to main, so an edit made on github.com goes live by itself.
+name: publish
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: git push --force origin HEAD:gh-pages
