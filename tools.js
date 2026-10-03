@@ -266,6 +266,59 @@
     return stop;
   };
 
+  /* ---------- keys ---------- */
+  T.keys = function (el) {
+    el.innerHTML = '<div class="piano nc" data-p></div><div class="keys"><button class="key" data-m>&minus;</button><span class="sub" style="min-width:72px" data-o></span><button class="key" data-u>+</button></div>';
+    var p = $(el, '[data-p]'), ol = $(el, '[data-o]'), oct = clamp(store('oct') || 4, 1, 6), voices = {}, down = {}, bus;
+    var WH = [0, 2, 4, 5, 7, 9, 11], BL = { 0: 1, 1: 3, 3: 6, 4: 8, 5: 10 }, QWERTY = 'awsedftgyhujk';
+    function build() {
+      var n = p.clientWidth >= 500 ? 15 : 8, base = 12 * (oct + 1), h = '', i, m;
+      for (i = 0; i < n; i++) { m = base + 12 * Math.floor(i / 7) + WH[i % 7]; h += '<i class="w" data-n="' + m + '"><b>' + SHARP[m % 12] + (m % 12 ? '' : Math.floor(m / 12) - 1) + '</b></i>'; }
+      for (i = 0; i < n - 1; i++) if (BL[i % 7] !== undefined) { m = base + 12 * Math.floor(i / 7) + BL[i % 7]; h += '<i class="b" data-n="' + m + '" style="left:' + ((i + 1) / n * 100).toFixed(3) + '%;width:' + (62 / n).toFixed(3) + '%"><b>' + SHARP[m % 12] + '</b></i>'; }
+      p.innerHTML = h; ol.textContent = 'octave ' + oct; store('oct', oct);
+    }
+    function keyEl(m) { return p.querySelector('[data-n="' + m + '"]'); }
+    function out() { if (!bus) { var a = ac(), g = a.createGain(); bus = a.createDynamicsCompressor(); g.gain.value = 0.7; bus.connect(g); g.connect(a.destination); } return bus; }
+    function on(m) {
+      if (voices[m]) off(m);
+      var a = ac(), t = a.currentTime, f = 440 * Math.pow(2, (m - 69) / 12), g = a.createGain(), o1 = a.createOscillator(), o2 = a.createOscillator(), g2 = a.createGain();
+      o1.type = 'triangle'; o1.frequency.value = f; o2.type = 'sine'; o2.frequency.value = f * 2; g2.gain.value = 0.25;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.35, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + 2.4);
+      o1.connect(g); o2.connect(g2); g2.connect(g); g.connect(out()); o1.start(t); o2.start(t); o1.stop(t + 2.5); o2.stop(t + 2.5);
+      voices[m] = { g: g, o: [o1, o2] };
+      var k = keyEl(m); if (k) k.classList.add('on');
+    }
+    function off(m) {
+      var v = voices[m]; if (!v) return;
+      var t = ac().currentTime;
+      if (v.g.gain.cancelAndHoldAtTime) v.g.gain.cancelAndHoldAtTime(t); else { v.g.gain.cancelScheduledValues(t); v.g.gain.setValueAtTime(v.g.gain.value, t); }
+      v.g.gain.setTargetAtTime(0.0001, t, 0.07);
+      v.o.forEach(function (o) { try { o.stop(t + 0.5); } catch (_) {} });
+      delete voices[m];
+      var k = keyEl(m); if (k) k.classList.remove('on');
+    }
+    function held(m) { for (var id in down) if (down[id] === m) return true; return false; }
+    function at(e) { var x = document.elementFromPoint(e.clientX, e.clientY), k = x && x.closest ? x.closest('.piano i') : null; return k ? +k.getAttribute('data-n') : null; }
+    function pd(e) { e.preventDefault(); var m = at(e); if (m === null) return; down[e.pointerId] = m; on(m); }
+    function pm(e) { if (!(e.pointerId in down)) return; var m = at(e), was = down[e.pointerId]; if (m === was) return; down[e.pointerId] = m; if (was !== null && !held(was)) off(was); if (m !== null) on(m); }
+    function pu(e) { if (!(e.pointerId in down)) return; var was = down[e.pointerId]; delete down[e.pointerId]; if (was !== null && !held(was)) off(was); }
+    function kd(e) { if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return; var i = QWERTY.indexOf(e.key.toLowerCase()); if (i < 0) return; var m = 12 * (oct + 1) + i; down['k' + i] = m; on(m); }
+    function ku(e) { var i = QWERTY.indexOf(e.key.toLowerCase()); if (i < 0 || !('k' + i in down)) return; var m = down['k' + i]; delete down['k' + i]; if (!held(m)) off(m); }
+    function all() { Object.keys(voices).forEach(function (m) { off(+m); }); down = {}; }
+    function shift(d) { all(); oct = clamp(oct + d, 1, 6); build(); }
+    p.addEventListener('pointerdown', pd);
+    addEventListener('pointermove', pm); addEventListener('pointerup', pu); addEventListener('pointercancel', pu);
+    addEventListener('keydown', kd); addEventListener('keyup', ku); addEventListener('resize', build);
+    $(el, '[data-m]').onclick = function () { shift(-1); };
+    $(el, '[data-u]').onclick = function () { shift(1); };
+    build();
+    return function () {
+      all();
+      removeEventListener('pointermove', pm); removeEventListener('pointerup', pu); removeEventListener('pointercancel', pu);
+      removeEventListener('keydown', kd); removeEventListener('keyup', ku); removeEventListener('resize', build);
+    };
+  };
+
   /* ---------- transpose ---------- */
   var PC = { C: 0, 'C#': 1, Db: 1, D: 2, 'D#': 3, Eb: 3, E: 4, Fb: 4, 'E#': 5, F: 5, 'F#': 6, Gb: 6, G: 7, 'G#': 8, Ab: 8, A: 9, 'A#': 10, Bb: 10, B: 11, Cb: 11, 'B#': 0 };
   var CHORD = /^([A-G][#b]?)((?:maj|min|dim|aug|sus|add|m|M)?[0-9]*(?:(?:sus|add|maj|min|dim|aug|[#b+\-])[0-9]*)*(?:\([^)]*\))?)(?:\/([A-G][#b]?))?$/;
