@@ -148,15 +148,20 @@
   }
   T.analyse = function (audio) { var m = mono(audio, 11025); return { bpm: tempo(m.x, m.sr), key: keyOf(m.x, m.sr) }; };
   T.key = function (el) {
-    el.innerHTML = '<div class="pair"><div><div class="big nc" data-k>–</div><div class="sub">key</div></div><div><div class="big" data-b>–</div><div class="sub">bpm</div></div></div><div class="sub nc" data-d>&nbsp;</div><label class="key">choose audio file<input type="file" accept="audio/*" hidden></label><p data-s>analysed on this device. nothing is uploaded.</p>';
+    el.innerHTML = '<div class="pair"><div><div class="big nc" data-k>–</div><div class="sub">key</div></div><div><div class="big" data-b>–</div><div class="sub">bpm</div></div></div><div class="sub nc" data-d>&nbsp;</div><label class="key pick">choose audio file<input type="file"></label><p data-s>analysed on this device. nothing is uploaded.</p>';
     var kk = $(el, '[data-k]'), kb = $(el, '[data-b]'), kd = $(el, '[data-d]'), ks = $(el, '[data-s]'), input = $(el, 'input'), alive = true;
     function run(file) {
       if (!file) return;
       ks.textContent = 'listening to ' + file.name.toLowerCase() + '…'; kk.textContent = kb.textContent = '–'; kd.innerHTML = '&nbsp;';
-      file.arrayBuffer().then(function (buf) { return new Promise(function (ok, no) { ac().decodeAudioData(buf, ok, no); }); }).then(function (audio) {
+      if (file.size > 300e6) { ks.textContent = 'this file is too large to analyse here.'; return; }
+      var read = file.arrayBuffer ? file.arrayBuffer() : new Promise(function (ok, no) { var fr = new FileReader(); fr.onload = function () { ok(fr.result); }; fr.onerror = no; fr.readAsArrayBuffer(file); });
+      read.then(function (buf) {
+        return new Promise(function (ok, no) { var p = ac().decodeAudioData(buf, ok, no); if (p && p.catch) p.catch(function () {}); });
+      }).then(function (audio) {
         if (!alive) return;
         setTimeout(function () {
-          var r = T.analyse(audio), b = Math.round(r.bpm * 10) / 10;
+          var r, b;
+          try { r = T.analyse(audio); b = Math.round(r.bpm * 10) / 10; } catch (_) { ks.textContent = 'could not analyse this file.'; return; }
           var name = (r.key.minor ? KMIN : KMAJ)[r.key.root];
           kk.textContent = name + (r.key.minor ? 'm' : '');
           kb.textContent = Math.abs(b - Math.round(b)) < 0.15 ? Math.round(b) : b.toFixed(1);
@@ -166,12 +171,11 @@
         }, 30);
       }).catch(function () { if (alive) ks.textContent = 'could not read this file.'; });
     }
-    input.onchange = function () { run(input.files[0]); };
+    input.onchange = function () { var f = input.files[0]; input.value = ''; run(f); };
     function over(e) { e.preventDefault(); }
     function drop(e) { e.preventDefault(); run(e.dataTransfer.files[0]); }
-    var stage = document.getElementById('stage') || el;
-    stage.addEventListener('dragover', over); stage.addEventListener('drop', drop);
-    return function () { alive = false; stage.removeEventListener('dragover', over); stage.removeEventListener('drop', drop); };
+    addEventListener('dragover', over); addEventListener('drop', drop);
+    return function () { alive = false; removeEventListener('dragover', over); removeEventListener('drop', drop); };
   };
 
   /* ---------- metronome ---------- */
