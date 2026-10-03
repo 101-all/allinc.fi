@@ -71,9 +71,10 @@
     .places b { display: block; font-weight: 500; color: var(--fg); }
 
     /* toolbox */
-    .names { margin-top: 18px; display: grid; font-size: clamp(15px, 1.3vw, 17px); color: var(--muted); }
-    .names a { padding: 7px 0; transition: color .2s; }
-    .names a:hover { color: var(--fg); }
+    .names { margin-top: 18px; display: grid; justify-items: center; font-size: clamp(15px, 1.3vw, 17px); color: var(--fg); }
+    .names a { padding: 7px 0; opacity: .85; transition: opacity .2s; }
+    .names a:nth-child(even) { opacity: .42; }
+    .names a:hover { opacity: 1; }
     .back { display: inline-block; padding: 4px 0 10px; font-size: 13px; color: var(--muted); }
     .back:hover { color: var(--fg); }
     .tool { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; justify-items: center; font-size: 14px; }
@@ -97,14 +98,6 @@
     .meter::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 2px; margin-top: -1px; background: #fff; }
     .meter::after { content: ""; position: absolute; left: 50%; top: 4px; bottom: 4px; width: 1px; background: rgba(255,255,255,.35); }
     .meter i { position: absolute; z-index: 1; left: 50%; top: 50%; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; background: var(--blue); transform: translateX(var(--x, 0px)); transition: transform .09s linear, opacity .2s; }
-    .piano { position: relative; display: flex; width: 100%; height: clamp(130px, 26vh, 190px); touch-action: none; }
-    .piano i { font-style: normal; display: flex; align-items: flex-end; justify-content: center; cursor: pointer; }
-    .piano .w { flex: 1; margin: 0 1px; padding-bottom: 8px; background: #fff; color: #000; border-radius: 0 0 8px 8px; }
-    .piano .b { position: absolute; top: 0; height: 60%; padding-bottom: 6px; background: var(--soft); color: #fff; border-radius: 0 0 6px 6px; transform: translateX(-50%); box-shadow: 0 0 0 1px #000; }
-    .piano b { font-weight: 500; font-size: 11px; pointer-events: none; }
-    .piano .b b { font-size: 9px; }
-    .piano .w.on { background: #bfbfbf; }
-    .piano .b.on { background: #48484a; }
     .beats { display: flex; gap: 10px; height: 12px; }
     .beats i { width: 12px; height: 12px; border-radius: 50%; background: var(--soft); }
     .beats i.on { background: var(--blue); }
@@ -166,15 +159,14 @@
         <div id="tb-list">
           <h1>toolbox</h1>
           <div class="names">
-            <a href="#toolbox/key">key &amp; bpm</a>
-            <a href="#toolbox/tuner">tuner</a>
-            <a href="#toolbox/metronome">metronome</a>
-            <a href="#toolbox/setlist">setlist</a>
-            <a href="#toolbox/delay">delay times</a>
             <a href="#toolbox/tone">tone</a>
-            <a href="#toolbox/keys">keys</a>
-            <a href="#toolbox/transpose">transpose</a>
+            <a href="#toolbox/setlist">setlist</a>
+            <a href="#toolbox/key">key &amp; bpm</a>
+            <a href="#toolbox/delay">delay times</a>
             <a href="#toolbox/timer">stage timer</a>
+            <a href="#toolbox/metronome">metronome</a>
+            <a href="#toolbox/transpose">transpose</a>
+            <a href="#toolbox/tuner">tuner</a>
           </div>
         </div>
         <div id="tb-tool" hidden>
