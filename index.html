@@ -5,112 +5,115 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>all inc.</title>
   <meta name="description" content="All Inc. builds software, user interfaces and connectivity for creatives. All Inc. Audio Ab, Porvoo, Finland. US & All Inc., Palo Alto, California.">
-  <meta name="theme-color" content="#d6d7d9">
+  <meta name="theme-color" content="#ffffff">
   <link rel="canonical" href="https://allinc.fi/">
-  <meta property="og:title" content="All Inc.">
-  <meta property="og:description" content="Advanced Instruments for the Artificial Intelligence era.">
+  <meta property="og:title" content="all inc.">
+  <meta property="og:description" content="we build software, user interfaces and connectivity for creatives.">
   <meta property="og:url" content="https://allinc.fi/">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d6d7d9'/%3E%3Cpath d='M12 34 C 22 14, 30 54, 40 30 S 50 30, 54 32' fill='none' stroke='%231d1d1f' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-40 -40 320 320'%3E%3Crect x='-40' y='-40' width='320' height='320' fill='%23fff'/%3E%3Ccircle cx='120' cy='120' r='85' fill='none' stroke='%23000' stroke-width='70'/%3E%3Crect x='170' y='0' width='70' height='240' fill='%23000'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    :root { --ink: #1d1d1f; --ink2: #6a6b6f; --fg: #f5f5f7; --muted: #86868b; --blue: #5aa9f6; }
+    /* all inc. format: white ground, ink type, muted labels. the company has no accent. */
+    :root {
+      --ground: #ffffff; --ink: #000000; --muted: #6b6b6b; --soft: #bfbfbf;
+      --margin: clamp(20px, 6.67vw, 128px);
+      --label: clamp(13px, 1.25vw, 24px);
+      --statement: clamp(24px, 3.33vw, 64px);
+      --lead: clamp(17px, 2.29vw, 44px);
+      --text: clamp(14px, 1.67vw, 32px);
+      --s24: clamp(12px, 1.25vw, 24px);
+      --s48: clamp(20px, 2.5vw, 48px);
+    }
     * { box-sizing: border-box; }
     html, body { margin: 0; height: 100%; overflow: hidden; }
     body {
-      background: linear-gradient(180deg, #e2e3e5 0%, #d6d7d9 50%, #c6c7ca 100%) fixed;
-      color: var(--ink);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Helvetica Neue", Arial, sans-serif;
+      background: var(--ground); color: var(--ink);
+      font-family: Inter, Arial, sans-serif; font-weight: 400;
       -webkit-font-smoothing: antialiased;
-      font-size: 13px;
       height: 100dvh;
-      display: grid; grid-template-rows: auto 1fr auto;
-      padding-top: env(safe-area-inset-top);
-      padding-bottom: env(safe-area-inset-bottom);
+      display: grid; grid-template-rows: 1fr auto; row-gap: var(--s48);
+      padding: var(--margin) var(--margin) clamp(18px, 3.33vw, 64px);
+      padding-top: max(var(--margin), env(safe-area-inset-top));
       text-transform: lowercase;
     }
-    /* rough aluminium grain */
-    body::after {
-      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      mix-blend-mode: soft-light; opacity: .5;
-    }
     a { color: inherit; text-decoration: none; }
-    header, footer { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; padding: 0 clamp(20px, 3vw, 32px); color: var(--ink2); }
-    header { height: 48px; }
-    .wordmark { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
-    footer { height: 44px; justify-content: center; }
-    nav { display: flex; gap: clamp(20px, 4vw, 36px); }
-    nav a { padding: 8px 0; transition: color .25s; }
-    nav a:hover, nav a[aria-current="page"] { color: var(--ink); }
+    p, h1, h2, address { margin: 0; font-style: normal; }
 
-    main {
-      position: relative; z-index: 1; margin: 0 12px; overflow: hidden;
-      border-radius: 28px; background: #000; color: var(--fg);
-      box-shadow: 0 0 0 1px rgba(0,0,0,.55), 0 1px 0 1px rgba(255,255,255,.75), 0 30px 60px -40px rgba(0,0,0,.6);
-      display: grid; place-items: center; text-align: center;
-      padding: clamp(20px, 4vw, 56px);
-      touch-action: none; user-select: none; -webkit-user-select: none;
-    }
-    canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
-    .inner { position: relative; width: 100%; max-width: 560px; }
-    section { display: none; animation: in .7s ease both; }
-    section.active { display: block; }
-    @keyframes in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-    h1 { margin: 0; font-size: clamp(22px, 2.8vw, 36px); line-height: 1.12; font-weight: 600; letter-spacing: -0.02em; text-wrap: balance; }
-    p { margin: 12px auto 0; max-width: 26em; font-size: clamp(14px, 1.2vw, 16px); line-height: 1.45; color: var(--muted); text-wrap: pretty; }
-    .rows { margin: 22px auto 0; max-width: 380px; font-size: clamp(14px, 1.2vw, 16px); text-align: left; }
-    .rows a { display: flex; justify-content: space-between; gap: 16px; padding: 11px 0; border-top: 1px solid rgba(255,255,255,.12); }
-    .rows a:last-child { border-bottom: 1px solid rgba(255,255,255,.12); }
-    .rows a span:last-child { color: var(--blue); }
-    .places { margin: 0 auto; display: grid; grid-template-columns: auto auto; justify-content: center; gap: clamp(28px, 6vw, 72px); font-size: clamp(13px, 1.1vw, 15px); line-height: 1.5; text-align: left; }
-    .places address { font-style: normal; color: var(--muted); }
-    .places b { display: block; font-weight: 500; color: var(--fg); }
+    main { min-height: 0; }
+    .view { display: none; height: 100%; flex-direction: column; animation: in .3s ease both; }
+    .view.active { display: flex; }
+    @keyframes in { from { opacity: 0; } to { opacity: 1; } }
+
+    .label, footer { font-size: var(--label); line-height: 1.4; font-weight: 500; color: var(--muted); }
+    .statement { margin-top: var(--s24); max-width: 22em; font-size: var(--statement); line-height: 1.15; font-weight: 500; letter-spacing: -0.02em; }
+    .body { margin-top: auto; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; column-gap: var(--s48); }
+    .rule { display: block; width: 100%; height: var(--s24); overflow: visible; cursor: pointer; touch-action: none; }
+    .rule path { fill: none; stroke: var(--ink); stroke-width: 2px; vector-effect: non-scaling-stroke; }
+    .col h2 { font-size: var(--lead); line-height: 1.3; font-weight: 500; }
+    .col .lead { font-size: var(--lead); line-height: 1.3; }
+    .col .small { font-size: var(--label); line-height: 1.4; font-weight: 500; color: var(--muted); margin-bottom: clamp(6px, .8vw, 16px); }
+    .col address { margin-top: clamp(4px, .8vw, 16px); font-size: var(--text); line-height: 1.4; color: var(--muted); }
+
+    footer { display: flex; justify-content: space-between; gap: 24px; }
+    nav { display: flex; gap: clamp(16px, 2.5vw, 48px); }
+    footer a { transition: color .2s; }
+    footer a:hover, footer a[aria-current="page"] { color: var(--ink); }
+    body[data-page="home"] .to-home, body:not([data-page="home"]) .tag { display: none; }
 
     @media (max-width: 699px) {
-      header { padding: 0 16px; }
-      main { margin: 0 8px; border-radius: 22px; }
-      .places { grid-template-columns: 1fr; gap: 16px; text-align: center; }
+      .body.c4 { grid-auto-flow: row; grid-template-columns: 1fr 1fr; row-gap: 20px; }
+      .body.c3, .body.c2 { grid-auto-flow: row; grid-template-columns: 1fr; row-gap: 16px; }
     }
-    @media (prefers-reduced-motion: reduce) { section { animation: none; } }
+    @media (prefers-reduced-motion: reduce) { .view { animation: none; } }
   </style>
 </head>
-<body>
-  <header>
-    <a class="wordmark" href="#home">all inc.</a>
-    <span>ai for ai by ai</span>
-  </header>
+<body data-page="home">
+  <main>
+    <section class="view" id="home">
+      <p class="label">All Inc.</p>
+      <h1 class="statement">advanced instruments for the artificial intelligence era.</h1>
+      <div class="body">
+        <div class="col"><svg class="rule" viewBox="0 0 100 24" preserveAspectRatio="none" aria-hidden="true"><rect width="100" height="24" fill="transparent"/><path d="M0 1 L100 1"/></svg>
+          <p class="lead">We build software, user interfaces and connectivity for creatives.</p></div>
+      </div>
+    </section>
 
-  <main id="stage">
-    <canvas id="line" aria-hidden="true"></canvas>
-    <div class="inner">
-      <section id="home">
-        <h1>advanced instruments for the artificial intelligence era.</h1>
-        <p>All Inc. builds software, user interfaces and connectivity for creatives.</p>
-      </section>
-      <section id="platform">
-        <h1>a full arena show from a single device.</h1>
-        <p>Playback, showfiles, vocal processing and visuals.</p>
-      </section>
-      <section id="work">
-        <h1>software, user interfaces and connectivity.</h1>
-        <div class="rows">
-          <a href="#work"><span>user interfaces</span><span>learn more</span></a>
-          <a href="#work"><span>plugins &amp; tools</span><span>buy now</span></a>
-          <a href="#work"><span>creative ecosystems</span><span>join waitlist</span></a>
-        </div>
-      </section>
-      <section id="company">
-        <div class="places">
-          <address><b>All Inc. Audio Ab</b>Urakoitsijantie 15<br>Porvoo, Uusimaa<br>Finland</address>
-          <address><b>US &amp; All Inc.</b>470 Ramona St<br>Palo Alto, California<br>United States</address>
-        </div>
-      </section>
-    </div>
+    <section class="view" id="platform">
+      <p class="label">the platform</p>
+      <h1 class="statement">we run a full arena show from a single device.</h1>
+      <div class="body c4">
+        <div class="col"><svg class="rule" viewBox="0 0 100 24" preserveAspectRatio="none" aria-hidden="true"><rect width="100" height="24" fill="transparent"/><path d="M0 1 L100 1"/></svg><h2>playback</h2></div>
+        <div class="col"><svg class="rule" viewBox="0 0 100 24" preserveAspectRatio="none" aria-hidden="true"><rect width="100" height="24" fill="transparent"/><path d="M0 1 L100 1"/></svg><h2>showfiles</h2></div>
+        <div class="col"><svg class="rule" viewBox="0 0 100 24" preserveAspectRatio="none" aria-hidden="true"><rect width="100" height="24" fill="transparent"/><path d="M0 1 L100 1"/></svg><h2>vocal processing</h2></div>
+        <div class="col"><svg class="rule" viewBox="0 0 100 24" preserveAspectRatio="none" aria-hidden="true"><rect width="100" height="24" fill="transparent"/><path d="M0 1 L100 1"/></svg><h2>visuals</h2></div>
+      </div>
+    </section>
+
+    <section class="view" id="work">
+      <p class="label">what we build</p>
+      <h1 class="statement">our applications are built by the artists, producers and engineers who tour with them.</h1>
+      <div class="body c3">
+        <div class="col"><svg class="rule" viewBox="0 0 100 24" preserveAspectRatio="none" aria-hidden="true"><rect width="100" height="24" fill="transparent"/><path d="M0 1 L100 1"/></svg><h2>user interfaces</h2></div>
+        <div class="col"><svg class="rule" viewBox="0 0 100 24" preserveAspectRatio="none" aria-hidden="true"><rect width="100" height="24" fill="transparent"/><path d="M0 1 L100 1"/></svg><h2>plugins &amp; tools</h2></div>
+        <div class="col"><svg class="rule" viewBox="0 0 100 24" preserveAspectRatio="none" aria-hidden="true"><rect width="100" height="24" fill="transparent"/><path d="M0 1 L100 1"/></svg><h2>creative ecosystems</h2></div>
+      </div>
+    </section>
+
+    <section class="view" id="company">
+      <p class="label">where we are</p>
+      <div class="body c2">
+        <div class="col"><svg class="rule" viewBox="0 0 100 24" preserveAspectRatio="none" aria-hidden="true"><rect width="100" height="24" fill="transparent"/><path d="M0 1 L100 1"/></svg>
+          <p class="small">Europe</p><h2>All Inc. Audio Ab</h2><address>Urakoitsijantie 15<br>Porvoo, Uusimaa<br>Finland</address></div>
+        <div class="col"><svg class="rule" viewBox="0 0 100 24" preserveAspectRatio="none" aria-hidden="true"><rect width="100" height="24" fill="transparent"/><path d="M0 1 L100 1"/></svg>
+          <p class="small">United States</p><h2>US &amp; All Inc.</h2><address>470 Ramona St<br>Palo Alto, California<br>United States</address></div>
+      </div>
+    </section>
   </main>
 
   <footer>
+    <span><span class="tag">ai for ai by ai</span><a class="to-home" href="#home">All Inc.</a></span>
     <nav aria-label="Sections">
       <a href="#platform" data-page="platform">platform</a>
       <a href="#work" data-page="work">work</a>
@@ -121,23 +124,35 @@
   <script>
   (function () {
     var pages = ['home', 'platform', 'work', 'company'];
-    var stage = document.getElementById('stage'), inner = document.querySelector('.inner');
-    var c = document.getElementById('line'), g = c.getContext('2d');
-    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var dpr = Math.min(devicePixelRatio || 1, 2), W = 0, H = 0, Y = 0, Yt = 0, t = 0;
-    var px = 0.5, py = 0.5, sx = 0.5, near = 0, bump = 0, level = 0;
+    function current() { var h = location.hash.replace('#', ''); return pages.indexOf(h) < 0 ? 'home' : h; }
+    function show() {
+      var id = current();
+      document.body.dataset.page = id;
+      pages.forEach(function (p) { document.getElementById(p).classList.toggle('active', p === id); });
+      document.querySelectorAll('[data-page]').forEach(function (a) {
+        if (a !== document.body) { if (a.dataset.page === id) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); }
+      });
+    }
+    addEventListener('hashchange', show);
+    addEventListener('keydown', function (e) {
+      var i = pages.indexOf(current());
+      if (e.key === 'ArrowRight' && i < pages.length - 1) location.hash = pages[i + 1];
+      if (e.key === 'ArrowLeft' && i > 0) location.hash = pages[i - 1];
+    });
+    show();
 
-    /* Sound lives in the interaction, not in a button: press and drag on the display. */
+    /* the rules are strings. press one and drag: it sounds, and it settles back to a straight line. */
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     var AC = window.AudioContext || window.webkitAudioContext, ctx, gain, filter, oscs = [];
     var scale = [110, 130.81, 146.83, 164.81, 196, 220, 261.63, 293.66, 329.63, 392, 440, 523.25];
+    var held = false, amp = 0, raf = 0, px = 0.5, py = 0.5;
     function note() {
       if (!ctx) return;
       var n = scale[Math.max(0, Math.min(scale.length - 1, Math.floor(px * scale.length)))], now = ctx.currentTime;
       oscs.forEach(function (o) { o.frequency.setTargetAtTime(n, now, 0.05); });
       filter.frequency.setTargetAtTime(300 + Math.pow(1 - py, 2) * 3000, now, 0.08);
     }
-    function press(on) {
-      level = on ? 1 : 0;
+    function sound(on) {
       if (!AC) return;
       if (on && !ctx) {
         ctx = new AC(); gain = ctx.createGain(); gain.gain.value = 0;
@@ -151,64 +166,37 @@
       if (!ctx) return;
       if (ctx.state === 'suspended') ctx.resume();
       note();
-      gain.gain.setTargetAtTime(on ? 0.1 : 0, ctx.currentTime, on ? 0.08 : 0.25);
-    }
-    function point(e) { px = e.clientX / innerWidth; var r = stage.getBoundingClientRect(); py = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height)); near = 1; if (level) note(); }
-    addEventListener('pointermove', point, { passive: true });
-    stage.addEventListener('pointerdown', function (e) { if (e.target.closest('a')) return; point(e); press(true); });
-    addEventListener('pointerup', function () { press(false); });
-    addEventListener('pointercancel', function () { press(false); });
-    document.addEventListener('pointerleave', function () { near = 0; press(false); });
-    document.addEventListener('visibilitychange', function () { if (document.hidden) press(false); });
-
-    /* One line of light. It drifts, leans toward the pointer, and swells when played. */
-    var swell = 0;
-    function size() {
-      W = c.clientWidth; H = c.clientHeight; if (!W || !H) return;
-      c.width = W * dpr; c.height = H * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0);
-      Yt = (inner.getBoundingClientRect().top - c.getBoundingClientRect().top) / 2;
-      if (!Y) Y = Yt;
-      if (reduce) { Y = Yt; draw(); }
+      gain.gain.setTargetAtTime(on ? 0.1 : 0, ctx.currentTime, on ? 0.05 : 0.3);
     }
     function draw() {
-      if (!W) return;
-      g.clearRect(0, 0, W, H);
-      var a = Math.min(Y * 0.4, W * 0.05) * (1 + swell * 0.8);
-      g.beginPath();
-      for (var x = 0; x <= W; x += 3) {
-        var u = x / W, d = (u - sx) / 0.09;
-        var y = Y + (Math.sin(u * 5 + t * 0.7) * 0.55 + Math.sin(u * 2.2 + t * 0.35) * 0.45) * a
-              - Math.exp(-d * d) * bump * a * 1.1
-              + Math.sin(u * 60 + t * 24) * swell * a * 0.12 * Math.exp(-d * d * 0.2);
-        x ? g.lineTo(x, y) : g.moveTo(x, y);
-      }
-      g.strokeStyle = '#5aa9f6'; g.lineWidth = 1.5; g.shadowColor = '#5aa9f6'; g.shadowBlur = 14 + swell * 10; g.stroke();
-    }
-    function frame() {
-      sx += (px - sx) * 0.1; bump += (near - bump) * 0.05; swell += (level - swell) * 0.08; Y += (Yt - Y) * 0.08;
-      t += 0.006 + swell * 0.01; draw(); requestAnimationFrame(frame);
-    }
-
-    /* Sections swap in place. */
-    function current() { var h = location.hash.replace('#', ''); return pages.indexOf(h) < 0 ? 'home' : h; }
-    function show() {
-      var id = current();
-      pages.forEach(function (p) { document.getElementById(p).classList.toggle('active', p === id); });
-      document.querySelectorAll('[data-page]').forEach(function (a) {
-        if (a.dataset.page === id) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+      var now = performance.now() / 1000;
+      document.querySelectorAll('.view.active .rule path').forEach(function (p, i) {
+        if (reduce || amp < 0.02) { p.setAttribute('d', 'M0 1 L100 1'); return; }
+        var d = 'M0 1';
+        for (var x = 4; x <= 100; x += 4) {
+          var u = x / 100;
+          d += ' L' + x + ' ' + (1 + amp * 4 * Math.sin(Math.PI * u) * Math.sin(now * (40 + i * 7)) + amp * 1.2 * Math.sin(2 * Math.PI * u) * Math.sin(now * (63 + i * 5))).toFixed(2);
+        }
+        p.setAttribute('d', d);
       });
-      size();
     }
-    addEventListener('hashchange', show);
-    addEventListener('resize', size);
-    addEventListener('keydown', function (e) {
-      var i = pages.indexOf(current());
-      if (e.key === 'ArrowRight' && i < pages.length - 1) location.hash = pages[i + 1];
-      if (e.key === 'ArrowLeft' && i > 0) location.hash = pages[i - 1];
+    function loop() {
+      amp += ((held ? 1 : 0) - amp) * (held ? 0.3 : 0.05);
+      if (!held && amp < 0.02) { amp = 0; draw(); raf = 0; return; }
+      draw(); raf = requestAnimationFrame(loop);
+    }
+    function point(e) { px = e.clientX / innerWidth; py = e.clientY / innerHeight; if (held) note(); }
+    function release() { if (!held) return; held = false; sound(false); }
+    document.querySelectorAll('.rule').forEach(function (r) {
+      r.addEventListener('pointerdown', function (e) {
+        e.preventDefault(); try { r.setPointerCapture(e.pointerId); } catch (_) {}
+        point(e); held = true; sound(true); if (!raf) raf = requestAnimationFrame(loop);
+      });
     });
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(size);
-    show();
-    if (!reduce) frame();
+    addEventListener('pointermove', point, { passive: true });
+    addEventListener('pointerup', release);
+    addEventListener('pointercancel', release);
+    document.addEventListener('visibilitychange', function () { if (document.hidden) release(); });
   })();
   </script>
 </body>
