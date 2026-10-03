@@ -8,14 +8,14 @@
   <meta name="theme-color" content="#d6d7d9">
   <link rel="canonical" href="https://allinc.fi/">
   <meta property="og:title" content="All Inc.">
-  <meta property="og:description" content="Advanced Instruments for the Artificial Intelligence era.">
+  <meta property="og:description" content="Advanced Instruments for the Artificial Intelligence.">
   <meta property="og:url" content="https://allinc.fi/">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-40 -40 320 320'%3E%3Crect x='-40' y='-40' width='320' height='320' fill='%23fff'/%3E%3Ccircle cx='120' cy='120' r='85' fill='none' stroke='%23000' stroke-width='70'/%3E%3Crect x='170' y='0' width='70' height='240' fill='%23000'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    :root { --ink: #1d1d1f; --ink2: #6a6b6f; --fg: #f5f5f7; --muted: #8e8e8e; --blue: #2f6bff; }
+    :root { --ink: #1d1d1f; --ink2: #6a6b6f; --fg: #f5f5f7; --muted: #8e8e8e; --soft: #1c1c1c; --blue: #2f6bff; }
     * { box-sizing: border-box; }
     html, body { margin: 0; height: 100%; overflow: hidden; }
     body {
@@ -37,13 +37,14 @@
       mix-blend-mode: soft-light; opacity: .5;
     }
     a { color: inherit; text-decoration: none; }
+    button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-transform: inherit; }
     header, footer { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; padding: 0 clamp(20px, 3vw, 32px); color: var(--ink2); }
     header { height: 48px; }
     .wordmark { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
     footer { height: 44px; justify-content: center; }
     nav { display: flex; gap: clamp(20px, 4vw, 36px); }
-    nav a { padding: 8px 0; transition: color .25s; }
-    nav a:hover, nav a[aria-current="page"] { color: var(--ink); }
+    nav a, header a { padding: 8px 0; transition: color .25s; }
+    nav a:hover, header a:hover, [aria-current="page"] { color: var(--ink); }
 
     main {
       position: relative; z-index: 1; margin: 0 12px; overflow: hidden;
@@ -53,7 +54,8 @@
       padding: clamp(20px, 4vw, 56px);
       touch-action: none; user-select: none; -webkit-user-select: none;
     }
-    canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+    body[data-page="toolbox"] main { touch-action: manipulation; }
+    canvas#line { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
     .inner { position: relative; width: 100%; max-width: 560px; }
     section { display: none; animation: in .7s ease both; }
     section.active { display: block; }
@@ -68,22 +70,77 @@
     .places address { font-style: normal; color: var(--muted); }
     .places b { display: block; font-weight: 500; color: var(--fg); }
 
+    /* touch hint: a small system-style tip under the line */
+    .hint {
+      position: absolute; left: 50%; top: 0; z-index: 2; pointer-events: none;
+      display: flex; align-items: center; gap: 7px; white-space: nowrap;
+      padding: 7px 12px 7px 9px; border-radius: 980px;
+      background: rgba(58,58,60,.72); -webkit-backdrop-filter: blur(20px) saturate(1.6); backdrop-filter: blur(20px) saturate(1.6);
+      font-size: 12px; font-weight: 500; color: rgba(255,255,255,.92);
+      opacity: 0; transform: translate(-50%, 6px) scale(.96); transition: opacity .5s ease, transform .5s cubic-bezier(.2,.9,.3,1.2);
+    }
+    .hint.on { opacity: 1; transform: translate(-50%, 0) scale(1); }
+    .hint svg { width: 15px; height: 15px; }
+
+    /* toolbox */
+    #toolbox .rows { margin-top: 18px; }
+    #toolbox .rows a { padding: 9px 0; }
+    .back { display: inline-block; padding: 4px 0 10px; font-size: 13px; color: var(--muted); }
+    .back:hover { color: var(--fg); }
+    .tool { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; justify-items: center; font-size: 14px; }
+    .tool p { margin: 0; font-size: 12px; }
+    .nc, .tool input, .tool textarea { text-transform: none; }
+    .big { font-size: clamp(56px, 11vw, 92px); font-weight: 600; letter-spacing: -0.045em; line-height: 1; font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+    .sub { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .pair { display: flex; gap: clamp(28px, 8vw, 72px); align-items: flex-end; }
+    .keys { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
+    .keys.notes { display: grid; grid-template-columns: repeat(6, auto); }
+    .key { display: inline-flex; align-items: center; justify-content: center; height: 40px; min-width: 40px; padding: 0 14px; border-radius: 10px; background: var(--soft); color: #fff; font-weight: 500; font-size: 14px; transition: background .15s, color .15s; }
+    .key:active { background: #2a2a2c; }
+    .key.on, .key[aria-pressed="true"] { background: #fff; color: #000; }
+    .field { height: 40px; min-width: 0; border-radius: 10px; background: var(--soft); color: #fff; border: 0; outline: 0; padding: 0 12px; font: 400 16px Inter, -apple-system, sans-serif; user-select: text; -webkit-user-select: text; }
+    .field::placeholder { color: #6b6b6b; }
+    textarea.field { width: 100%; height: 84px; padding: 10px 12px; resize: none; text-align: left; line-height: 1.4; }
+    .out { width: 100%; min-height: 84px; max-height: 120px; overflow: auto; padding: 10px 12px; border-radius: 10px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); text-align: left; white-space: pre-wrap; line-height: 1.4; font-size: 16px; user-select: text; -webkit-user-select: text; touch-action: pan-y; }
+    .meter { position: relative; width: min(100%, 300px); height: 26px; }
+    .meter::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 2px; margin-top: -1px; background: #fff; }
+    .meter::after { content: ""; position: absolute; left: 50%; top: 4px; bottom: 4px; width: 1px; background: rgba(255,255,255,.35); }
+    .meter i { position: absolute; z-index: 1; left: 50%; top: 50%; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; background: var(--blue); transform: translateX(var(--x, 0px)); transition: transform .09s linear, opacity .2s; }
+    .beats { display: flex; gap: 10px; height: 12px; }
+    .beats i { width: 12px; height: 12px; border-radius: 50%; background: var(--soft); }
+    .beats i.on { background: var(--blue); }
+    .table { width: min(100%, 320px); text-align: left; font-variant-numeric: tabular-nums; }
+    .table div { display: grid; grid-template-columns: 1fr auto 76px; gap: 12px; padding: 6px 0; border-top: 1px solid rgba(255,255,255,.12); }
+    .table div span:nth-child(n+2) { text-align: right; }
+    .table div span:last-child { color: var(--muted); }
+    .line { display: flex; gap: 8px; width: 100%; justify-content: center; align-items: center; }
+    .list { width: 100%; max-height: min(34vh, 260px); overflow-y: auto; touch-action: pan-y; text-align: left; font-variant-numeric: tabular-nums; }
+    .list div { display: grid; grid-template-columns: 22px 1fr auto 28px 28px; gap: 8px; align-items: center; padding: 6px 0; border-top: 1px solid rgba(255,255,255,.12); }
+    .list div span:first-child, .list div span:nth-child(3) { color: var(--muted); }
+    .list button { color: var(--muted); height: 28px; }
+    .list button:hover { color: #fff; }
+
+    main:fullscreen { margin: 0; border-radius: 0; }
+    main:fullscreen .big { font-size: min(24vw, 42vh); }
+    main:fullscreen .back { display: none; }
     @media (max-width: 699px) {
       header { padding: 0 16px; }
       main { margin: 0 8px; border-radius: 22px; }
       .places { grid-template-columns: 1fr; gap: 16px; text-align: center; }
     }
-    @media (prefers-reduced-motion: reduce) { section { animation: none; } }
+    @media (max-height: 640px) { #toolbox .rows a { padding: 6px 0; } .tool { gap: 9px; } .big { font-size: 52px; } }
+    @media (prefers-reduced-motion: reduce) { section { animation: none; } .hint { transition: none; } }
   </style>
 </head>
-<body>
+<body data-page="home">
   <header>
     <a class="wordmark" href="#home">all inc.</a>
-    <span>ai for ai by ai</span>
+    <a href="#toolbox" data-page="toolbox">toolbox</a>
   </header>
 
   <main id="stage">
     <canvas id="line" aria-hidden="true"></canvas>
+    <div class="hint" id="hint" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.6" opacity=".5"/><circle cx="8" cy="8" r="2.8" fill="currentColor" stroke="none"/></svg><span id="hint-text">press and drag</span></div>
     <div class="inner">
       <section id="home">
         <h1>advanced instruments for the artificial intelligence.</h1>
@@ -91,7 +148,7 @@
       </section>
       <section id="platform">
         <h1>perform arena show from a single device.</h1>
-        <p>playback, showfiles, vocal processing, visuals & more.</p>
+        <p>playback, showfiles, vocal processing, visuals &amp; more.</p>
       </section>
       <section id="work">
         <h1>interfaces, workflows and connectivity for creators.</h1>
@@ -107,6 +164,26 @@
           <address><b>us &amp; all inc.</b>470 Ramona St.<br>Palo Alto, California<br>United States</address>
         </div>
       </section>
+      <section id="toolbox">
+        <div id="tb-list">
+          <h1>toolbox.</h1>
+          <p>free tools for creatives. no ads, no sign-up.</p>
+          <div class="rows">
+            <a href="#toolbox/tuner"><span>tuner</span><span>microphone</span></a>
+            <a href="#toolbox/key"><span>key &amp; bpm</span><span>audio file</span></a>
+            <a href="#toolbox/metronome"><span>metronome</span><span>tap tempo</span></a>
+            <a href="#toolbox/setlist"><span>setlist</span><span>running time</span></a>
+            <a href="#toolbox/delay"><span>delay times</span><span>bpm to ms</span></a>
+            <a href="#toolbox/tone"><span>tone</span><span>reference pitch</span></a>
+            <a href="#toolbox/transpose"><span>transpose</span><span>chords</span></a>
+            <a href="#toolbox/timer"><span>stage timer</span><span>countdown</span></a>
+          </div>
+        </div>
+        <div id="tb-tool" hidden>
+          <a class="back" href="#toolbox">&lsaquo; toolbox</a>
+          <div class="tool" id="tool"></div>
+        </div>
+      </section>
     </div>
   </main>
 
@@ -118,18 +195,22 @@
     </nav>
   </footer>
 
+  <script src="tools.js"></script>
   <script>
   (function () {
-    var pages = ['home', 'platform', 'work', 'company'];
+    var pages = ['home', 'platform', 'work', 'company', 'toolbox'];
     var stage = document.getElementById('stage'), inner = document.querySelector('.inner');
     var c = document.getElementById('line'), g = c.getContext('2d');
+    var hint = document.getElementById('hint');
     var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     var dpr = Math.min(devicePixelRatio || 1, 2), W = 0, H = 0, Y = 0, Yt = 0, t = 0;
-    var px = 0.5, py = 0.5, sx = 0.5, near = 0, bump = 0, level = 0;
+    var px = 0.5, py = 0.5, sx = 0.5, near = 0, bump = 0, level = 0, swell = 0, ghost = 0;
+    function route() { var h = location.hash.replace('#', '').split('/'); return { page: pages.indexOf(h[0]) < 0 ? 'home' : h[0], tool: h[1] || '' }; }
 
-    /* Sound lives in the interaction, not in a button: press and drag on the display. */
+    /* the hidden instrument: press and drag on the display. */
     var AC = window.AudioContext || window.webkitAudioContext, ctx, gain, filter, oscs = [];
     var scale = [110, 130.81, 146.83, 164.81, 196, 220, 261.63, 293.66, 329.63, 392, 440, 523.25];
+    var played = false; try { played = !!localStorage.getItem('played'); } catch (_) {}
     function note() {
       if (!ctx) return;
       var n = scale[Math.max(0, Math.min(scale.length - 1, Math.floor(px * scale.length)))], now = ctx.currentTime;
@@ -138,6 +219,7 @@
     }
     function press(on) {
       level = on ? 1 : 0;
+      if (on && !played) { played = true; hint.classList.remove('on'); try { localStorage.setItem('played', '1'); } catch (_) {} }
       if (!AC) return;
       if (on && !ctx) {
         ctx = new AC(); gain = ctx.createGain(); gain.gain.value = 0;
@@ -155,55 +237,90 @@
     }
     function point(e) { px = e.clientX / innerWidth; var r = stage.getBoundingClientRect(); py = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height)); near = 1; if (level) note(); }
     addEventListener('pointermove', point, { passive: true });
-    stage.addEventListener('pointerdown', function (e) { if (e.target.closest('a')) return; point(e); press(true); });
+    stage.addEventListener('pointerdown', function (e) {
+      if (route().page === 'toolbox' || e.target.closest('a, button, input, textarea, label')) return;
+      point(e); press(true);
+    });
     addEventListener('pointerup', function () { press(false); });
     addEventListener('pointercancel', function () { press(false); });
     document.addEventListener('pointerleave', function () { near = 0; press(false); });
     document.addEventListener('visibilitychange', function () { if (document.hidden) press(false); });
 
-    /* One line of light. It drifts, leans toward the pointer, and swells when played. */
-    var swell = 0;
+    /* one line of light. */
+    function amp() { return Math.min(Y * 0.4, W * 0.05) * (1 + swell * 0.8); }
+    function lineY(x, a) {
+      var u = x / W, d = (u - sx) / 0.09;
+      return Y + (Math.sin(u * 5 + t * 0.7) * 0.55 + Math.sin(u * 2.2 + t * 0.35) * 0.45) * a
+           - Math.exp(-d * d) * bump * a * 1.1
+           + Math.sin(u * 60 + t * 24) * swell * a * 0.12 * Math.exp(-d * d * 0.2);
+    }
     function size() {
       W = c.clientWidth; H = c.clientHeight; if (!W || !H) return;
       c.width = W * dpr; c.height = H * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0);
-      Yt = (inner.getBoundingClientRect().top - c.getBoundingClientRect().top) / 2;
+      Yt = Math.max(14, (inner.getBoundingClientRect().top - c.getBoundingClientRect().top) / 2);
       if (!Y) Y = Yt;
+      hint.style.top = Math.round(Yt + Math.min(Yt * 0.4, W * 0.05) + 20) + 'px';
       if (reduce) { Y = Yt; draw(); }
     }
     function draw() {
       if (!W) return;
       g.clearRect(0, 0, W, H);
-      var a = Math.min(Y * 0.4, W * 0.05) * (1 + swell * 0.8);
+      var a = amp();
       g.beginPath();
-      for (var x = 0; x <= W; x += 3) {
-        var u = x / W, d = (u - sx) / 0.09;
-        var y = Y + (Math.sin(u * 5 + t * 0.7) * 0.55 + Math.sin(u * 2.2 + t * 0.35) * 0.45) * a
-              - Math.exp(-d * d) * bump * a * 1.1
-              + Math.sin(u * 60 + t * 24) * swell * a * 0.12 * Math.exp(-d * d * 0.2);
-        x ? g.lineTo(x, y) : g.moveTo(x, y);
-      }
+      for (var x = 0; x <= W; x += 3) { var y = lineY(x, a); x ? g.lineTo(x, y) : g.moveTo(x, y); }
       g.strokeStyle = '#2f6bff'; g.lineWidth = 2; g.shadowColor = '#2f6bff'; g.shadowBlur = 14 + swell * 10; g.stroke();
+      if (ghost > 0.01) {   /* a ghost touch gliding along the line while the hint is up */
+        var gx = W * (0.5 + 0.1 * Math.sin(t * 1.6)), gy = lineY(gx, a);
+        g.shadowBlur = 0; g.beginPath(); g.arc(gx, gy, 13, 0, 6.2832);
+        g.fillStyle = 'rgba(255,255,255,' + (0.16 * ghost).toFixed(3) + ')'; g.fill();
+        g.lineWidth = 1.5; g.strokeStyle = 'rgba(255,255,255,' + (0.55 * ghost).toFixed(3) + ')'; g.stroke();
+      }
     }
     function frame() {
       sx += (px - sx) * 0.1; bump += (near - bump) * 0.05; swell += (level - swell) * 0.08; Y += (Yt - Y) * 0.08;
+      ghost += ((hint.classList.contains('on') ? 1 : 0) - ghost) * 0.06;
       t += 0.006 + swell * 0.01; draw(); requestAnimationFrame(frame);
     }
 
-    /* Sections swap in place. */
-    function current() { var h = location.hash.replace('#', ''); return pages.indexOf(h) < 0 ? 'home' : h; }
+    /* the hint appears on home until the line has been played once. */
+    var hintTimer = 0;
+    document.getElementById('hint-text').textContent = matchMedia('(pointer: coarse)').matches ? 'touch and drag' : 'press and drag';
+    function armHint(page) {
+      clearTimeout(hintTimer); hint.classList.remove('on');
+      if (played || page !== 'home') return;
+      hintTimer = setTimeout(function () {
+        hint.classList.add('on');
+        hintTimer = setTimeout(function () { hint.classList.remove('on'); }, 9000);
+      }, 1800);
+    }
+
+    /* sections swap in place. the toolbox opens one tool at a time. */
+    var cleanup = null, mounted = '';
     function show() {
-      var id = current();
-      pages.forEach(function (p) { document.getElementById(p).classList.toggle('active', p === id); });
-      document.querySelectorAll('[data-page]').forEach(function (a) {
-        if (a.dataset.page === id) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+      var r = route(), tools = window.TOOLS || {};
+      document.body.dataset.page = r.page;
+      pages.forEach(function (p) { document.getElementById(p).classList.toggle('active', p === r.page); });
+      document.querySelectorAll('a[data-page]').forEach(function (a) {
+        if (a.dataset.page === r.page) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
       });
+      var tool = r.page === 'toolbox' && tools[r.tool] ? r.tool : '';
+      if (tool !== mounted) {
+        if (cleanup) { try { cleanup(); } catch (_) {} cleanup = null; }
+        var el = document.getElementById('tool'); el.innerHTML = '';
+        if (tool) cleanup = tools[tool](el) || null;
+        mounted = tool;
+      }
+      document.getElementById('tb-list').hidden = !!tool;
+      document.getElementById('tb-tool').hidden = !tool;
+      armHint(r.page);
       size();
     }
     addEventListener('hashchange', show);
     addEventListener('resize', size);
     addEventListener('keydown', function (e) {
-      var i = pages.indexOf(current());
-      if (e.key === 'ArrowRight' && i < pages.length - 1) location.hash = pages[i + 1];
+      if (route().page === 'toolbox' || /input|textarea/i.test(e.target.tagName)) return;
+      var i = pages.indexOf(route().page);
+      if (e.key === 'ArrowRight' && i < 3) location.hash = pages[i + 1];
       if (e.key === 'ArrowLeft' && i > 0) location.hash = pages[i - 1];
     });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(size);
