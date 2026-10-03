@@ -70,21 +70,10 @@
     .places address { font-style: normal; color: var(--muted); }
     .places b { display: block; font-weight: 500; color: var(--fg); }
 
-    /* touch hint: a small system-style tip under the line */
-    .hint {
-      position: absolute; left: 50%; top: 0; z-index: 2; pointer-events: none;
-      display: flex; align-items: center; gap: 7px; white-space: nowrap;
-      padding: 7px 12px 7px 9px; border-radius: 980px;
-      background: rgba(58,58,60,.72); -webkit-backdrop-filter: blur(20px) saturate(1.6); backdrop-filter: blur(20px) saturate(1.6);
-      font-size: 12px; font-weight: 500; color: rgba(255,255,255,.92);
-      opacity: 0; transform: translate(-50%, 6px) scale(.96); transition: opacity .5s ease, transform .5s cubic-bezier(.2,.9,.3,1.2);
-    }
-    .hint.on { opacity: 1; transform: translate(-50%, 0) scale(1); }
-    .hint svg { width: 15px; height: 15px; }
-
     /* toolbox */
-    #toolbox .rows { margin-top: 18px; }
-    #toolbox .rows a { padding: 9px 0; }
+    .names { margin-top: 18px; display: grid; font-size: clamp(15px, 1.3vw, 17px); color: var(--muted); }
+    .names a { padding: 7px 0; transition: color .2s; }
+    .names a:hover { color: var(--fg); }
     .back { display: inline-block; padding: 4px 0 10px; font-size: 13px; color: var(--muted); }
     .back:hover { color: var(--fg); }
     .tool { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; justify-items: center; font-size: 14px; }
@@ -128,8 +117,8 @@
       main { margin: 0 8px; border-radius: 22px; }
       .places { grid-template-columns: 1fr; gap: 16px; text-align: center; }
     }
-    @media (max-height: 640px) { #toolbox .rows a { padding: 6px 0; } .tool { gap: 9px; } .big { font-size: 52px; } }
-    @media (prefers-reduced-motion: reduce) { section { animation: none; } .hint { transition: none; } }
+    @media (max-height: 640px) { .names a { padding: 5px 0; } .tool { gap: 9px; } .big { font-size: 52px; } }
+    @media (prefers-reduced-motion: reduce) { section { animation: none; } }
   </style>
 </head>
 <body data-page="home">
@@ -140,7 +129,6 @@
 
   <main id="stage">
     <canvas id="line" aria-hidden="true"></canvas>
-    <div class="hint" id="hint" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6.6" opacity=".5"/><circle cx="8" cy="8" r="2.8" fill="currentColor" stroke="none"/></svg><span id="hint-text">press and drag</span></div>
     <div class="inner">
       <section id="home">
         <h1>advanced instruments for the artificial intelligence.</h1>
@@ -166,17 +154,16 @@
       </section>
       <section id="toolbox">
         <div id="tb-list">
-          <h1>toolbox.</h1>
-          <p>free tools for creatives. no ads, no sign-up.</p>
-          <div class="rows">
-            <a href="#toolbox/tuner"><span>tuner</span><span>microphone</span></a>
-            <a href="#toolbox/key"><span>key &amp; bpm</span><span>audio file</span></a>
-            <a href="#toolbox/metronome"><span>metronome</span><span>tap tempo</span></a>
-            <a href="#toolbox/setlist"><span>setlist</span><span>running time</span></a>
-            <a href="#toolbox/delay"><span>delay times</span><span>bpm to ms</span></a>
-            <a href="#toolbox/tone"><span>tone</span><span>reference pitch</span></a>
-            <a href="#toolbox/transpose"><span>transpose</span><span>chords</span></a>
-            <a href="#toolbox/timer"><span>stage timer</span><span>countdown</span></a>
+          <h1>toolbox</h1>
+          <div class="names">
+            <a href="#toolbox/key">key &amp; bpm</a>
+            <a href="#toolbox/tuner">tuner</a>
+            <a href="#toolbox/metronome">metronome</a>
+            <a href="#toolbox/setlist">setlist</a>
+            <a href="#toolbox/delay">delay times</a>
+            <a href="#toolbox/tone">tone</a>
+            <a href="#toolbox/transpose">transpose</a>
+            <a href="#toolbox/timer">stage timer</a>
           </div>
         </div>
         <div id="tb-tool" hidden>
@@ -201,10 +188,9 @@
     var pages = ['home', 'platform', 'work', 'company', 'toolbox'];
     var stage = document.getElementById('stage'), inner = document.querySelector('.inner');
     var c = document.getElementById('line'), g = c.getContext('2d');
-    var hint = document.getElementById('hint');
     var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     var dpr = Math.min(devicePixelRatio || 1, 2), W = 0, H = 0, Y = 0, Yt = 0, t = 0;
-    var px = 0.5, py = 0.5, sx = 0.5, near = 0, bump = 0, level = 0, swell = 0, ghost = 0;
+    var px = 0.5, py = 0.5, sx = 0.5, near = 0, bump = 0, level = 0, swell = 0, ghost = 0, hinting = false, hx = 0.5, hy = 0.5;
     function route() { var h = location.hash.replace('#', '').split('/'); return { page: pages.indexOf(h[0]) < 0 ? 'home' : h[0], tool: h[1] || '' }; }
 
     /* the hidden instrument: press and drag on the display. */
@@ -219,7 +205,7 @@
     }
     function press(on) {
       level = on ? 1 : 0;
-      if (on && !played) { played = true; hint.classList.remove('on'); try { localStorage.setItem('played', '1'); } catch (_) {} }
+      if (on && !played) { played = true; hinting = false; try { localStorage.setItem('played', '1'); } catch (_) {} }
       if (!AC) return;
       if (on && !ctx) {
         ctx = new AC(); gain = ctx.createGain(); gain.gain.value = 0;
@@ -259,7 +245,6 @@
       c.width = W * dpr; c.height = H * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0);
       Yt = Math.max(14, (inner.getBoundingClientRect().top - c.getBoundingClientRect().top) / 2);
       if (!Y) Y = Yt;
-      hint.style.top = Math.round(Yt + Math.min(Yt * 0.4, W * 0.05) + 20) + 'px';
       if (reduce) { Y = Yt; draw(); }
     }
     function draw() {
@@ -269,29 +254,37 @@
       g.beginPath();
       for (var x = 0; x <= W; x += 3) { var y = lineY(x, a); x ? g.lineTo(x, y) : g.moveTo(x, y); }
       g.strokeStyle = '#2f6bff'; g.lineWidth = 2; g.shadowColor = '#2f6bff'; g.shadowBlur = 14 + swell * 10; g.stroke();
-      if (ghost > 0.01) {   /* a ghost touch gliding along the line while the hint is up */
-        var gx = W * (0.5 + 0.1 * Math.sin(t * 1.6)), gy = lineY(gx, a);
-        g.shadowBlur = 0; g.beginPath(); g.arc(gx, gy, 13, 0, 6.2832);
+      if (ghost > 0.01) {   /* a lone touch dot at a random spot. no words. */
+        var gx = hx * W, gy = hy * H, beat = (t * 9) % 1;
+        g.shadowBlur = 0;
+        g.beginPath(); g.arc(gx, gy, 13 + beat * 15, 0, 6.2832);
+        g.lineWidth = 1; g.strokeStyle = 'rgba(255,255,255,' + (0.35 * (1 - beat) * ghost).toFixed(3) + ')'; g.stroke();
+        g.beginPath(); g.arc(gx, gy, 13, 0, 6.2832);
         g.fillStyle = 'rgba(255,255,255,' + (0.16 * ghost).toFixed(3) + ')'; g.fill();
         g.lineWidth = 1.5; g.strokeStyle = 'rgba(255,255,255,' + (0.55 * ghost).toFixed(3) + ')'; g.stroke();
       }
     }
     function frame() {
       sx += (px - sx) * 0.1; bump += (near - bump) * 0.05; swell += (level - swell) * 0.08; Y += (Yt - Y) * 0.08;
-      ghost += ((hint.classList.contains('on') ? 1 : 0) - ghost) * 0.06;
+      ghost += ((hinting ? 1 : 0) - ghost) * 0.06;
       t += 0.006 + swell * 0.01; draw(); requestAnimationFrame(frame);
     }
 
-    /* the hint appears on home until the line has been played once. */
+    /* one second after landing on home, a touch dot appears somewhere. it goes once the display has been played. */
     var hintTimer = 0;
-    document.getElementById('hint-text').textContent = matchMedia('(pointer: coarse)').matches ? 'touch and drag' : 'press and drag';
     function armHint(page) {
-      clearTimeout(hintTimer); hint.classList.remove('on');
+      clearTimeout(hintTimer); hinting = false;
       if (played || page !== 'home') return;
       hintTimer = setTimeout(function () {
-        hint.classList.add('on');
-        hintTimer = setTimeout(function () { hint.classList.remove('on'); }, 9000);
-      }, 1800);
+        var s = c.getBoundingClientRect(), r = inner.getBoundingClientRect(), tries = 0, x, y;
+        do {   /* anywhere on the display except on top of the words */
+          x = 0.12 + Math.random() * 0.76; y = 0.14 + Math.random() * 0.72;
+          var ax = s.left + x * s.width, ay = s.top + y * s.height;
+        } while (++tries < 40 && ax > r.left - 40 && ax < r.right + 40 && ay > r.top - 40 && ay < r.bottom + 40);
+        hx = x; hy = y; hinting = true;
+        if (reduce) { ghost = 1; draw(); }
+        hintTimer = setTimeout(function () { hinting = false; if (reduce) { ghost = 0; draw(); } }, 10000);
+      }, 1000);
     }
 
     /* sections swap in place. the toolbox opens one tool at a time. */
