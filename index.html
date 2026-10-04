@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <script>if (/^#antiphon\/?$/i.test(location.hash)) location.replace('/antiphon/');</script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>all inc.</title>
   <meta name="description" content="All Inc. builds software, user interfaces and connectivity for creatives. All Inc. Audio Ab, Helsinki, Finland. US & All Inc., Palo Alto, California.">
@@ -311,7 +312,7 @@
       armHint(r.page);
       size();
     }
-    addEventListener('hashchange', show);
+    addEventListener('hashchange', function () { if (/^#antiphon\/?$/i.test(location.hash)) location.replace('/antiphon/'); else show(); });
     addEventListener('resize', size);
     addEventListener('keydown', function (e) {
       if (route().page === 'toolbox' || /input|textarea/i.test(e.target.tagName)) return;
