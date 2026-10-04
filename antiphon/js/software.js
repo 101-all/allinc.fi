@@ -57,21 +57,21 @@ function phone(ctx, w, h, t, o) {
   ctx.font = '15px ' + F; ctx.fillStyle = '#6b6b6b'; ctx.fillText('show score', X, y + 22);
   ctx.font = '600 64px ' + F; ctx.fillStyle = '#000'; ctx.fillText(String(Math.round(70 + L * 25)), X - 3, y + 68);
   ctx.font = '15px ' + F; ctx.fillStyle = '#6b6b6b'; ctx.fillText('song 07  ·  01:42:18', X, y + 112);
-  CN.forEach((name, i) => {
+  if (o.rows) CN.forEach((name, i) => {
     const ry = y + 148 + i * 30, v = clamp01(L * (0.75 + 0.25 * Math.sin(t * (0.6 + i * 0.17) + i * 2)));
     ctx.font = '500 15px ' + F; ctx.fillStyle = '#000'; ctx.fillText(name, X, ry);
     ctx.fillStyle = '#ececec'; ctx.fillRect(X + 96, ry - 3, XR - X - 96, 6);
     ctx.fillStyle = '#000'; ctx.fillRect(X + 96, ry - 3, (XR - X - 96) * v, 6);
   });
-  const gy0 = y + 334;
+  const gy0 = y + (o.rows ? 334 : 160);
   ctx.font = '15px ' + F; ctx.fillStyle = '#6b6b6b'; ctx.fillText('the set', X, gy0 - 16);
   set(ctx, t, X, XR, gy0, Math.max(gy0 + 40, h - 28), 120);
 }
 
 export default {
   build(w, h) {
-    if (mobile()) { const aw = w - 32, ah = aw / 1.45, o = arena(16, 16, aw, ah); o.mob = true; o.y = 16 + ah + 18; return o; }
-    const k = Math.min(1, w / 1200), o = arena(32, 32, (w / k) * 0.4, h / k - 64); o.k = k; return o;
+    if (mobile()) { const aw = w - 32, ah = Math.max(90, Math.min(aw / 1.45, h - 34 - 270)), o = arena(16, 16, aw, ah); o.mob = true; o.y = 16 + ah + 18; o.rows = h - o.y >= 440; return o; }
+    const k = Math.min(1, w / 1200, h / 470), o = arena(32, 32, (w / k) * 0.4, h / k - 64); o.k = k; return o;
   },
   frame(ctx, w, h, t, o) {
     if (o.mob) return phone(ctx, w, h, t, o);
