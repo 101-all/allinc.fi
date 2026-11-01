@@ -7,7 +7,7 @@
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>all inc. venue</title>
+<title>all inc. system</title>
 <style>
 :root{color-scheme:light;--ink:#111;--mute:#7c7c7a;--hair:rgba(0,0,0,.13);--glass:rgba(255,255,255,.74);--y:#ffcf33;--bg:#f5f5f3;
 --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);--sl:env(safe-area-inset-left,0px);--sr:env(safe-area-inset-right,0px)}
@@ -52,8 +52,7 @@ body.build #buildtools{display:flex}
 .sw.act{background:#1b1b1b}
 .sw.antiphon{background:#fff}
 .sw.link{background:transparent;border-style:dashed}
-.sw.parked{background:#e2e2e0;border-color:#8f8f8f}
-#hint{position:fixed;left:50%;bottom:calc(var(--sb) + 66px);transform:translateX(-50%);font-size:12px;color:#6d6d6a;pointer-events:none;transition:opacity .8s;
+#hint{position:fixed;left:50%;bottom:calc(var(--sb) + 66px);transform:translateX(-50%);font-size:12px;color:#6d6d6a;pointer-events:none;transition:opacity .8s;opacity:0;
 padding:7px 12px;border-radius:10px;background:rgba(255,255,255,.7);white-space:nowrap;z-index:4}
 #panel{position:fixed;right:calc(var(--sr) + 68px);top:calc(var(--st) + 70px);width:350px;max-height:calc(100% - var(--st) - var(--sb) - 150px);
 overflow:auto;-webkit-overflow-scrolling:touch;padding:16px 18px 18px;z-index:6;-webkit-user-select:text;user-select:text;transition:opacity .18s,transform .18s}
@@ -62,7 +61,21 @@ overflow:auto;-webkit-overflow-scrolling:touch;padding:16px 18px 18px;z-index:6;
 .tag{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--mute);letter-spacing:.02em}
 .x{width:36px;height:36px;margin:-8px -10px -8px 0;display:flex;align-items:center;justify-content:center;border-radius:10px;color:#444}
 #panel h2{font-size:20px;font-weight:600;letter-spacing:-.015em;margin:8px 0 6px;line-height:1.2}
-#panel p.note{font-size:13px;line-height:1.5;color:#333;margin:0 0 12px}
+#panel p.fn{font-size:14px;line-height:1.35;color:var(--mute);margin:0 0 14px}
+#panel dl.spec{margin:0;border-top:.5px solid var(--hair)}
+#panel dl.spec div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:10px 0;border-bottom:.5px solid var(--hair)}
+#panel dl.spec dt{margin:0;font-size:12px;color:var(--mute);letter-spacing:0}
+#panel dl.spec dd{margin:0;font-size:14px;font-weight:550;text-align:right;font-variant-numeric:tabular-nums}
+.sys{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0 4px}
+.sys div{display:flex;flex-direction:column;gap:3px}
+.sys .sw{margin-bottom:5px}
+.sys b{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.sys span:last-child{font-size:12.5px;color:var(--mute);line-height:1.3}
+.rhythm{font-size:12px;color:var(--mute);margin:14px 0 0;padding-top:12px;border-top:.5px solid var(--hair)}
+.tools{display:flex;gap:4px;margin-top:12px}
+.tools button{height:34px;padding:0 10px 0 7px;border-radius:9px;display:flex;align-items:center;gap:5px;font-size:12px;color:#333}
+.tools button svg.i{width:17px;height:17px}
+.tools button.armed{background:#111;color:#fff}
 #panel dl{margin:0;border-top:.5px solid var(--hair)}
 #panel dt{font-size:10.5px;letter-spacing:.06em;color:var(--mute);margin-top:12px}
 #panel dd{margin:4px 0 0;font-size:13px;line-height:1.5}
@@ -88,16 +101,10 @@ textarea.in{resize:vertical;min-height:64px;line-height:1.4}
 .step button{width:40px;height:36px;border-radius:9px;border:.5px solid rgba(0,0,0,.2);background:rgba(255,255,255,.7);font-size:16px}
 #panel ol{padding-left:18px;margin:6px 0 0;font-size:13px;line-height:1.5}
 #panel ol li{margin:4px 0}
-#modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(245,245,243,.5);z-index:10;padding:16px}
-#modal.hidden{display:none}
-#modal .card{width:min(460px,100%);padding:18px;max-height:90%;overflow:auto}
-#modal h3{margin:0 0 4px;font-size:17px;font-weight:600}
-#modal p{margin:0 0 10px;font-size:12.5px;color:#555;line-height:1.45}
-#modal textarea{height:150px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
-#mStatus{font-size:12px;color:#555;min-height:16px;margin-top:10px}
 @media (max-width:640px){
- #panel{left:calc(var(--sl) + 8px);right:calc(var(--sr) + 8px);top:auto;bottom:calc(var(--sb) + 8px);width:auto;max-height:56%;border-radius:18px}
+ #panel{left:calc(var(--sl) + 8px);right:calc(var(--sr) + 8px);top:auto;bottom:calc(var(--sb) + 62px);width:auto;max-height:56%;border-radius:18px}
  #buildtools{bottom:calc(var(--sb) + 62px)}
+ body.build #panel{bottom:calc(var(--sb) + 116px);max-height:50%}
  #hint{bottom:calc(var(--sb) + 118px);white-space:normal;width:max-content;max-width:88vw;text-align:center}
  #legend button{padding:0 8px;gap:5px;font-size:11.5px}
  #brand span{display:none}
@@ -109,7 +116,7 @@ textarea.in{resize:vertical;min-height:64px;line-height:1.4}
 <div id="labels"></div>
 
 <header id="top">
-  <button id="brand" class="glass" aria-label="the system"><b>all inc.</b><span>operating system · venue twin</span><i id="saved"></i></button>
+  <button id="brand" class="glass" aria-label="the system"><b>all inc.</b><span>system</span><i id="saved"></i></button>
   <div id="modeSeg" class="glass seg" role="tablist">
     <button data-mode="view" class="on">view</button><button data-mode="build">build</button>
   </div>
@@ -118,7 +125,6 @@ textarea.in{resize:vertical;min-height:64px;line-height:1.4}
 <nav id="camtools" class="glass">
   <button id="bPlan" title="plan view" aria-label="plan view"><svg class="i" viewBox="0 0 20 20"><rect x="3.5" y="3.5" width="13" height="13"/><path d="M3.5 10h13M10 3.5v13"/></svg></button>
   <button id="bReset" title="reset camera" aria-label="reset camera"><svg class="i" viewBox="0 0 20 20"><path d="M4.2 10.5a6 6 0 1 0 1.9-5"/><path d="M5.6 2.8v3h3"/></svg></button>
-  <button id="bScene" title="scene file" aria-label="scene file"><svg class="i" viewBox="0 0 20 20"><path d="M5 2.5h7l3 3v12H5z"/><path d="M12 2.5v3h3M10 8.5v6M7.5 12l2.5 2.5 2.5-2.5"/></svg></button>
 </nav>
 
 <div id="buildtools">
@@ -130,25 +136,7 @@ textarea.in{resize:vertical;min-height:64px;line-height:1.4}
 <div id="hint"></div>
 <aside id="panel" class="glass hidden"></aside>
 
-<div id="modal" class="hidden">
-  <div class="glass card">
-    <div class="ph"><h3>scene file</h3><button class="x" id="mClose" aria-label="close"><svg class="i" viewBox="0 0 20 20"><path d="M5 5l10 10M15 5L5 15"/></svg></button></div>
-    <p>the scene saves itself on this device. export a copy to keep it safe or move it to another device; paste or import to load one.</p>
-    <div class="row" style="margin-top:6px">
-      <button class="pill" id="mExport">export file</button>
-      <button class="pill" id="mCopy">copy json</button>
-      <button class="pill" id="mImport">import file</button>
-    </div>
-    <label class="fl">scene json</label>
-    <textarea class="in" id="mText" spellcheck="false"></textarea>
-    <div class="row">
-      <button class="pill" id="mLoad">load from text</button>
-      <button class="pill danger" id="mReset">reset to default</button>
-    </div>
-    <div id="mStatus"></div>
-    <input type="file" id="mFile" accept="application/json,.json" style="display:none">
-  </div>
-</div>
+<input type="file" id="mFile" accept="application/json,.json" style="display:none">
 
 <script>/**
  * @license
@@ -1207,92 +1195,62 @@ textarea.in{resize:vertical;min-height:64px;line-height:1.4}
 (function(){
 'use strict';
 
-/* ------------------------------------------------------------------ content (from the all inc. operating system doc) */
+/* ------------------------------------------------------------------ system */
 const LINES = {
-  act: {
-    name:'all act', tag:'the present · pays',
-    role:'all act already works: the pilot delivered 250+ paid shows, 275k€+ billed and about 35% operating net profit. its role now is to keep running, keep booking and pay for the rest of the company while we stay out of its daily operation.',
-    outcome:'the 125k€ already booked is delivered cleanly, and more of the 500k€ eu pipeline turns into signed shows without us closing the deals ourselves.',
-    signal:'booked revenue for the coming months holds or grows week on week, and margin stays near the pilot’s 35%. if either slips two weeks running, it comes to the top of the review.',
-    mayNot:'our selling time, our weekly hours beyond the review, or new spending that doesn’t pay back inside the season. it asks for nothing new; it is protected, not expanded.',
-    next:'a full quarter of shows is booked and delivered without our involvement in a single deal or show day. then all act is a business that runs itself, and we decide how far to scale it.'
-  },
-  antiphon: {
-    name:'all antiphon', tag:'the next thing · opens doors',
-    role:'where our energy goes now. the agency pays 2,500 € per show, and it is the product that gets venues and agencies to let us in; once we are in, all act follows. the live nation and apple music pilot starts in q1 2027.',
-    outcome:'the pilot is ready to start on day one, with scope, show dates, success criteria and payment terms agreed in writing.',
-    signal:'the pilot’s shows happen as agreed and are paid at 2,500 € each, and the partners ask for more. a second agency or venue asking to talk counts as early proof that the door is opening.',
-    mayNot:'all act’s margin as a subsidy, or link’s ring-fenced money. its costs are carried by the pilot and the round, and it does not get to grow scope before the pilot is proven.',
-    next:'the pilot is proven: it ran, was paid and earned a follow-on commitment. then all antiphon moves from pilot to repeatable sale, and all act is introduced to the same partners.'
-  },
-  link: {
-    name:'all link', tag:'the future · parked on purpose',
-    role:'deliberately still. its six patents are ready, and its only job now is getting them filed through our us company, the delaware c corp; filings start in q4 2026. €0.5m of the round is ring-fenced for it and is not touched for anything else.',
-    outcome:'all six patent applications filed.',
-    signal:'the number of filings made out of six, and nothing else. nothing about all link is discussed outside the nda.',
-    mayNot:'product time, sales time or public attention. no pitching, no building, no demos before the filings are in, and its ring-fenced money is spent only on its own path.',
-    next:'all six patents are filed. then, and only then, we decide what all link does next, at a review set aside for that one question.'
-  },
-  parked: {
-    name:'parked', tag:'not now, not never',
-    role:'holds anything that fails the filter, a market we aren’t ready for, all link’s next steps, or a feature the pilot doesn’t need, each with the date it was parked and the line it would serve.',
-    outcome:'once it is written down, it stops nagging. nobody carries it in their head or raises it in passing.',
-    signal:'we look at the list once a week, in the last ten minutes of the review, and nowhere else.',
-    mayNot:'any of our time outside those ten minutes of the weekly review.',
-    next:'the stage it waits for has arrived. anything parked for a full quarter without a reason to return is dropped.'
-  }
+  act:      {name:'all act',      fn:'runs the show',      state:'live'},
+  antiphon: {name:'all antiphon', fn:'reads the room',     state:'next'},
+  link:     {name:'all link',     fn:'carries the signal', state:'locked'}
 };
-const FIELDS = [['role','role now'],['outcome','this quarter’s outcome'],['signal','how we know it’s working'],['mayNot','what it may not take'],['next','next stage when']];
-const ORDER = ['act','antiphon','link','parked'];
-const SHORT = {act:'act',antiphon:'antiphon',link:'link',parked:'parked'};
+const ORDER = ['act','antiphon','link'];
+const SHORT = {act:'act',antiphon:'antiphon',link:'link'};
+const RHYTHM = 'weekly review · 45 min';
 
 const STYLE = {
   act:      {fill:0x1b1b1b, edge:0x000000, opacity:1},
   antiphon: {fill:0xffffff, edge:0x111111, opacity:1},
-  link:     {fill:0xffffff, edge:0x222222, opacity:0.45},
-  parked:   {fill:0xe2e2e0, edge:0x8f8f8f, opacity:1}
+  link:     {fill:0xffffff, edge:0x222222, opacity:0.45}
 };
 const Y = 0xffcf33, BG = 0xf5f5f3;
-const KEY = 'allinc.venue.v1';
+const KEY = 'allinc.venue.v2';
 const TODAY = new Date().toISOString().slice(0,10);
 
 /* ------------------------------------------------------------------ default scene */
 function defaults(){
   const items = [
     {id:'performer', kind:'performer', label:'performer', line:'act', x:0, z:-6.2, rot:0,
-      note:'the performer position, downstage centre. everything on this stage exists so this spot is looked after on every show day, without us.'},
+      fn:'the show', figs:[['shows','250+']]},
     {id:'device', kind:'device', label:'show device', line:'act', x:3.6, z:-9, rot:-0.35,
-      note:'the playback and show device that runs the set, night after night.'},
+      fn:'runs the set', figs:[['billed','275k€+'],['net','35%']]},
     {id:'iem', kind:'iem', label:'in-ear monitoring', line:'act', x:-3.4, z:-8.4, rot:0.3,
-      note:'in-ear monitoring: what the performer hears on stage.'},
+      fn:'what the performer hears'},
     {id:'setlist', kind:'setlist', label:'setlist', line:'act', x:1.6, z:-4.7, rot:0.18,
-      note:'the setlist for the night, taped down at the downstage edge.'},
+      fn:'the night, in order'},
     {id:'heat', kind:'heat', label:'room reading', line:'antiphon', x:0, z:6.5, rot:0, fixed:true,
-      note:'the live room reading: how the audience floor is responding, drawn as a field across the room from the sensor nodes.'},
+      fn:'the audience, live', figs:[['per show','2,500 €']]},
     {id:'studio', kind:'studio', label:'remote studio', line:'antiphon', x:27, z:5, rot:-0.25,
-      note:'the remote mixing studio, linked live to the venue from off site.'},
+      fn:'mixes from off site', figs:[['pilot','q1 2027'],['with','live nation · apple music']]},
     {id:'link', kind:'link', label:'all link', line:'link', x:1.8, z:-7.4, rot:0,
-      note:'the signal path between stage and performer, shown here only as a placeholder: parked, waiting for patents. details stay under nda.'},
-    {id:'parked-link', kind:'block', shape:'box', label:'all link: everything beyond the filings', line:'parked',
-      serves:'link', waits:'all six patents filed', parkedAt:'2026-11-01', x:-4.2, z:-14.9, rot:0, sx:2.4, sy:0.7, sz:1.3,
-      note:'everything all link does after the filings waits here.'}
+      fn:'carries the signal'}
   ];
   const xs=[-9,-3,3,9], zs=[-0.5,4.5,9.2]; let n=1;
   zs.forEach(z=>xs.forEach(x=>{
     items.splice(4+n-1,0,{id:'s'+n, kind:'sensor', label:'sensor node '+String(n).padStart(2,'0'), line:'antiphon', x, z, rot:0,
-      note:'a small sensor node on the audience floor. together, the nodes read the room.'}); n++;
+      fn:'reads the floor'}); n++;
   }));
   items.forEach(it=>{ it.sx=it.sx||1; it.sy=it.sy||1; it.sz=it.sz||1; });
-  return {version:1, meta:{filings:0, hidden:[]}, items};
+  return {version:2, meta:{filings:0, hidden:[]}, items};
 }
 
 function validScene(o){
-  return o && Array.isArray(o.items) && o.items.every(i=>i && typeof i.id==='string' && typeof i.kind==='string' && LINES[i.line] && isFinite(i.x) && isFinite(i.z));
+  return o && Array.isArray(o.items) && o.items.every(i=>i && typeof i.id==='string' && typeof i.kind==='string' && (LINES[i.line] || i.line==='parked') && isFinite(i.x) && isFinite(i.z));
 }
 function normalise(o){
-  o.version=1; o.meta=Object.assign({filings:0, hidden:[]}, o.meta||{});
+  o.version=2; o.meta=Object.assign({filings:0, hidden:[]}, o.meta||{});
   o.meta.filings = Math.max(0, Math.min(6, o.meta.filings|0));
-  o.items.forEach(i=>{ i.rot=+i.rot||0; i.sx=+i.sx||1; i.sy=+i.sy||1; i.sz=+i.sz||1; i.label=String(i.label||''); i.note=String(i.note||''); });
+  o.meta.hidden = (o.meta.hidden||[]).filter(l=>LINES[l]);
+  o.items = o.items.filter(i=>LINES[i.line]);
+  o.items.forEach(i=>{ i.rot=+i.rot||0; i.sx=+i.sx||1; i.sy=+i.sy||1; i.sz=+i.sz||1; i.label=String(i.label||''); i.fn=String(i.fn||'');
+    i.figs=Array.isArray(i.figs)?i.figs:[]; delete i.note; delete i.serves; delete i.waits; delete i.parkedAt; });
   return o;
 }
 let storageOk = true;
@@ -1307,7 +1265,7 @@ function save(){
   saveTimer = setTimeout(()=>{
     try{ localStorage.setItem(KEY, JSON.stringify(S)); storageOk=true;
       const d=new Date(); $('#saved').textContent='saved '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
-    catch(e){ storageOk=false; $('#saved').textContent='not saved here · export to keep'; }
+    catch(e){ storageOk=false; $('#saved').textContent='not saved'; }
   }, 250);
 }
 
@@ -1401,8 +1359,6 @@ const dse = new THREE.Mesh(new THREE.BoxGeometry(16,0.025,0.07), new THREE.MeshB
 dse.position.set(0,1.21,-4.05); arch.add(dse);
 archBox(5.5,2.6,0.12, -5.25,2.5,-12.05);
 archBox(5.5,2.6,0.12,  5.25,2.5,-12.05);
-const parkedDash = new THREE.LineDashedMaterial({color:0x8f8f8f, dashSize:0.35, gapSize:0.22});
-rect(-7.5,-17.1,-0.6,-12.8,1.215,parkedDash);
 
 // foh
 archBox(5,0.4,3, 0,0.2,12.5);
@@ -1415,7 +1371,6 @@ const zoneDefs = [
   ['audience floor', V(-9.6,0.02,15.4)],
   ['foh', V(0,1.4,13.6)],
   ['backstage', V(5.2,1.25,-16.6)],
-  ['parked', V(-4.05,1.25,-17.0)],
 ];
 
 /* ------------------------------------------------------------------ heat layer (canvas texture, halftone) */
@@ -1537,7 +1492,7 @@ function syncItem(it){
   o.group.rotation.y = it.rot;
   if(it.kind!=='heat') o.group.scale.set(it.sx,it.sy,it.sz);
   o.group.visible = !isHidden(it.line);
-  o.label.textContent = it.kind==='link' ? 'all link · waiting for patents · '+S.meta.filings+'/6 filed' : (it.label||'untitled');
+  o.label.textContent = it.kind==='link' ? 'all link · locked · '+S.meta.filings+'/6' : (it.label||'block');
   o.label.classList.toggle('lock', it.kind==='link');
 }
 function styleItem(it){
@@ -1796,14 +1751,11 @@ function select(id){
 }
 const X_ICON='<svg class="i" viewBox="0 0 20 20"><path d="M5 5l10 10M15 5L5 15"/></svg>';
 const panel=$('#panel');
-function tagHtml(line){ const L=LINES[line]; return '<div class="tag"><span class="sw '+line+'"></span>'+esc(L.name)+' · '+esc(L.tag)+'</div>'; }
-function rulesHtml(line){
-  const L=LINES[line];
-  return '<dl>'+FIELDS.map(([k,t])=>'<dt>'+t+'</dt><dd>'+esc(L[k])+'</dd>').join('')+'</dl>';
-}
+function tagHtml(line){ return '<div class="tag"><span class="sw '+line+'"></span>'+esc(LINES[line].name)+'</div>'; }
 function ticksHtml(){ let h='<div class="ticks">'; for(let i=0;i<6;i++) h+='<span class="'+(i<S.meta.filings?'f':'')+'"></span>'; return h+'</div>'; }
+function stateOf(it){ const s=LINES[it.line].state; return it.line==='link' ? s+' · '+S.meta.filings+'/6 filed' : s; }
 function renderPanel(){
-  if(state.panel==='system'){ panel.innerHTML=systemHtml(); panel.classList.remove('hidden'); wireClose(); return; }
+  if(state.panel==='system'){ panel.innerHTML=systemHtml(); panel.classList.remove('hidden'); wireClose(); wireSystem(); return; }
   const it = state.sel && getItem(state.sel);
   if(!it){ panel.classList.add('hidden'); return; }
   panel.classList.remove('hidden');
@@ -1814,28 +1766,22 @@ function renderPanel(){
 function wireClose(){ const x=panel.querySelector('.x'); if(x) x.onclick=()=>{ if(state.panel==='system'){state.panel=null; renderPanel();} else select(null); }; }
 function viewHtml(it){
   let h='<div class="ph">'+tagHtml(it.line)+'<button class="x" aria-label="close">'+X_ICON+'</button></div>';
-  h+='<h2>'+esc(it.label||'untitled')+'</h2>';
-  if(it.note) h+='<p class="note">'+esc(it.note)+'</p>';
-  if(it.kind==='link'){ h+='<dl><dt>status</dt><dd class="lead">parked · waiting for patents · '+S.meta.filings+' of 6 filed</dd><dd>'+ticksHtml()+'</dd></dl>'; }
-  if(it.line==='parked'){
-    h+='<dl><dt>serves</dt><dd>'+esc(it.serves? LINES[it.serves].name : 'not set')+'</dd><dt>waits for</dt><dd>'+esc(it.waits||'not set')+'</dd>'+
-       (it.parkedAt?'<dt>parked</dt><dd>'+esc(it.parkedAt)+'</dd>':'')+'</dl>';
-  }
-  h+=rulesHtml(it.line);
+  h+='<h2>'+esc(it.label||'block')+'</h2>';
+  if(it.fn) h+='<p class="fn">'+esc(it.fn)+'</p>';
+  h+='<dl class="spec"><div><dt>state</dt><dd>'+esc(stateOf(it))+'</dd></div>';
+  (it.figs||[]).slice(0,2).forEach(f=>{ h+='<div><dt>'+esc(f[0])+'</dt><dd>'+esc(f[1])+'</dd></div>'; });
+  h+='</dl>';
+  if(it.kind==='link') h+=ticksHtml();
   return h;
 }
+const I_EXPORT='<svg class="i" viewBox="0 0 20 20"><path d="M10 13V3.5M6.5 7L10 3.5 13.5 7M4 12.5v4h12v-4"/></svg>';
+const I_IMPORT='<svg class="i" viewBox="0 0 20 20"><path d="M10 3.5V13M6.5 9.5L10 13l3.5-3.5M4 12.5v4h12v-4"/></svg>';
+const I_RESET='<svg class="i" viewBox="0 0 20 20"><path d="M4.2 10.5a6 6 0 1 0 1.9-5"/><path d="M5.6 2.8v3h3"/></svg>';
 function systemHtml(){
-  return '<div class="ph"><div class="tag">all inc. operating system</div><button class="x" aria-label="close">'+X_ICON+'</button></div>'+
-  '<h2>act pays, antiphon opens, link waits behind its patents.</h2>'+
-  '<p class="note">one system at three moments in time, not three companies competing for attention. all act is the present and funds everything. all antiphon is the next thing and the door into venues and agencies. all link is the future, held still until its patents are filed. every hour, euro and decision is placed against one of the three, and anything that serves none of them waits.</p>'+
-  '<dl><dt>the weekly review · 45 minutes, fixed order</dt><dd><ol>'+
-  '<li>all act, ten minutes: booked revenue, margin, anything that needed us.</li>'+
-  '<li>all antiphon, twenty minutes: where the pilot stands, what is unagreed, which doors opened or closed.</li>'+
-  '<li>all link, five minutes: filings made out of six, and the next one due.</li>'+
-  '<li>the parked list, ten minutes: anything ready to come back, anything to drop.</li></ol></dd>'+
-  '<dd>ends with at most three commitments for the coming week, each tied to one line.</dd>'+
-  '<dt>the decision filter</dt><dd>which of the three does this serve? all act: it must not need our time. all antiphon: it must move the pilot or open a door. all link: it must help file the patents. none: it goes to the parked list without discussion.</dd>'+
-  '<dt>where our hours go</dt><dd>most of the week to all antiphon, a small fixed share to the patent filings, all act gets the weekly review and real emergencies.</dd></dl>';
+  return '<div class="ph"><div class="tag">all inc.</div><button class="x" aria-label="close">'+X_ICON+'</button></div>'+
+  '<div class="sys">'+ORDER.map(l=>'<div><span class="sw '+l+'"></span><b>'+esc(LINES[l].name)+'</b><span>'+esc(LINES[l].fn)+'</span></div>').join('')+'</div>'+
+  '<p class="rhythm">'+esc(RHYTHM)+'</p>'+
+  '<div class="tools"><button id="sExport">'+I_EXPORT+'export</button><button id="sImport">'+I_IMPORT+'import</button><button id="sReset">'+I_RESET+'<span>reset</span></button></div>';
 }
 function rng(key,label,val,min,max,step,unit){
   return '<div class="rng"><span>'+label+'</span><input type="range" data-k="'+key+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'"><output data-o="'+key+'">'+fmt(val,unit)+'</output></div>';
@@ -1845,29 +1791,25 @@ const deg = r=>{ let d=r*180/Math.PI%360; if(d<0) d+=360; return Math.round(d); 
 function buildHtml(it){
   const d=dimsOf(it);
   let h='<div class="ph">'+tagHtml(it.line)+'<button class="x" aria-label="close">'+X_ICON+'</button></div>';
-  h+='<label class="fl">label</label><input class="in" id="fLabel" value="'+esc(it.label)+'" maxlength="80" autocomplete="off">';
-  h+='<label class="fl">note</label><textarea class="in" id="fNote" rows="3">'+esc(it.note)+'</textarea>';
+  h+='<label class="fl">name</label><input class="in" id="fLabel" value="'+esc(it.label)+'" maxlength="40" autocomplete="off">';
+  h+='<label class="fl">function</label><input class="in" id="fNote" value="'+esc(it.fn||'')+'" maxlength="40" autocomplete="off">';
   h+='<label class="fl">line</label><div class="seg2" id="fLine">'+ORDER.map(l=>'<button data-v="'+l+'" class="'+(it.line===l?'on':'')+'"><span class="sw '+l+'"></span>'+SHORT[l]+'</button>').join('')+'</div>';
-  if(it.line==='parked'){
-    h+='<label class="fl">serves</label><div class="seg2" id="fServes">'+['act','antiphon','link'].map(l=>'<button data-v="'+l+'" class="'+(it.serves===l?'on':'')+'">'+SHORT[l]+'</button>').join('')+'</div>';
-    h+='<label class="fl">waits for</label><input class="in" id="fWaits" value="'+esc(it.waits||'')+'" autocomplete="off">';
-  }
   if(it.kind==='block'){
     const sh=it.shape||'box';
     h+='<label class="fl">shape</label><div class="seg2" id="fShape">'+['box','cylinder','pyramid'].map(s=>'<button data-v="'+s+'" class="'+(sh===s?'on':'')+'">'+s+'</button>').join('')+'</div>';
   }
   if(it.kind==='link'){
-    h+='<label class="fl">patent filings</label><div class="step"><button id="fMinus">−</button><b id="fFil">'+S.meta.filings+' / 6</b><button id="fPlus">+</button></div>';
+    h+='<label class="fl">filed</label><div class="step"><button id="fMinus">−</button><b id="fFil">'+S.meta.filings+' / 6</b><button id="fPlus">+</button></div>';
   }
   if(!it.fixed){
-    h+='<label class="fl">shape and size</label>';
+    h+='<label class="fl">size</label>';
     h+=rng('w','width',d[0]*it.sx,0.1,Math.max(30,d[0]*3),0.05,'m');
     h+=rng('d','depth',d[2]*it.sz,0.1,Math.max(30,d[2]*3),0.05,'m');
     h+=rng('h','height',d[1]*it.sy,0.05,Math.max(12,d[1]*3),0.05,'m');
     h+=rng('r','turn',deg(it.rot),0,360,1,'°');
     h+='<div class="row"><button class="pill" id="fDup">duplicate</button><button class="pill danger" id="fDel">delete</button></div>';
   } else {
-    h+='<p class="note" style="margin-top:14px;color:#888">this layer is fixed to the audience floor.</p>';
+    h+='<p class="fn" style="margin-top:14px">fixed</p>';
   }
   return h;
 }
@@ -1883,14 +1825,11 @@ function wireBuild(it){
   const lab=q('#fLabel'), note=q('#fNote');
   lab.addEventListener('focus',startEdit); note.addEventListener('focus',startEdit);
   lab.addEventListener('input',()=>{ it.label=lab.value; syncItem(it); save(); });
-  note.addEventListener('input',()=>{ it.note=note.value; save(); });
+  note.addEventListener('input',()=>{ it.fn=note.value; save(); });
   q('#fLine').querySelectorAll('button').forEach(b=>b.onclick=()=>{
     pushUndo(); it.line=b.dataset.v; lastLine=it.line;
-    if(it.line==='parked' && !it.parkedAt) it.parkedAt=TODAY;
     syncItem(it); styleItem(it); renderPanel(); save();
   });
-  const sv=q('#fServes'); if(sv) sv.querySelectorAll('button').forEach(b=>b.onclick=()=>{ pushUndo(); it.serves=b.dataset.v; renderPanel(); save(); });
-  const wt=q('#fWaits'); if(wt){ wt.addEventListener('focus',startEdit); wt.addEventListener('input',()=>{ it.waits=wt.value; save(); }); }
   const shp=q('#fShape'); if(shp) shp.querySelectorAll('button').forEach(b=>b.onclick=()=>{ pushUndo(); it.shape=b.dataset.v; removeItemObj(it.id); buildItem(it); renderPanel(); save(); });
   const mi=q('#fMinus'), pl=q('#fPlus');
   if(mi){ const upd=()=>{ q('#fFil').textContent=S.meta.filings+' / 6'; syncItem(it); save(); };
@@ -1915,29 +1854,24 @@ function wireBuild(it){
 function deleteSel(){
   const it=state.sel && getItem(state.sel); if(!it || it.fixed) return;
   pushUndo(); S.items=S.items.filter(i=>i.id!==it.id); removeItemObj(it.id); select(null); save();
-  hint('deleted · undo brings it back');
+  hint('deleted');
 }
 const newId=()=>'b'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 let lastLine='antiphon';
 function addBlock(){
   pushUndo();
   const t=controls.target; let x=r1(t.x), z=r1(t.z);
-  const it={id:newId(), kind:'block', shape:'box', label:'new block', note:'', line:lastLine, x, z, rot:0, sx:1, sy:1, sz:1};
-  if(lastLine==='parked'){ it.parkedAt=TODAY; }
+  const it={id:newId(), kind:'block', shape:'box', label:'block', fn:'', figs:[], line:lastLine, x, z, rot:0, sx:1, sy:1, sz:1};
   S.items.push(it); buildItem(it); select(it.id); save();
-  hint('drag to place · two fingers on it to turn and scale');
 }
 
-/* ------------------------------------------------------------------ chrome: mode, legend, tools, hint, modal */
+/* ------------------------------------------------------------------ chrome: mode, legend, tools, hint, hint */
 function setMode(m){
   state.mode=m; document.body.classList.toggle('build', m==='build');
   document.querySelectorAll('#modeSeg button').forEach(b=>b.classList.toggle('on', b.dataset.mode===m));
   if(state.panel==='system') state.panel = state.sel?'item':null;
   if(m==='view' && state.sel==='heat'){}
   renderPanel();
-  hint(m==='build'
-    ? 'drag a block to move it · two fingers on it to turn and scale · handles for precision'
-    : 'tap anything to read it · drag to orbit · pinch to zoom · two fingers to pan');
 }
 document.querySelectorAll('#modeSeg button').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
 $('#brand').onclick=()=>{ state.panel = state.panel==='system' ? (state.sel?'item':null) : 'system'; renderPanel(); };
@@ -1948,7 +1882,7 @@ $('#bUndo').onclick=doUndo;
 
 const legend=$('#legend');
 function renderLegend(){
-  legend.innerHTML = ORDER.map(l=>'<button data-l="'+l+'" class="'+(isHidden(l)?'off':'')+'" title="show or hide '+LINES[l].name+'"><span class="sw '+l+'"></span>'+SHORT[l]+'</button>').join('');
+  legend.innerHTML = ORDER.map(l=>'<button data-l="'+l+'" class="'+(isHidden(l)?'off':'')+'" title="'+LINES[l].name+'"><span class="sw '+l+'"></span>'+SHORT[l]+'</button>').join('');
   legend.querySelectorAll('button').forEach(b=>b.onclick=()=>{
     const l=b.dataset.l, i=S.meta.hidden.indexOf(l);
     if(i>=0) S.meta.hidden.splice(i,1); else S.meta.hidden.push(l);
@@ -1961,44 +1895,40 @@ function renderLegend(){
 let hintT=null;
 function hint(t){ const h=$('#hint'); h.textContent=t; h.style.opacity=1; clearTimeout(hintT); hintT=setTimeout(()=>h.style.opacity=0, 5200); }
 
-// modal
-const modal=$('#modal'), mText=$('#mText'), mStatus=$('#mStatus');
+// scene file
 const sceneJson=()=>JSON.stringify(S,null,2);
-$('#bScene').onclick=()=>{ mText.value=sceneJson(); mStatus.textContent = storageOk ? 'autosave is on for this device.' : 'this browser is not keeping the scene · export a copy.'; modal.classList.remove('hidden'); };
-$('#mClose').onclick=()=>modal.classList.add('hidden');
-modal.addEventListener('pointerdown',e=>{ if(e.target===modal) modal.classList.add('hidden'); });
-$('#mExport').onclick=()=>{
+const fileIn=$('#mFile');
+function exportScene(){
   try{
     const blob=new Blob([sceneJson()],{type:'application/json'}); const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob); a.download='all-inc-venue-'+TODAY+'.json'; document.body.appendChild(a); a.click();
+    a.href=URL.createObjectURL(blob); a.download='all-inc-system-'+TODAY+'.json'; document.body.appendChild(a); a.click();
     setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500);
-    mStatus.textContent='exported. if nothing downloaded, use copy json instead.';
-  }catch(e){ mStatus.textContent='download is blocked here · use copy json.'; }
-};
-$('#mCopy').onclick=async()=>{
-  mText.value=sceneJson();
-  try{ await navigator.clipboard.writeText(mText.value); mStatus.textContent='copied to clipboard.'; }
-  catch(e){ mText.focus(); mText.select(); try{ document.execCommand('copy'); mStatus.textContent='copied.'; }catch(_){ mStatus.textContent='select the text and copy it.'; } }
-};
-$('#mImport').onclick=()=>$('#mFile').click();
-$('#mFile').onchange=e=>{
+    hint('exported');
+  }catch(e){ hint('export blocked'); }
+}
+fileIn.onchange=e=>{
   const f=e.target.files[0]; if(!f) return; const r=new FileReader();
-  r.onload=()=>{ mText.value=String(r.result); loadText(mText.value); }; r.readAsText(f); e.target.value='';
+  r.onload=()=>loadText(String(r.result)); r.readAsText(f); e.target.value='';
 };
-$('#mLoad').onclick=()=>loadText(mText.value);
 function loadText(txt){
   try{ const o=JSON.parse(txt); if(!validScene(o)) throw new Error('not a scene');
     pushUndo(); S=normalise(o); state.sel=null; state.panel=null; rebuildAll(); renderLegend(); renderPanel(); save();
-    mStatus.textContent='scene loaded · '+S.items.length+' objects.'; }
-  catch(e){ mStatus.textContent='that isn’t a valid scene file.'; }
+    hint('imported'); }
+  catch(e){ hint('not a scene file'); }
 }
-let resetArmed=false;
-$('#mReset').onclick=function(){
-  if(!resetArmed){ resetArmed=true; this.classList.add('armed'); this.textContent='tap again to reset'; setTimeout(()=>{ resetArmed=false; this.classList.remove('armed'); this.textContent='reset to default'; },3000); return; }
-  resetArmed=false; this.classList.remove('armed'); this.textContent='reset to default';
-  pushUndo(); S=defaults(); state.sel=null; state.panel=null; rebuildAll(); renderLegend(); renderPanel(); save();
-  mText.value=sceneJson(); mStatus.textContent='default scene restored · undo brings yours back.';
-};
+let resetArmed=null;
+function wireSystem(){
+  const q=s=>panel.querySelector(s);
+  q('#sExport').onclick=exportScene;
+  q('#sImport').onclick=()=>fileIn.click();
+  q('#sReset').onclick=function(){
+    const lbl=this.querySelector('span');
+    if(!resetArmed){ lbl.textContent='confirm'; this.classList.add('armed'); resetArmed=setTimeout(()=>{ resetArmed=null; lbl.textContent='reset'; this.classList.remove('armed'); },3000); return; }
+    clearTimeout(resetArmed); resetArmed=null;
+    pushUndo(); S=defaults(); state.sel=null; state.panel='system'; rebuildAll(); renderLegend(); renderPanel(); save();
+    hint('reset');
+  };
+}
 
 // keyboard
 window.addEventListener('keydown',e=>{
@@ -2006,7 +1936,7 @@ window.addEventListener('keydown',e=>{
   if(tag==='INPUT'||tag==='TEXTAREA') return;
   if((e.metaKey||e.ctrlKey) && e.key.toLowerCase()==='z'){ e.preventDefault(); doUndo(); }
   else if(state.mode==='build' && (e.key==='Delete'||e.key==='Backspace')){ e.preventDefault(); deleteSel(); }
-  else if(e.key==='Escape'){ modal.classList.add('hidden'); select(null); }
+  else if(e.key==='Escape'){ state.panel=null; select(null); }
 });
 
 /* ------------------------------------------------------------------ resize + loop */
@@ -2039,8 +1969,7 @@ resize();
 rebuildAll();
 renderLegend();
 const dv=defaultView(); camera.position.copy(dv.pos); controls.target.copy(dv.target); controls.update();
-$('#saved').textContent = storageOk ? '' : 'not saved here · export to keep';
-hint('tap anything to read it · drag to orbit · pinch to zoom · two fingers to pan');
+$('#saved').textContent = storageOk ? '' : 'not saved';
 requestAnimationFrame(frame);
 window.__twin = {S:()=>S, state, select, setMode, camera, controls, objs, getItem, handles:{rotKnob,sclKnob}};
 })();
