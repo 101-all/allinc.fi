@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-03-pov">
+<html lang="en" data-build="2026-11-03-towers">
 <head>
 <meta charset="utf-8">
 <script>
-/* build 2026-11-03-pov: if a cached copy is showing, fetch the page fresh once and reload */
+/* build 2026-11-03-towers: if a cached copy is showing, fetch the page fresh once and reload */
 (function(){ try{ var b=document.documentElement.getAttribute('data-build');
   fetch(location.pathname+'?build='+Date.now(),{cache:'no-store'}).then(function(r){return r.text();}).then(function(h){
     var m=h.match(/data-build="([^"]+)"/); if(m && m[1]!==b && sessionStorage.getItem('allinc.rb')!==m[1]){ sessionStorage.setItem('allinc.rb',m[1]); location.reload(); }
@@ -3040,40 +3040,50 @@ function styleItem(it){
 }
 function refreshSelection(){ S.items.forEach(styleItem); }
 
-/* derived: all link. short streaks of light, straight from device to device, a burst about once a second; only the essential paths */
-const LK={speed:170, burst:2, gap:0.04, r:0.011};
+/* derived: all link. short streaks of light between each device and its nearest link tower; quiet by default, dense when all link is chosen */
+const LK={speed:170, burst:2, gap:0.04, r:0.011, slots:5};
 const lkMat=reg('link', new THREE.MeshBasicMaterial(Object.assign({color:lit('link').multiplyScalar(0.85), opacity:0.7, toneMapped:false}, ADD)));
 const lkGeo=new THREE.CylinderGeometry(1,0.12,1,6,1).rotateX(Math.PI/2).translate(0,0,-0.5);   // head at 0, tail at -1
-const lkRoutes=[], LK_MAX=(collars.length+sources.length+4)*LK.burst;
+const lkRoutes=[], LK_MAX=((collars.length+sources.length+4)*2+2)*LK.slots*LK.burst;
 const lkMesh=new THREE.InstancedMesh(lkGeo, lkMat, LK_MAX); lkMesh.frustumCulled=false; lkMesh.raycast=noop;
 lkMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); scene.add(lkMesh);
 for(let i=0;i<LK_MAX;i++) lkMesh.setColorAt(i, new THREE.Color().setScalar(1-(i%LK.burst)*0.28));
 const _d=new THREE.Object3D(), _h=V(0,0,0), _t=V(0,0,0), _dir=V(0,0,0), _w=V(0,0,0);
 let lkSeed=0;
-function lkRoute(list,a,b){ const r=lkRoutes[list.n] || (lkRoutes[list.n]={a:V(0,0,0), b:V(0,0,0), period:0.95+((lkSeed++*0.618)%1)*0.4, phase:(lkSeed*0.377)%1}); r.a.copy(a); r.b.copy(b); r.on=true; list.n++; }
+function lkRoute(list,a,b,main){ const r=lkRoutes[list.n] || (lkRoutes[list.n]={a:V(0,0,0), b:V(0,0,0), period:0.95+((lkSeed++*0.618)%1)*0.4, phase:(lkSeed*0.377)%1}); r.a.copy(a); r.b.copy(b); r.main=!!main; list.n++; }
 function devicePoint(kind, x,y,z){ const it=S.items.find(i=>i.kind===kind); if(!it || isHidden(it.line)) return null; const o=objs.get(it.id); o.group.updateMatrixWorld(true); return o.group.localToWorld(V(x,y,z)); }
+// every path runs through the two link towers at the downstage corners: device -> nearest tower -> device, both ways
+const towers=[V(0,0,0),V(0,0,0)], _e=[];
+function viaTower(list,p,main){ const w=p.distanceTo(towers[0])<=p.distanceTo(towers[1]) ? towers[0] : towers[1]; lkRoute(list,p,w,main); lkRoute(list,w,p,main); }
 function updateLink(t){
   const lk=S.items.find(i=>i.kind==='link'), on=!!lk && !isHidden('link'); lkMesh.visible=on; if(!on) return;
-  const ai=S.items.find(i=>i.kind==='act'), vo=ai&&objs.get(ai.id), act=vo?ACT_DEV:null, foh=devicePoint('antiphon',0,0.97,0), list={n:0};
-  if(act){
-    if(vo.mic){ vo.mic.getWorldPosition(_w); lkRoute(list, _w, act); }   // the vocalist's handheld mic to the show device
-    collars.forEach(c=>lkRoute(list, act, _w.copy(c).setY(c.y+0.22)));   // show device to each performer's in-ears
-    if(vo.ear){ vo.ear.getWorldPosition(_w); lkRoute(list, act, _w); }   // and to the vocalist's
-    if(foh){ lkRoute(list, act, foh); lkRoute(list, foh, act); }        // stage to foh and back
-  }
+  const tl=devicePoint('link',-9.6,3.2,0), tr=devicePoint('link',9.6,3.2,0); towers[0].copy(tl); towers[1].copy(tr);
+  const ai=S.items.find(i=>i.kind==='act'), vo=ai&&objs.get(ai.id), foh=devicePoint('antiphon',0,0.97,0), list={n:0};
+  if(vo && vo.mic){ vo.mic.getWorldPosition(_w); viaTower(list,_w,true); }    // the vocalist's handheld mic
+  if(vo && vo.ear){ vo.ear.getWorldPosition(_w); viaTower(list,_w,false); }   // and in-ears
+  if(vo) viaTower(list,ACT_DEV,true);                                        // the show device by the decks
+  if(foh) viaTower(list,foh,true);                                           // foh
+  collars.forEach(c=>viaTower(list,_w.copy(c).setY(c.y+0.22),false));       // each player's in-ears
+  sources.forEach(c=>viaTower(list,c,false));                                // instruments
+  lkRoute(list,towers[0],towers[1],true); lkRoute(list,towers[1],towers[0],true);   // tower to tower
+  // quiet by default: the main paths, one pulse each; with all link chosen every path runs, several pulses each
+  const h=lineH.link, slots=1+Math.round(h*(LK.slots-1));
   let k=0;
   for(let i=0;i<list.n;i++){
-    const r=lkRoutes[i], len=r.a.distanceTo(r.b), travel=Math.max(0.09, len/LK.speed), L=Math.min(0.8, len*0.12);
+    const r=lkRoutes[i]; if(!r.main && h<0.3) continue;
+    const len=r.a.distanceTo(r.b), travel=Math.max(0.09, len/LK.speed), L=Math.min(0.8, len*0.12);
     _dir.subVectors(r.b,r.a).normalize();
-    const tc=((t+r.phase*r.period)%r.period);
-    for(let j=0;j<LK.burst;j++,k++){
-      const tk=tc-j*LK.gap, head=Math.min(len, tk/travel*len), tail=Math.max(0, tk/travel*len-L);
-      if(tk<0 || tail>=len){ _d.scale.set(0,0,0); _d.position.set(0,-99,0); }
-      else {
-        _h.copy(r.a).addScaledVector(_dir, head);
-        _d.position.copy(_h); _d.lookAt(_t.copy(_h).add(_dir)); _d.scale.set(LK.r, LK.r, Math.max(0.001, head-tail));
+    for(let s2=0;s2<slots;s2++){
+      const tc=((t+r.phase*r.period+s2*r.period/slots)%r.period);
+      for(let j=0;j<LK.burst;j++,k++){
+        const tk=tc-j*LK.gap, head=Math.min(len, tk/travel*len), tail=Math.max(0, tk/travel*len-L);
+        if(tk<0 || tail>=len){ _d.scale.set(0,0,0); _d.position.set(0,-99,0); }
+        else {
+          _h.copy(r.a).addScaledVector(_dir, head);
+          _d.position.copy(_h); _d.lookAt(_t.copy(_h).add(_dir)); _d.scale.set(LK.r, LK.r, Math.max(0.001, head-tail));
+        }
+        _d.updateMatrix(); lkMesh.setMatrixAt(k, _d.matrix);
       }
-      _d.updateMatrix(); lkMesh.setMatrixAt(k, _d.matrix);
     }
   }
   lkMesh.count=k; lkMesh.instanceMatrix.needsUpdate=true;
