@@ -3,24 +3,19 @@
 <head>
 <meta charset="utf-8">
 <script>
-/* all words and figures on this page live here.
-   public build: set `confidential` to null. nothing else needs to change. */
+/* all words on this page live here. */
 window.ALLINC = {
   title: 'all inc.',
   lines: {
-    act:      {name:'act',      line:'act runs the show.'},
-    link:     {name:'link',     line:'link carries the signal.'},
-    antiphon: {name:'antiphon', line:'antiphon reads the room.'}
+    act:      {name:'all act',      line:'digital live performance system', status:['EU pilot · 500+ shows', 'EU + US H1 2027']},
+    link:     {name:'all link',     line:'next-generation optical wireless', status:['6 patents + licensing', 'H2 2027']},
+    antiphon: {name:'all antiphon', line:'AI-supported LLM for autonomous and remote audio and AoIP show control', status:['H2 2027']}
   },
   clocks: ['Europe/Helsinki', 'America/Los_Angeles'],   // remote mixing, two time zones
   ui: {legend:'lines', build:'build', close:'close', undo:'undo', block:'block', deleted:'deleted', fixed:'fixed',
        name:'name', figure:'figure', line:'line', shape:'shape', size:'size', width:'width', depth:'depth', height:'height', turn:'turn',
        duplicate:'duplicate', del:'delete', filed:'filed'},
-  confidential: {
-    act:      {state:'live',   figure:'250+ shows'},
-    antiphon: {state:'next',   figure:'q1 2027'},
-    link:     {state:'locked', figure:'{n} / {of} filed', filings:0, of:6}
-  }
+  footer: '© all inc. · Palo Alto, California · all rights reserved'
 };
 </script>
 <meta name="robots" content="noindex, nofollow, noarchive">
@@ -51,6 +46,7 @@ body.ready .chrome{opacity:1}
 .lbl.sel img{transform:scale(1.2) translateY(-1px)}
 .lbl.dim{opacity:.22}
 #legend{position:fixed;left:50%;bottom:calc(var(--sb) + 16px);transform:translateX(-50%);display:flex;gap:2px;padding:4px;border-radius:14px;z-index:5}
+#foot{position:fixed;left:calc(var(--sl) + 22px);bottom:calc(var(--sb) + 18px);font-size:11px;line-height:16px;color:var(--mute);z-index:4;pointer-events:none;white-space:nowrap}
 #legend button{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:10px;position:relative;transition:opacity .3s,background .3s}
 #legend button img{width:22px;height:22px;display:block}
 #legend button:after{content:"";position:absolute;left:50%;bottom:3px;width:3px;height:3px;margin-left:-1.5px;border-radius:50%;background:var(--c);opacity:0;transition:opacity .3s}
@@ -84,6 +80,8 @@ body:not(.build) #panel{width:auto;min-width:0;max-width:260px}
 .x{width:36px;height:36px;margin:-8px -10px -8px 0;display:flex;align-items:center;justify-content:center;border-radius:10px;color:#aaa}
 #panel h2{font-size:15px;font-weight:600;letter-spacing:-.01em;margin:0;line-height:1.2}
 #panel p.fn{font-size:12.5px;line-height:1.35;color:var(--mute);margin:5px 0 0 29px;font-variant-numeric:tabular-nums}
+#panel p.ds{font-size:12.5px;line-height:1.35;color:rgba(255,255,255,.86);margin:7px 0 0 29px}
+#panel p.ds+p.fn{margin-top:2px}
 #panel .ph+h2{margin-top:8px}
 .fl{display:block;font-size:11px;font-weight:500;color:var(--mute);margin:12px 0 5px}
 .in{width:100%;font:inherit;font-size:16px;color:var(--ink);background:rgba(255,255,255,.06);border:.5px solid rgba(255,255,255,.16);border-radius:9px;padding:9px 10px;outline:none;-webkit-user-select:text;user-select:text}
@@ -100,6 +98,10 @@ textarea.in{resize:vertical;min-height:64px;line-height:1.4}
 .pill.danger{color:var(--ink)}
 .step{display:flex;align-items:center;gap:10px}
 .step button{width:40px;height:36px;border-radius:9px;border:.5px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);font-size:16px}
+@media (max-width:720px){
+ #foot{left:0;right:0;text-align:center;bottom:calc(var(--sb) + 8px);font-size:10px}
+ #legend{bottom:calc(var(--sb) + 30px)}
+}
 @media (max-width:640px){
  #panel,body:not(.build) #panel{left:calc(var(--sl) + 12px);right:calc(var(--sr) + 12px);top:auto;bottom:calc(var(--sb) + 76px);width:auto;max-width:none;max-height:52%;border-radius:16px}
  body.build #panel{bottom:calc(var(--sb) + 124px);max-height:46%}
@@ -115,6 +117,7 @@ textarea.in{resize:vertical;min-height:64px;line-height:1.4}
 
 <div id="brand" class="chrome">all inc.</div>
 <div id="legend" class="glass chrome" role="toolbar"></div>
+<div id="foot" class="chrome"></div>
 <button id="bBuild" class="glass chrome" aria-label="build"><svg class="i" viewBox="0 0 20 20"><path d="M3.5 16.5l3.2-.8 8.6-8.6a1.7 1.7 0 0 0-2.4-2.4L4.3 13.3z"/><path d="M11.6 6l2.4 2.4"/></svg></button>
 
 <div id="buildtools">
@@ -2142,7 +2145,7 @@ textarea.in{resize:vertical;min-height:64px;line-height:1.4}
 
 /* ------------------------------------------------------------------ system */
 const CFG = window.ALLINC, CONF = CFG.confidential || null, UI = CFG.ui;
-document.title = CFG.title; document.getElementById('brand').textContent = CFG.title;
+document.title = CFG.title; document.getElementById('brand').textContent = CFG.title; document.getElementById('foot').textContent = CFG.footer||'';
 const LINES = CFG.lines;
 const ORDER = ['act','link','antiphon'];
 const SHORT = {act:LINES.act.name, antiphon:LINES.antiphon.name, link:LINES.link.name};
@@ -2151,7 +2154,7 @@ const SHORT = {act:LINES.act.name, antiphon:LINES.antiphon.name, link:LINES.link
 const Y = 0xf6cc44, BG = 0x000000;
 const COL = {act:0x1434b8, link:0x6cc0ff, antiphon:0x2e9be6};
 const GAIN = {act:1, link:1.3, antiphon:1.45};     // how far each line's light sits above white, i.e. how much it blooms
-const KEY = 'allinc.venue.v6';
+const KEY = 'allinc.venue.v7';
 
 // line icons: the marks from the brand sheets, kept as files in brand/
 const ICON = {};
@@ -2160,7 +2163,7 @@ ORDER.forEach(l=>{ ICON[l]='<img src="brand/'+l+'-icon.svg" alt="" draggable="fa
 /* ------------------------------------------------------------------ default scene */
 function defaults(){
   const items = [
-    {id:'act',      kind:'act',      label:'', line:'act',      x:0,   z:-19.6, rot:0},
+    {id:'act',      kind:'act',      label:'', line:'act',      x:0,   z:1.2,   rot:0},
     {id:'antiphon', kind:'antiphon', label:'', line:'antiphon', x:0.6, z:32.4,  rot:0, fixed:true},
     {id:'link',     kind:'link',     label:'', line:'link',     x:0,   z:-14.4, rot:0, fixed:true}
   ];
@@ -2302,10 +2305,12 @@ const M = {
   grille: new THREE.MeshStandardMaterial({color:0x2a2a2a, roughness:1}),
   phone:  new THREE.MeshBasicMaterial({color:0xffffff, toneMapped:false, side:THREE.DoubleSide})
 };
+const lin = h=>new THREE.Color(h).convertSRGBToLinear();
 const L = {
-  steel: new THREE.LineBasicMaterial({color:0x2e2e2e}),
-  roof:  new THREE.LineBasicMaterial({color:0x070707}),
-  chain: new THREE.LineBasicMaterial({color:0x141414}),
+  steel: new THREE.LineBasicMaterial({color:lin(0x111111)}),     // trusses: near-black lacing,
+  chord: new THREE.LineBasicMaterial({color:lin(0x1e1e1e)}),     // chords a shade lighter, so the edges just read
+  roof:  new THREE.LineBasicMaterial({color:lin(0x121212)}),
+  chain: new THREE.LineBasicMaterial({color:lin(0x1a1a1a)}),
   edge:  new THREE.LineBasicMaterial({color:0x2a2a2a}),
   faint: new THREE.LineBasicMaterial({color:0x0e0e0e}),
   rail:  new THREE.LineBasicMaterial({color:0x262626})
@@ -2316,7 +2321,6 @@ L.inst = new THREE.LineBasicMaterial({color:0x1c1c1c});
 /* ------------------------------------------------------------------ line colours: one accent per line, dimmable as a set */
 const LINE_MATS = {act:[], link:[], antiphon:[]};
 const partHits = [];                       // invisible boxes that map a tap to a line
-const lin = h=>new THREE.Color(h).convertSRGBToLinear();
 const ADD = {blending:THREE.AdditiveBlending, depthWrite:false, toneMapped:false};
 function reg(line, mat, e0, e1){ mat.transparent=true; mat.userData.base=mat.opacity; mat.userData.e0=e0||0; mat.userData.e1=e1==null?0:e1; LINE_MATS[line].push(mat); return mat; }
 const lit = l=>lin(COL[l]).multiplyScalar(GAIN[l]);
@@ -2399,7 +2403,7 @@ function hangFrom(p, bridle){
 }
 
 /* ------------------------------------------------------------------ box truss (line geometry) */
-const trussLines=[];
+const trussLines=[], trussChords=[];
 function truss(a, b, s){
   s = s||0.52;
   const d = b.clone().sub(a), len = d.length(); d.normalize();
@@ -2407,7 +2411,7 @@ function truss(a, b, s){
   const u = new THREE.Vector3().crossVectors(d, up).normalize(), v = new THREE.Vector3().crossVectors(u, d).normalize();
   const c = [[-1,-1],[1,-1],[1,1],[-1,1]].map(([i,j])=>u.clone().multiplyScalar(i*s/2).add(v.clone().multiplyScalar(j*s/2)));
   const at = (t,k)=>a.clone().addScaledVector(d,t).add(c[k]);
-  for(let k=0;k<4;k++) push(trussLines, at(0,k), at(len,k));
+  for(let k=0;k<4;k++) push(trussChords, at(0,k), at(len,k));
   const n = Math.max(1, Math.round(len/s));
   for(let i=0;i<=n;i++){
     const t=i*len/n;
@@ -2432,7 +2436,7 @@ truss(V(-8.4,11.4,T3z), V(8.4,11.4,T3z));   fixtureRow(V(-8,0,T3z),V(8,0,T3z),5,
 // truss square over the b-stage
 [[-5,-2.2,5,-2.2],[-5,4.2,5,4.2],[-5,-2.2,-5,4.2],[5,-2.2,5,4.2]].forEach(([x0,z0,x1,z1])=>truss(V(x0,10.6,z0),V(x1,10.6,z1),0.45));
 fixtureRow(V(-4.5,0,-2.2),V(4.5,0,-2.2),4,10.2); fixtureRow(V(-4.5,0,4.2),V(4.5,0,4.2),4,10.2);
-segs(trussLines, L.steel);
+segs(trussLines, L.steel); segs(trussChords, L.chord);
 [[-12,T1z],[-4,T1z],[4,T1z],[12,T1z],[-9.5,T2z],[0,T2z],[9.5,T2z],[-8,T3z],[0,T3z],[8,T3z],[-5,-2.2],[5,-2.2],[-5,4.2],[5,4.2]]
   .forEach(([x,z],i)=>hangFrom(V(x, i<4?13.7:i<7?12.7:i<10?11.7:10.85, z), i%2===0));
 
@@ -2802,8 +2806,8 @@ function styleItem(it){
 function refreshSelection(){ S.items.forEach(styleItem); }
 
 /* derived: all link. short streaks of light, straight from device to device, a burst about once a second */
-const LK={speed:150, burst:3, gap:0.05, r:0.026};
-const lkMat=reg('link', new THREE.MeshBasicMaterial(Object.assign({color:lit('link').multiplyScalar(1.6), toneMapped:false}, ADD)));
+const LK={speed:170, burst:3, gap:0.04, r:0.011};
+const lkMat=reg('link', new THREE.MeshBasicMaterial(Object.assign({color:lit('link').multiplyScalar(0.85), opacity:0.7, toneMapped:false}, ADD)));
 const lkGeo=new THREE.CylinderGeometry(1,0.12,1,6,1).rotateX(Math.PI/2).translate(0,0,-0.5);   // head at 0, tail at -1
 const lkRoutes=[], LK_MAX=(collars.length+sources.length+2)*LK.burst;
 const lkMesh=new THREE.InstancedMesh(lkGeo, lkMat, LK_MAX); lkMesh.frustumCulled=false; lkMesh.raycast=noop;
@@ -2823,7 +2827,7 @@ function updateLink(t){
   }
   let k=0;
   for(let i=0;i<list.n;i++){
-    const r=lkRoutes[i], len=r.a.distanceTo(r.b), travel=Math.max(0.09, len/LK.speed), L=Math.min(2.4, len*0.3);
+    const r=lkRoutes[i], len=r.a.distanceTo(r.b), travel=Math.max(0.09, len/LK.speed), L=Math.min(0.8, len*0.12);
     _dir.subVectors(r.b,r.a).normalize();
     const tc=((t+r.phase*r.period)%r.period);
     for(let j=0;j<LK.burst;j++,k++){
@@ -3228,6 +3232,10 @@ function renderPanel(){
 function wireClose(){ const x=panel.querySelector('.x'); if(x) x.onclick=()=>select(null); }
 function viewHtml(it){
   const name = it.kind==='block' ? (it.label||UI.block) : LINES[it.line].name;
+  if(it.kind!=='block'){                                   // name, what it is, where it stands
+    const L=LINES[it.line];
+    return '<div class="pi">'+ICON[it.line]+'<h2>'+esc(name)+'</h2></div><p class="ds">'+esc(L.line)+'</p>'+(L.status&&L.status.length?'<p class="fn">'+esc(L.status.join(' · '))+'</p>':'');
+  }
   return '<div class="pi">'+ICON[it.line]+'<h2>'+esc(name)+'</h2></div>'+(stateOf(it)?'<p class="fn">'+esc(stateOf(it))+'</p>':'');
 }
 function rng(key,label,val,min,max,step,unit){
@@ -3388,7 +3396,7 @@ flyTo(dv, 5200, true);
 host.addEventListener('pointerdown', ()=>{ if(tween && tween.ease) tween=null; }, true);
 host.addEventListener('wheel', ()=>{ if(tween && tween.ease) tween=null; }, {passive:true, capture:true});
 requestAnimationFrame(t=>{ lastT=t; document.body.classList.add('ready'); frame(t); });
-window.__twin = {setBloom:b=>{ composer = b ? (composer||makeComposer()) : null; if(composer) resize(); }, S:()=>S, state, select, setMode, camera, controls, objs, getItem, handles:{rotKnob,sclKnob}, renderer, bloom:()=>!!composer, clocks};
+window.__twin = {lk:()=>lkMesh, setBloom:b=>{ composer = b ? (composer||makeComposer()) : null; if(composer) resize(); }, S:()=>S, state, select, setMode, camera, controls, objs, getItem, handles:{rotKnob,sclKnob}, renderer, bloom:()=>!!composer, clocks};
 })();
 </script>
 </body>
