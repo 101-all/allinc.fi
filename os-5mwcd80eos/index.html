@@ -1,7 +1,14 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-build="2026-11-03-bowl">
 <head>
 <meta charset="utf-8">
+<script>
+/* build 2026-11-03-bowl: if a cached copy is showing, fetch the page fresh once and reload */
+(function(){ try{ var b=document.documentElement.getAttribute('data-build');
+  fetch(location.pathname+'?build='+Date.now(),{cache:'no-store'}).then(function(r){return r.text();}).then(function(h){
+    var m=h.match(/data-build="([^"]+)"/); if(m && m[1]!==b && sessionStorage.getItem('allinc.rb')!==m[1]){ sessionStorage.setItem('allinc.rb',m[1]); location.reload(); }
+  }).catch(function(){}); }catch(e){} })();
+</script>
 <script>
 /* all words on this page live here. */
 window.ALLINC = {
@@ -2158,7 +2165,7 @@ const SHORT = {act:LINES.act.name, antiphon:LINES.antiphon.name, link:LINES.link
 const Y = 0xf6cc44, BG = 0x000000;
 const COL = {act:0x1434b8, link:0x6cc0ff, antiphon:0x2e9be6};
 const GAIN = {act:1, link:1.3, antiphon:1.45};     // how far each line's light sits above white, i.e. how much it blooms
-const KEY = 'allinc.venue.v7';
+const KEY = 'allinc.venue.v8';
 
 // line icons: the marks from the brand sheets, kept as files in brand/
 const ICON = {};
@@ -2288,10 +2295,10 @@ const V=(x,y,z)=>new THREE.Vector3(x,y,z);
 const DECK = 1.8;
 
 /* ------------------------------------------------------------------ light */
-// tungsten on the stage and a warm spill into the front rows; the room stays dark
-const WARM = 0xffb070;
-scene.add(new THREE.HemisphereLight(0xf6eee4, 0x0a0705, 0.24));
-const key = new THREE.DirectionalLight(0xffe4c8, 0.34);
+// neutral warm-white on the stage, a faint spill on the front rows; the room stays dark
+const WARM = 0xffd2a8;                                        // about 4200 K, linear
+scene.add(new THREE.HemisphereLight(0xf2f2f2, 0x060606, 0.22));
+const key = new THREE.DirectionalLight(0xfff4ea, 0.3);
 key.position.set(-28, 46, 30); key.target.position.set(0, 0, 4);
 key.castShadow = true;
 key.shadow.mapSize.set(LOW?1024:2048, LOW?1024:2048);
@@ -2299,11 +2306,11 @@ Object.assign(key.shadow.camera, {left:-52, right:52, top:52, bottom:-52, near:1
 key.shadow.bias = -0.0006; key.shadow.normalBias = 0.04;
 scene.add(key, key.target);
 const SPOTS = [[-7,-19],[-2.5,-19.5],[2.5,-19.5],[7,-19],[0,-8],[0,1]].map(([x,z],i)=>{
-  const s = new THREE.SpotLight(WARM, i<4?1.8:2.2, 34, 0.32, 0.65, 1.4);
+  const s = new THREE.SpotLight(WARM, i<4?1.25:1.6, 34, 0.32, 0.65, 1.4);
   s.position.set(x*0.9, 13.4, i<4?-14.5:z-1.5); s.target.position.set(x, DECK, z);
   scene.add(s, s.target); return s;
 });
-const spill = new THREE.SpotLight(0xff9a50, 1.0, 44, 0.8, 1, 1.5);
+const spill = new THREE.SpotLight(0xffe6d0, 0.45, 44, 0.8, 1, 1.5);
 spill.position.set(0, 12.6, -11); spill.target.position.set(0, 0, 5); scene.add(spill, spill.target);
 
 /* ------------------------------------------------------------------ materials */
@@ -2317,9 +2324,9 @@ const M = {
   crowd:  new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.95}),
   seat:   new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.95}),
   tier:   new THREE.MeshStandardMaterial({color:0x111111, roughness:0.85}),
-  figure: new THREE.MeshStandardMaterial({color:lin(0xb8aea1), roughness:0.9}),
+  figure: new THREE.MeshStandardMaterial({color:lin(0xa6a6a6), roughness:0.9}),
   pa:     new THREE.MeshStandardMaterial({color:0x191919, roughness:0.7, metalness:0.1}),
-  lamp:   new THREE.MeshBasicMaterial({color:new THREE.Color(1.3,1.02,0.7), toneMapped:false}),
+  lamp:   new THREE.MeshBasicMaterial({color:new THREE.Color(1.15,1.12,1.06), toneMapped:false}),
   glow:   new THREE.MeshBasicMaterial({color:0x8a8a8a, toneMapped:false}),
   yellow: new THREE.MeshBasicMaterial({color:0x121212, toneMapped:false}),
   inst:   new THREE.MeshStandardMaterial({color:0x242424, roughness:0.5}),
@@ -2352,7 +2359,7 @@ const MAT = {};
 ORDER.forEach(l=>{
   const c=lin(COL[l]);
   MAT[l] = {
-    accent: reg(l, new THREE.MeshStandardMaterial({color:lin(0xe2d8ca), emissive:c, roughness:0.88}), 0, 0.55),   // people: warm off-white, take the line's blue on focus
+    accent: reg(l, new THREE.MeshStandardMaterial({color:lin(0xcdcdcd), emissive:c, roughness:0.88}), 0, 0.55),   // people: light grey, take the line's blue on focus
     dark:   reg(l, new THREE.MeshStandardMaterial({color:0x151515, roughness:0.45, metalness:0.2})),
     block:  reg(l, new THREE.MeshStandardMaterial({color:0x5a5a5a, emissive:c, roughness:0.7}), 0.12, 0.5),
     glow:   reg(l, new THREE.MeshBasicMaterial({color:lit(l), toneMapped:false})),
@@ -2386,9 +2393,9 @@ const push = (a,p,q)=>a.push(p.x,p.y,p.z,q.x,q.y,q.z);
 function outline(a, pts, y){ for(let i=0;i<pts.length;i++){ const p=pts[i], q=pts[(i+1)%pts.length]; a.push(p[0],y,p[1],q[0],y,q[1]); } }
 
 /* ------------------------------------------------------------------ room */
-mesh(new THREE.PlaneGeometry(96,100).rotateX(-Math.PI/2), M.floor, 0, 0, 14, {noCast:true});
+mesh(new THREE.PlaneGeometry(116,136).rotateX(-Math.PI/2), M.floor, 0, 0, 12, {noCast:true});
 (function(){                                                  // venue volume, so "outside" reads
-  const a=[], c=[[-48,-36],[48,-36],[48,64],[-48,64]];
+  const a=[], c=[[-57,-55],[57,-55],[57,79],[-57,79]];
   outline(a, c, 0.02); outline(a, c, 27);
   c.forEach(([x,z])=>a.push(x,0,z, x,27,z));
   segs(a, L.roof);
@@ -2396,10 +2403,10 @@ mesh(new THREE.PlaneGeometry(96,100).rotateX(-Math.PI/2), M.floor, 0, 0, 14, {no
 (function(){                                                  // warm wash over the floor
   const c=document.createElement('canvas'); c.width=c.height=256; const g=c.getContext('2d');
   const r=g.createRadialGradient(128,128,0,128,128,128);
-  r.addColorStop(0,'rgba(255,176,104,.5)'); r.addColorStop(0.5,'rgba(255,160,90,.14)'); r.addColorStop(1,'rgba(255,150,80,0)');
+  r.addColorStop(0,'rgba(255,250,244,.4)'); r.addColorStop(0.5,'rgba(255,250,244,.1)'); r.addColorStop(1,'rgba(255,250,244,0)');
   g.fillStyle=r; g.fillRect(0,0,256,256);
   const t=new THREE.CanvasTexture(c); c.tex=t; t.encoding=THREE.sRGBEncoding;
-  const p=new THREE.Mesh(new THREE.PlaneGeometry(60,60).rotateX(-Math.PI/2), new THREE.MeshBasicMaterial({map:t, transparent:true, opacity:0.16, depthWrite:false, blending:THREE.AdditiveBlending, toneMapped:false}));
+  const p=new THREE.Mesh(new THREE.PlaneGeometry(60,60).rotateX(-Math.PI/2), new THREE.MeshBasicMaterial({map:t, transparent:true, opacity:0.1, depthWrite:false, blending:THREE.AdditiveBlending, toneMapped:false}));
   p.position.set(0,0.015,2); p.raycast=noop; arch.add(p);
 })();
 box(30, 14, 0.4, M.black, 0, 7, -27.2);                       // upstage drape
@@ -2407,8 +2414,8 @@ box(30, 14, 0.4, M.black, 0, 7, -27.2);                       // upstage drape
 // roof grid: one level, 6 m bays
 (function(){
   const a=[];
-  for(let x=-42; x<=42; x+=6) a.push(x,27,-34, x,27,62);
-  for(let z=-30; z<=60; z+=6) a.push(-45,27,z, 45,27,z);
+  for(let x=-54; x<=54; x+=6) a.push(x,27,-54, x,27,78);
+  for(let z=-54; z<=78; z+=6) a.push(-54,27,z, 54,27,z);
   segs(a, L.roof);
 })();
 
@@ -2502,26 +2509,15 @@ box(15.2, 8.9, 0.35, M.black, 0, DECK+0.35+4.45, -25.05);
 [[-11,-12.8,-3,-12.8],[3,-12.8,11,-12.8],[-3,-12.8,-3,-3.2],[3,-12.8,3,-3.2],[-5.4,-3.2,-3,-3.2],[3,-3.2,5.4,-3.2],[-5.4,-3.2,-5.4,5.4],[5.4,-3.2,5.4,5.4],[-5.4,5.4,5.4,5.4]]
   .forEach(([x0,z0,x1,z1])=>{ const len=Math.hypot(x1-x0,z1-z0); box(x0===x1?0.45:len, 1.15, x0===x1?len:0.45, M.grey, (x0+x1)/2, 0.575, (z0+z1)/2); });
 
-/* ------------------------------------------------------------------ screens: a soft live image, painted small and scaled up so it stays out of focus */
+/* ------------------------------------------------------------------ screens: dark glass with a slow neutral glow; the wordmark only on the upstage wall */
 const SCREENS=[];
 function screenMat(w, h, main){
   const c=document.createElement('canvas'); c.width=w; c.height=h; const g=c.getContext('2d');
   const paint=()=>{
-    const sm=document.createElement('canvas'); sm.width=40; sm.height=22; const q=sm.getContext('2d'); q.scale(40/96, 22/54);
-    const bg=q.createRadialGradient(48,main?40:30,2,48,30,62);
-    if(main){ bg.addColorStop(0,'#4a2e18'); bg.addColorStop(0.55,'#1c120b'); bg.addColorStop(1,'#070504'); }
-    else    { bg.addColorStop(0,'#b5793f'); bg.addColorStop(0.45,'#4d2e17'); bg.addColorStop(1,'#0a0705'); }
-    q.fillStyle=bg; q.fillRect(0,0,96,54);
-    if(!main){                                                // the artist, backlit: head, shoulders, one arm up
-      q.fillStyle='#0d0907';
-      q.beginPath(); q.ellipse(48,25,6.4,7.8,0,0,Math.PI*2); q.fill();
-      q.beginPath(); q.moveTo(20,54); q.quadraticCurveTo(25,37,40,35); q.lineTo(56,35); q.quadraticCurveTo(71,37,76,54); q.closePath(); q.fill();
-      q.beginPath(); q.moveTo(63,38); q.lineTo(71,37); q.lineTo(80,4); q.lineTo(74,3); q.closePath(); q.fill();
-    }
-    const md=document.createElement('canvas'); md.width=w/4; md.height=h/4; const mg=md.getContext('2d');
-    mg.imageSmoothingEnabled=true; mg.imageSmoothingQuality='high'; mg.drawImage(sm,0,0,md.width,md.height);
-    g.imageSmoothingEnabled=true; g.imageSmoothingQuality='high'; g.drawImage(md,0,0,w,h);
-    if(main){ g.fillStyle='rgba(240,228,212,.86)'; g.textAlign='center'; g.textBaseline='middle'; g.font='500 '+Math.round(h*0.12)+'px Inter, -apple-system, sans-serif'; g.fillText(CFG.title, w/2, h*0.34); }
+    const bg=g.createRadialGradient(w*0.5,h*0.62,0,w*0.5,h*0.55,w*0.62);
+    bg.addColorStop(0,'#2a2c2f'); bg.addColorStop(0.55,'#111214'); bg.addColorStop(1,'#060606');
+    g.fillStyle=bg; g.fillRect(0,0,w,h);
+    if(main){ g.fillStyle='rgba(236,236,236,.82)'; g.textAlign='center'; g.textBaseline='middle'; g.font='500 '+Math.round(h*0.07)+'px Inter, -apple-system, sans-serif'; g.fillText(CFG.title, w/2, h*0.34); }
     if(c.tex) c.tex.needsUpdate=true;
   };
   paint(); if(main && document.fonts) document.fonts.load('500 80px Inter').then(paint).catch(()=>{});
@@ -2539,7 +2535,7 @@ mesh(new THREE.PlaneGeometry(14.4, 8.1), screenMat(1024, 576, true), 0, DECK+0.3
 
 /* ------------------------------------------------------------------ haze: soft shafts under the stage spots */
 const shaftMat = new THREE.ShaderMaterial({
-  uniforms:{uC:{value:lin(0xffb878).multiplyScalar(0.045)}, uK:{value:1}},
+  uniforms:{uC:{value:lin(0xf4efe8).multiplyScalar(0.028)}, uK:{value:1}},
   vertexShader:'varying float vY; varying float vF; void main(){ vY=uv.y; vec4 mv=modelViewMatrix*vec4(position,1.0); vF=abs(dot(normalize(normalMatrix*normal),normalize(-mv.xyz))); gl_Position=projectionMatrix*mv; }',
   fragmentShader:'uniform vec3 uC; uniform float uK; varying float vY; varying float vF; void main(){ float a=pow(vF,3.0)*(0.15+0.85*vY*vY)*uK; gl_FragColor=vec4(uC*a,1.0);\n#include <encodings_fragment>\n}',
   blending:THREE.AdditiveBlending, transparent:true, depthWrite:false, side:THREE.DoubleSide
@@ -2737,8 +2733,8 @@ box(5.6, 0.85, 0.9, M.black, 0.4, 0.6+0.425, 34.6);
 })();
 
 /* ------------------------------------------------------------------ audience: instanced people, soft clothing, phones, a few hands up */
-const CLOTH=['#1c1a18','#22201d','#292623','#302c28','#36322d','#3d3833','#45403a','#4e4842','#575049','#2a2826','#3a3632','#201e1c'].map(lin);
-const SKIN=['#4f4238','#433830','#5a4a3f','#3a3029','#64544a','#483c34'].map(lin);
+const CLOTH=['#1a1a1a','#202020','#262626','#2c2c2c','#323232','#383838','#3e3e3e','#464646','#4e4e4e','#585858','#2a2a2a','#363636'].map(lin);
+const SKIN=['#4a4a4a','#545454','#5e5e5e','#686868','#424242'].map(lin);
 const pickOf=a=>a[(Math.random()*a.length)|0];
 // the crowd moves on the gpu: each person sways with the bar and lifts a little on the beat, pivoting at the feet
 const SWAY={value:0};
@@ -2754,7 +2750,12 @@ function swayMat(mat){
   };
   return mat;
 }
-swayMat(M.crowd); swayMat(M.phone);
+swayMat(M.crowd);
+// the bowl: an oval around the floor, a lower and an upper tier with a concourse between
+const BOWL={a:29, b:40, cz:12};
+const inBowl=(x,z,m)=> (x/(BOWL.a-m))**2 + ((z-BOWL.cz)/(BOWL.b-m))**2 < 1;
+// phone lights: tiny cool points, scattered sparsely, each with its own slow twinkle
+const PHONES=[], TW={value:0};
 const blobTex=(function(){
   const c=document.createElement('canvas'); c.width=c.height=64; const g=c.getContext('2d');
   const r=g.createRadialGradient(32,32,0,32,32,32); r.addColorStop(0,'rgba(0,0,0,.62)'); r.addColorStop(0.5,'rgba(0,0,0,.3)'); r.addColorStop(1,'rgba(0,0,0,0)');
@@ -2763,25 +2764,24 @@ const blobTex=(function(){
 const blobMat=new THREE.MeshBasicMaterial({map:blobTex, transparent:true, depthWrite:false, toneMapped:false});
 (function(){
   const pts=[];
-  const out=(x,z)=> (z<-12.4) || (Math.abs(x)<3.4 && z<-2.8) || (Math.abs(x)<5.8 && z<5.8) || (Math.abs(x)<8.6 && z>26.9 && z<39.1) || Math.abs(x)>27;
-  for(let z=-12; z<=47; z+=0.64) for(let x=-27; x<=27; x+=0.6){
+  const out=(x,z)=> (z<-12.4) || (Math.abs(x)<3.4 && z<-2.8) || (Math.abs(x)<5.8 && z<5.8) || (Math.abs(x)<8.6 && z>26.9 && z<39.1) || !inBowl(x,z,2);
+  for(let z=-12; z<=50; z+=0.64) for(let x=-27; x<=27; x+=0.6){
     const jx=x+(Math.random()-0.5)*0.24, jz=z+(Math.random()-0.5)*0.24;
     if(out(jx,jz)) continue;
     const back = Math.max(0,(z-8)/40);
     if(Math.random() < 0.12+back*0.45) continue;
-    const ph=Math.random()<0.04, up=!ph && jz<10 && Math.random()<(jz<2?0.14:0.06) ? (Math.random()<0.4?2:1) : 0;
+    const ph=Math.random()<0.012, up=jz<10 && Math.random()<(jz<2?0.14:0.06) ? (Math.random()<0.4?2:1) : 0;
     pts.push({x:jx, z:jz, h:1.22+Math.random()*0.34, r:(Math.random()-0.5)*0.5, lx:(Math.random()-0.5)*0.1, lz:(Math.random()-0.5)*0.1, ph, up, t:Math.random()*1.2});
   }
-  const n=pts.length, np=pts.filter(p=>p.ph).length, na=pts.reduce((k,p)=>k+(p.ph?1:p.up),0);
+  const n=pts.length, na=pts.reduce((k,p)=>k+p.up,0);
   const phase=(im,a)=>im.geometry.setAttribute('aPh', new THREE.InstancedBufferAttribute(a,1));
   const body=new THREE.InstancedMesh(SILHOUETTE, M.crowd, n);
   const head=new THREE.InstancedMesh(HEAD, M.crowd, n);
   const arm=new THREE.InstancedMesh(new THREE.CylinderGeometry(0.04,0.034,0.46,6).translate(0,0.23,0), M.crowd, Math.max(1,na));
-  const phone=new THREE.InstancedMesh(new THREE.PlaneGeometry(0.05,0.09), M.phone, Math.max(1,np));
   const blob=new THREE.InstancedMesh(new THREE.PlaneGeometry(0.9,0.9).rotateX(-Math.PI/2), blobMat, n);
-  const aB=new Float32Array(n), aA=new Float32Array(Math.max(1,na)), aP=new Float32Array(Math.max(1,np));
+  const aB=new Float32Array(n), aA=new Float32Array(Math.max(1,na));
   const m=new THREE.Matrix4(), q=new THREE.Quaternion(), qa=new THREE.Quaternion(), e=new THREE.Euler(), v=V(0,0,0), up=V(0,1,0), one=V(1,1,1), c=new THREE.Color();
-  let k=0, kp=0;
+  let k=0;
   const limb=(from,to,cl,t)=>{ qa.setFromUnitVectors(up, to.clone().sub(from).normalize()); m.compose(from,qa,V(1,from.distanceTo(to)/0.46,1)); arm.setMatrixAt(k,m); arm.setColorAt(k,cl); aA[k]=t; k++; };
   pts.forEach((p,i)=>{
     const base=V(p.x,0,p.z), cl=pickOf(CLOTH);
@@ -2789,21 +2789,16 @@ const blobMat=new THREE.MeshBasicMaterial({map:blobTex, transparent:true, depthW
     m.compose(base,q,V(1,p.h,1)); body.setMatrixAt(i,m); body.setColorAt(i,cl); aB[i]=p.t;
     v.set(0,p.h+0.13,0).applyQuaternion(q).add(base); m.compose(v,q,one); head.setMatrixAt(i,m); head.setColorAt(i,pickOf(SKIN));
     m.makeTranslation(p.x,0.02,p.z); blob.setMatrixAt(i,m);
-    if(p.ph){
-      const sh=V(0.15,p.h-0.07,0).applyQuaternion(q).add(base), ph=V(0.07,p.h+0.36,-0.3).applyQuaternion(q).add(base);
-      limb(sh,ph,cl,p.t);
-      e.set(-0.25,p.r,0,'YXZ'); qa.setFromEuler(e); m.compose(ph,qa,one); phone.setMatrixAt(kp,m); aP[kp]=p.t;
-      const b=0.32+Math.random()*0.36; phone.setColorAt(kp,c.setRGB(b,0.94*b,0.86*b)); kp++;
-    }
+    if(p.ph) PHONES.push(p.x+(Math.random()-0.5)*0.2, p.h+0.42, p.z-0.2);
     for(let j=0;j<p.up;j++){                                  // hands up: one, sometimes both
       const sd=p.up===2 ? (j?-1:1) : (Math.random()<0.5?-1:1);
       const sh=V(sd*0.16,p.h-0.08,0).applyQuaternion(q).add(base), hd=V(sd*(0.22+Math.random()*0.1),p.h+0.5,-0.06-Math.random()*0.12).applyQuaternion(q).add(base);
       limb(sh,hd,cl,p.t);
     }
   });
-  phase(body,aB); phase(head,aB); phase(arm,aA); phase(phone,aP);
-  if(!na) arm.count=0; if(!np) phone.count=0;
-  [body,head,arm,phone,blob].forEach(im=>{ im.raycast=noop; im.castShadow=im!==phone&&im!==blob; im.receiveShadow=im===body; arch.add(im); });
+  phase(body,aB); phase(head,aB); phase(arm,aA);
+  if(!na) arm.count=0;
+  [body,head,arm,blob].forEach(im=>{ im.raycast=noop; im.castShadow=im!==blob; im.receiveShadow=im===body; arch.add(im); });
   blob.castShadow=false; blob.renderOrder=1;
 })();
 
@@ -2819,21 +2814,57 @@ const blobMat=new THREE.MeshBasicMaterial({map:blobTex, transparent:true, depthW
   });
 })();
 
-/* ------------------------------------------------------------------ tiered seating, house right */
+/* ------------------------------------------------------------------ the bowl: stepped rows all the way round, seated people, quiet nosing lines */
 (function(){
-  const rows=17, step=0.92, rise=0.5, x0=31, z0=-22, z1=50;
-  const seats=[];
-  for(let i=0;i<rows;i++){
-    const top=0.6+i*rise, x=x0+i*step;
-    box(step, top, z1-z0, M.tier, x+step/2, top/2, (z0+z1)/2, {noCast:i<rows-1});
-    for(let z=z0+0.4; z<z1-0.3; z+=0.56){ if((Math.abs(z-6)<1.2) || Math.random()<0.3) continue; seats.push([x+0.5, top, z, 0.5+Math.random()*0.35]); }
-  }
-  box(3, 0.4, z1-z0, M.tier, x0+rows*step+1.5, 0.6+rows*rise, (z0+z1)/2);
+  const N=LOW?72:112, rows=[];
+  for(let i=0;i<12;i++) rows.push({d:1+i*0.9, y:1.1+i*0.45, t:0.9, seat:true});      // lower tier
+  rows.push({d:11.8, y:6.05, t:2.6});                                                   // concourse
+  for(let i=0;i<11;i++) rows.push({d:14.4+i*0.95, y:8.2+i*0.62, t:0.95, seat:true});  // upper tier
+  rows.push({d:24.85, y:16.2, t:0.6});                                                  // back wall cap
+  const P=(d,th,y)=>V((BOWL.a+d)*Math.cos(th), y, BOWL.cz+(BOWL.b+d)*Math.sin(th));
+  const pos=[], nose=[];
+  const quad=(p0,p1,p2,p3)=>pos.push(p0.x,p0.y,p0.z, p1.x,p1.y,p1.z, p2.x,p2.y,p2.z, p0.x,p0.y,p0.z, p2.x,p2.y,p2.z, p3.x,p3.y,p3.z);
+  rows.forEach((r,i)=>{
+    const y0=i?rows[i-1].y:0;
+    for(let k=0;k<N;k++){
+      const a0=k/N*Math.PI*2, a1=(k+1)/N*Math.PI*2;
+      quad(P(r.d,a0,y0),P(r.d,a1,y0),P(r.d,a1,r.y),P(r.d,a0,r.y));                    // riser, facing the floor
+      quad(P(r.d,a0,r.y),P(r.d,a1,r.y),P(r.d+r.t,a1,r.y),P(r.d+r.t,a0,r.y));          // tread
+      const p=P(r.d,a0,r.y+0.005), q2=P(r.d,a1,r.y+0.005); nose.push(p.x,p.y,p.z,q2.x,q2.y,q2.z);
+    }
+  });
+  const g=new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos,3)); g.computeVertexNormals();
+  const bowl=new THREE.Mesh(g, new THREE.MeshStandardMaterial({color:0x101010, roughness:0.95, side:THREE.DoubleSide}));
+  bowl.receiveShadow=true; bowl.raycast=noop; arch.add(bowl);
+  segs(nose, new THREE.LineBasicMaterial({color:lin(0x1c1c1c)}));
+  // seated people, facing the stage; the rows behind the stage stay empty
+  const seats=[], fill=LOW?0.34:0.52;
+  rows.forEach(r=>{ if(!r.seat) return;
+    const d=r.d+0.5, rr=Math.sqrt(((BOWL.a+d)**2+(BOWL.b+d)**2)/2), n=Math.floor(Math.PI*2*rr/0.62);
+    for(let k=0;k<n;k++){
+      const th=(k+Math.random()*0.3)/n*Math.PI*2, p=P(d,th,r.y);
+      if(p.z<-20 && Math.abs(p.x)<34) continue;
+      if(Math.random()>fill) continue;
+      seats.push([p.x,p.y,p.z,0.55+Math.random()*0.28, Math.atan2(-p.x, -14-p.z)]);
+      if(Math.random()<0.014) PHONES.push(p.x, p.y+1.0, p.z);
+    }
+  });
   const im=new THREE.InstancedMesh(SILHOUETTE, M.seat, seats.length);
-  im.castShadow=true; im.receiveShadow=true; im.raycast=noop;
+  im.castShadow=false; im.receiveShadow=false; im.raycast=noop;
   const m=new THREE.Matrix4(), q=new THREE.Quaternion();
-  seats.forEach(([x,y,z,h],i)=>{ m.compose(V(x,y,z),q,V(1,h,1)); im.setMatrixAt(i,m); im.setColorAt(i,pickOf(CLOTH)); });
+  seats.forEach(([x,y,z,h,ry],i)=>{ q.setFromAxisAngle(V(0,1,0),ry); m.compose(V(x,y,z),q,V(1,h,1)); im.setMatrixAt(i,m); im.setColorAt(i,pickOf(CLOTH)); });
   arch.add(im);
+})();
+(function(){                                                  // the phone lights
+  const n=PHONES.length/3, ph=new Float32Array(n); for(let i=0;i<n;i++) ph[i]=Math.random();
+  const g=new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(PHONES,3)); g.setAttribute('aPh', new THREE.BufferAttribute(ph,1));
+  const mat=new THREE.ShaderMaterial({
+    uniforms:{uT:TW, uS:{value:2.6*renderer.getPixelRatio()}, map:{value:dotTex}},
+    vertexShader:'attribute float aPh; uniform float uT; uniform float uS; varying float vA; void main(){ float s=0.5+0.5*sin(uT*(0.35+fract(aPh*3.7)*0.7)+aPh*6.283); vA=0.2+0.8*smoothstep(0.3,1.0,s); gl_PointSize=uS; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
+    fragmentShader:'uniform sampler2D map; varying float vA; void main(){ float a=texture2D(map,gl_PointCoord).a*vA; gl_FragColor=vec4(vec3(0.8,0.87,1.0)*a*0.85,1.0);\n#include <encodings_fragment>\n}',
+    blending:THREE.AdditiveBlending, transparent:true, depthWrite:false
+  });
+  const p=new THREE.Points(g, mat); p.raycast=noop; arch.add(p);
 })();
 
 segs(rig, L.chain);
@@ -3033,11 +3064,11 @@ const stSlab = reg('link', new THREE.MeshStandardMaterial({color:lin(0x1e1915), 
 const stWall = reg('link', new THREE.MeshStandardMaterial({color:lin(0x2b2621), roughness:0.95}));
 const stDesk = reg('link', new THREE.MeshStandardMaterial({color:lin(0x151413), roughness:0.6}));
 const stWood = reg('link', new THREE.MeshStandardMaterial({color:lin(0x6a4a32), roughness:0.72}));
-const stFig  = reg('link', new THREE.MeshStandardMaterial({color:lin(0xd6ccbe), roughness:0.88}));
+const stFig  = reg('link', new THREE.MeshStandardMaterial({color:lin(0xcdcdcd), roughness:0.88}));
 const stScr  = reg('link', new THREE.MeshBasicMaterial({color:0x5e6266, toneMapped:false}));
 const stEdge = reg('link', new THREE.LineBasicMaterial({color:0x5c5c5c, opacity:0.14}));
-const stBulb = reg('link', new THREE.MeshBasicMaterial({color:new THREE.Color(1.5,1.1,0.66), toneMapped:false}));
-const stPool = reg('link', new THREE.MeshBasicMaterial(Object.assign({map:dotTex, color:lin(0xffa860), opacity:0.42}, ADD)));
+const stBulb = reg('link', new THREE.MeshBasicMaterial({color:new THREE.Color(1.3,1.2,1.05), toneMapped:false}));
+const stPool = reg('link', new THREE.MeshBasicMaterial(Object.assign({map:dotTex, color:lin(0xffe8d0), opacity:0.22}, ADD)));
 const fibreDots=dotMat('link',2.6,0.7), fibres=[], clocks=[];
 box(0.8, 0.6, 0.5, M.black, 0, 0.3, -28.1);                   // stage box the fibre leaves from
 const handGeo=(w,len)=>new THREE.PlaneGeometry(w,len).translate(0,len/2-0.13,0);
@@ -3091,9 +3122,9 @@ STUDIOS.forEach(st=>{
   const ch=new THREE.Mesh(new THREE.CircleGeometry(CR*1.1,24), proxyMat); ch.userData.line='link'; g.add(ch); partHits.push(ch);
   let fmt=null; try{ fmt=new Intl.DateTimeFormat('en-GB',{timeZone:st.tz, hour:'numeric', minute:'numeric', second:'numeric', hourCycle:'h23'}); }catch(err){}
   clocks.push({g, hh, mh, fmt});
-  // fibre: along the floor from the stage box, then straight up into the room
+  // fibre: from the stage box up the empty bowl behind the stage, then across into the room
   const s=Math.sign(st.x), entry=r.localToWorld(V(0,0,RD/2-0.3)), foot=V(entry.x,0.06,entry.z);
-  const curve=new THREE.CatmullRomCurve3([V(0,0.06,-28.4),V(0,0.06,-36),V(s*10,0.06,-43),V(foot.x*0.8,0.06,foot.z+1.6),foot,V(entry.x,entry.y*0.5,entry.z),V(entry.x,entry.y-0.08,entry.z)], false, 'centripetal');
+  const curve=new THREE.CatmullRomCurve3([V(0,0.06,-28.4),V(0,1.3,-29.1),V(s*0.6,6.4,-40.6),V(s*1.5,16.6,-52.6),V(entry.x*0.5,15.4,-63),V(entry.x,entry.y+1.4,entry.z+1),V(entry.x,entry.y-0.08,entry.z)], false, 'centripetal');
   const pts=curve.getSpacedPoints(320);
   const ln=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), MAT.link.faint); ln.raycast=noop; scene.add(ln);
   const N=40, pos=new Float32Array(N*3), geo=new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
@@ -3123,9 +3154,9 @@ function updateClocks(){
   });
 }
 function updateMotion(t){
-  const b=t*BPM/60*Math.PI*2; SWAY.value=b;
+  const b=t*BPM/60*Math.PI*2; SWAY.value=b; TW.value=t;
   MOVERS.forEach(m=>moveOne(m,b)); objs.forEach(o=>{ if(o.mover) moveOne(o.mover,b); });
-  SCREENS.forEach((m,i)=>m.color.setScalar(0.9+0.1*Math.sin(t*0.3+i*1.7)));
+  SCREENS.forEach((m,i)=>m.color.setScalar(0.88+0.12*Math.sin(t*0.12+i*1.7)));
 }
 function updateDerived(t){ updateLink(t); updateHolo(t); updateFibre(t); updateClocks(); updateMotion(t); }
 
@@ -3514,7 +3545,7 @@ function frame(now){
   if(tween || pointers.size || G) idle=0; else idle+=dt;
   if(idle>6 && !state.sel && state.mode==='view'){                 // slow drift around the view while nobody touches it
     const e=Math.min(1,(idle-6)/5); driftT+=dt*e;
-    camera.position.sub(controls.target).applyAxisAngle(V(0,1,0), 0.085*0.13*Math.cos(driftT*0.13)*e*dt).add(controls.target);
+    camera.position.sub(controls.target).applyAxisAngle(V(0,1,0), 0.06*0.1*Math.cos(driftT*0.1)*e*dt).add(controls.target);
   }
   controls.update();
   updateFocus(dt);
