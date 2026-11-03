@@ -46,13 +46,13 @@ body.ready #view{opacity:1}
 body.ready .chrome{opacity:1}
 #labels{position:fixed;inset:0;pointer-events:none;overflow:hidden}
 .lbl{position:absolute;left:0;top:0;display:flex;flex-direction:column;align-items:center;will-change:transform;transition:opacity .45s ease}
-.lbl svg{width:20px;height:20px;display:block;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.lbl img{width:20px;height:20px;display:block;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
 .lbl:after{content:"";display:block;width:1px;height:9px;margin-top:3px;background:rgba(255,255,255,.32)}
-.lbl.sel svg{transform:scale(1.2) translateY(-1px)}
+.lbl.sel img{transform:scale(1.2) translateY(-1px)}
 .lbl.dim{opacity:.22}
 #legend{position:fixed;left:50%;bottom:calc(var(--sb) + 16px);transform:translateX(-50%);display:flex;gap:2px;padding:4px;border-radius:14px;z-index:5}
 #legend button{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:10px;position:relative;transition:opacity .3s,background .3s}
-#legend button svg{width:22px;height:22px;display:block}
+#legend button img{width:22px;height:22px;display:block}
 #legend button:after{content:"";position:absolute;left:50%;bottom:3px;width:3px;height:3px;margin-left:-1.5px;border-radius:50%;background:var(--c);opacity:0;transition:opacity .3s}
 #legend button[data-l=act]{--c:var(--act)}#legend button[data-l=link]{--c:var(--link)}#legend button[data-l=antiphon]{--c:var(--antiphon)}
 #legend button.on{background:rgba(255,255,255,.07)}
@@ -62,8 +62,7 @@ body.ready .chrome{opacity:1}
 border:.5px solid var(--hair);border-radius:14px}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-action:manipulation;-webkit-appearance:none;appearance:none}
 svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;display:block}
-#brand{position:fixed;top:calc(var(--st) + 20px);left:calc(var(--sl) + 22px);z-index:5;pointer-events:none;line-height:0}
-#brand svg{height:20px;width:auto;display:block}
+#brand{position:fixed;top:calc(var(--st) + 19px);left:calc(var(--sl) + 22px);z-index:5;pointer-events:none;font-size:15px;font-weight:500;letter-spacing:-.01em;line-height:20px}
 #bBuild{position:fixed;top:calc(var(--st) + 12px);right:calc(var(--sr) + 12px);width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--mute);z-index:5;transition:color .2s,background .2s}
 #bBuild svg.i{width:16px;height:16px}
 body.build #bBuild{background:#fff;color:#000}
@@ -72,7 +71,7 @@ body.build #buildtools{display:flex}
 .pill{height:44px;padding:0 16px;display:flex;align-items:center;gap:6px;font-size:13px;border-radius:12px}
 .pill:disabled{opacity:.35}
 .pill.primary{background:#fff;color:#000;border-color:#fff}
-.sw{width:14px;height:14px;display:inline-block;flex:none}.sw svg{width:14px;height:14px;display:block}
+.sw{width:14px;height:14px;display:inline-block;flex:none}.sw img{width:14px;height:14px;display:block}
 #hint{position:fixed;left:50%;bottom:calc(var(--sb) + 76px);transform:translateX(-50%);font-size:12px;color:var(--mute);pointer-events:none;transition:opacity .8s;opacity:0;
 padding:7px 12px;border-radius:10px;background:var(--glass);white-space:nowrap;z-index:4}
 #panel{position:fixed;right:calc(var(--sr) + 12px);top:calc(var(--st) + 60px);width:280px;max-height:calc(100% - var(--st) - var(--sb) - 150px);
@@ -81,7 +80,7 @@ body:not(.build) #panel{width:auto;min-width:0;max-width:260px}
 #panel.hidden{opacity:0;transform:translateY(6px);pointer-events:none}
 .ph{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .tag{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--mute)}
-.pi{display:flex;align-items:center;gap:9px}.pi svg{width:20px;height:20px;flex:none;display:block}
+.pi{display:flex;align-items:center;gap:9px}.pi img{width:20px;height:20px;flex:none;display:block}
 .x{width:36px;height:36px;margin:-8px -10px -8px 0;display:flex;align-items:center;justify-content:center;border-radius:10px;color:#aaa}
 #panel h2{font-size:15px;font-weight:600;letter-spacing:-.01em;margin:0;line-height:1.2}
 #panel p.fn{font-size:12.5px;line-height:1.35;color:var(--mute);margin:5px 0 0 29px;font-variant-numeric:tabular-nums}
@@ -114,7 +113,7 @@ textarea.in{resize:vertical;min-height:64px;line-height:1.4}
 <div id="view"></div>
 <div id="labels" class="chrome"></div>
 
-<div id="brand" class="chrome" role="img" aria-label="all inc."><svg viewBox="0 0 350 240" aria-hidden="true"><circle cx="120" cy="120" r="85" fill="none" stroke="#FFFFFF" stroke-width="70"/><rect x="170" y="0" width="70" height="240" fill="#FFFFFF"/><circle cx="300" cy="50" r="50" fill="#FFFFFF"/><circle cx="300" cy="190" r="50" fill="#FFFFFF"/></svg></div>
+<div id="brand" class="chrome">all inc.</div>
 <div id="legend" class="glass chrome" role="toolbar"></div>
 <button id="bBuild" class="glass chrome" aria-label="build"><svg class="i" viewBox="0 0 20 20"><path d="M3.5 16.5l3.2-.8 8.6-8.6a1.7 1.7 0 0 0-2.4-2.4L4.3 13.3z"/><path d="M11.6 6l2.4 2.4"/></svg></button>
 
@@ -2143,7 +2142,7 @@ textarea.in{resize:vertical;min-height:64px;line-height:1.4}
 
 /* ------------------------------------------------------------------ system */
 const CFG = window.ALLINC, CONF = CFG.confidential || null, UI = CFG.ui;
-document.title = CFG.title;
+document.title = CFG.title; document.getElementById('brand').textContent = CFG.title;
 const LINES = CFG.lines;
 const ORDER = ['act','link','antiphon'];
 const SHORT = {act:LINES.act.name, antiphon:LINES.antiphon.name, link:LINES.link.name};
@@ -2154,13 +2153,9 @@ const COL = {act:0x1434b8, link:0x6cc0ff, antiphon:0x2e9be6};
 const GAIN = {act:1, link:1.3, antiphon:1.45};     // how far each line's light sits above white, i.e. how much it blooms
 const KEY = 'allinc.venue.v6';
 
-// line icons, drawn to the brand sheets: rounded square, white on black
-const SQ='<rect width="100" height="100" rx="22.5" fill="#000"/>';
-const ICON = {
-  act:      '<svg viewBox="0 0 100 100" aria-hidden="true">'+SQ+'<circle cx="50" cy="50" r="20" fill="#fff"/></svg>',
-  link:     '<svg viewBox="0 0 100 100" aria-hidden="true">'+SQ+'<rect x="29" y="46.5" width="42" height="7" fill="#fff"/><circle cx="29" cy="50" r="11" fill="#fff"/><circle cx="71" cy="50" r="11" fill="#fff"/></svg>',
-  antiphon: '<svg viewBox="0 0 100 100" aria-hidden="true">'+SQ+'<circle cx="50" cy="50" r="9" fill="#fff"/><g fill="none" stroke="#fff" stroke-width="5.5"><circle cx="50" cy="50" r="18.25"/><circle cx="50" cy="50" r="30.25"/></g></svg>'
-};
+// line icons: the marks from the brand sheets, kept as files in brand/
+const ICON = {};
+ORDER.forEach(l=>{ ICON[l]='<img src="brand/'+l+'-icon.svg" alt="" draggable="false">'; });
 
 /* ------------------------------------------------------------------ default scene */
 function defaults(){
@@ -2375,7 +2370,7 @@ mesh(new THREE.PlaneGeometry(96,100).rotateX(-Math.PI/2), M.floor, 0, 0, 14, {no
   const r=g.createRadialGradient(128,128,0,128,128,128);
   r.addColorStop(0,'rgba(255,255,255,.4)'); r.addColorStop(0.55,'rgba(255,255,255,.12)'); r.addColorStop(1,'rgba(255,255,255,0)');
   g.fillStyle=r; g.fillRect(0,0,256,256);
-  const t=new THREE.CanvasTexture(c); t.encoding=THREE.sRGBEncoding;
+  const t=new THREE.CanvasTexture(c); c.tex=t; t.encoding=THREE.sRGBEncoding;
   const p=new THREE.Mesh(new THREE.PlaneGeometry(74,74).rotateX(-Math.PI/2), new THREE.MeshBasicMaterial({map:t, transparent:true, opacity:0.14, depthWrite:false, blending:THREE.AdditiveBlending, toneMapped:false}));
   p.position.set(0,0.015,17); p.raycast=noop; arch.add(p);
 })();
@@ -2487,10 +2482,10 @@ function testPattern(w, h, mark){
   g.fillStyle='#020202'; g.fillRect(0,0,w,h);
   g.fillStyle='rgba(255,255,255,.1)';
   for(let y=12;y<h;y+=24) for(let x=12;x<w;x+=24) g.fillRect(x,y,1.5,1.5);
-  if(mark){                                                   // the all inc. mark, as drawn on the brand board
-    const s=h*0.3/240; g.save(); g.translate(w/2-175*s, h/2-120*s); g.scale(s,s); g.fillStyle=g.strokeStyle='#e6e6e6';
-    g.lineWidth=70; g.beginPath(); g.arc(120,120,85,0,Math.PI*2); g.stroke();
-    g.fillRect(170,0,70,240); [50,190].forEach(cy=>{ g.beginPath(); g.arc(300,cy,50,0,Math.PI*2); g.fill(); }); g.restore();
+  if(mark){                                                   // the name, typed in Inter as on the brand sheets
+    const type=()=>{ g.fillStyle='#e6e6e6'; g.textAlign='center'; g.textBaseline='middle'; g.font='500 '+Math.round(h*0.15)+'px Inter, -apple-system, sans-serif'; g.fillText(CFG.title, w/2, h/2); };
+    type(); if(document.fonts) document.fonts.load('500 80px Inter').then(()=>{ g.fillStyle='#020202'; g.fillRect(w*0.2,h*0.3,w*0.6,h*0.4); g.fillStyle='rgba(255,255,255,.1)';
+      for(let y=12;y<h;y+=24) for(let x=12;x<w;x+=24) if(x>w*0.2&&x<w*0.8&&y>h*0.3&&y<h*0.7) g.fillRect(x,y,1.5,1.5); type(); if(c.tex) c.tex.needsUpdate=true; }).catch(()=>{});
   } else {
     g.strokeStyle='rgba(255,255,255,.28)'; g.lineWidth=1.5;
     g.beginPath(); g.arc(w/2,h/2,h*0.36,0,Math.PI*2); g.stroke();
@@ -2498,7 +2493,7 @@ function testPattern(w, h, mark){
     for(let i=0;i<12;i++){ const v=Math.round(i*255/11); g.fillStyle='rgb('+v+','+v+','+v+')'; g.fillRect(w/2-w*0.18+i*w*0.03, h*0.86, w*0.03+0.5, h*0.025); }
   }
   g.strokeStyle='rgba(255,255,255,.18)'; g.lineWidth=1; g.strokeRect(1,1,w-2,h-2);
-  const t=new THREE.CanvasTexture(c); t.encoding=THREE.sRGBEncoding; t.anisotropy=renderer.capabilities.getMaxAnisotropy();
+  const t=new THREE.CanvasTexture(c); c.tex=t; t.encoding=THREE.sRGBEncoding; t.anisotropy=renderer.capabilities.getMaxAnisotropy();
   return new THREE.MeshBasicMaterial({map:t, toneMapped:false, color:0xd0d0d0});
 }
 mesh(new THREE.PlaneGeometry(14.4, 8.1), testPattern(1024, 576, true), 0, DECK+0.35+4.45, -24.86, {noCast:true});
@@ -2592,7 +2587,9 @@ function mk(geo, mat, p, x,y,z, rx,ry,rz, edges){
 }
 function at(x,y,z,ry){ const g=new THREE.Group(); g.position.set(x,y,z); g.rotation.y=ry||0; showRoot.add(g); return g; }
 function stand(p,x,z,h){ mk(cyl(0.012,h,6), M.metal, p, x,h/2,z); mk(cyl(0.15,0.015,12), M.inst, p, x,0.008,z); }
-function collar(g,y){ g.updateMatrixWorld(true); collars.push(g.localToWorld(V(0,y,0.1))); }
+function collar(g,y){ g.updateMatrixWorld(true); collars.push(g.localToWorld(V(0,y,0.1))); return g; }
+const sources=[];                                             // mics and instruments, where link picks the signal up
+function src(o,x,y,z){ o.updateMatrixWorld(true); sources.push(o.localToWorld(V(x,y,z))); }
 
 // drums on the riser, upstage left
 (function(){
@@ -2604,7 +2601,7 @@ function collar(g,y){ g.updateMatrixWorld(true); collars.push(g.localToWorld(V(0
   mk(cyl(0.13,0.17), M.shell, g, 0.17,0.9,0.68, 0.45,0,0, true);
   mk(cyl(0.14,0.18), M.shell, g, -0.17,0.9,0.68, 0.45,0,0, true);
   mk(cyl(0.2,0.36), M.shell, g, -0.5,0.42,0.36, 0,0,0, true);
-  stand(g,0.25,0.44,0.57);
+  stand(g,0.25,0.44,0.57); src(g,0.25,0.72,0.44);
   [[0.55,0.95,0.3,0.18],[0.5,1.42,0.85,0.23],[-0.62,1.2,0.74,0.27]].forEach(([x,y,z,r])=>{ stand(g,x,z,y); mk(cyl(r,0.012,24), M.metal, g, x,y,z, 0.12); });
 })();
 // keys on the riser, upstage right
@@ -2615,7 +2612,7 @@ function collar(g,y){ g.updateMatrixWorld(true); collars.push(g.localToWorld(V(0
   mk(bx(1.25,0.09,0.36), M.inst, g, 0,0.86,0.5, 0,0,0, true);
   mk(bx(1.12,0.012,0.15), M.keys, g, 0,0.91,0.42);
   mk(bx(1.05,0.07,0.3), M.inst, g, 0,1.13,0.68, -0.3,0,0, true);
-  mk(bx(0.95,0.01,0.12), M.keys, g, 0,1.17,0.63, -0.3,0,0);
+  mk(bx(0.95,0.01,0.12), M.keys, g, 0,1.17,0.63, -0.3,0,0); src(g,0,0.95,0.5);
 })();
 // bass and guitar, each with an amp behind
 function strings(x,z,ry,neck,ax,az,bass){
@@ -2624,7 +2621,7 @@ function strings(x,z,ry,neck,ax,az,bass){
   const ins=new THREE.Group(); ins.position.set(0.02,1.02,0.17); ins.rotation.z=0.5; g.add(ins);
   mk(bx(0.42,0.3,0.08), M.inst, ins, -0.16,0,0, 0,0,0, true);
   mk(bx(neck,0.05,0.035), M.inst, ins, 0.05+neck/2,0,0);
-  mk(bx(0.13,0.07,0.03), M.inst, ins, 0.12+neck,0,0);
+  mk(bx(0.13,0.07,0.03), M.inst, ins, 0.12+neck,0,0); src(ins,-0.16,0,0.05);
   const a=at(ax,DECK,az,-ry*0.6);
   const w=bass?0.75:0.66, h=bass?1.1:0.52, y=bass?0.55:0.42;
   mk(bx(w,h,bass?0.5:0.3), M.cab, a, 0,y,0, 0,0,0, true);
@@ -2639,7 +2636,7 @@ strings( 8.2,-18.2,-0.4,0.6, 9.1,-21.6,false);
   collar(person(g, ACC, {arms:[[0.2,0.35,0.14],[1.05,1.55,-0.18]]}), 1.4);
   mk(cyl(0.15,0.02,16), M.inst, g, 0,0.01,0.38);
   mk(cyl(0.012,1.42,6), M.metal, g, 0,0.72,0.38);
-  mk(cyl(0.022,0.17,10), M.inst, g, 0,1.5,0.3, 1.1);
+  mk(cyl(0.022,0.17,10), M.inst, g, 0,1.5,0.3, 1.1); src(g,0,1.55,0.26);
 })();
 (function(){                                                  // tap anywhere on the band -> all act
   const h=new THREE.Mesh(new THREE.BoxGeometry(20,2.6,9), new THREE.MeshBasicMaterial({visible:false}));
@@ -2804,36 +2801,42 @@ function styleItem(it){
 }
 function refreshSelection(){ S.items.forEach(styleItem); }
 
-/* derived: signal lines between the players and the two downstage points */
-const SIG_SEG=10, PULSES=2, MAXE=collars.length+1;
-const sigPos=new Float32Array(2*MAXE*SIG_SEG*6), pulsePos=new Float32Array(2*MAXE*PULSES*3);
-const sigGeo=new THREE.BufferGeometry(); sigGeo.setAttribute('position', new THREE.BufferAttribute(sigPos,3));
-const pulseGeo=new THREE.BufferGeometry(); pulseGeo.setAttribute('position', new THREE.BufferAttribute(pulsePos,3));
-const sigLines=new THREE.LineSegments(sigGeo, MAT.link.soft), pulses=new THREE.Points(pulseGeo, dotMat('link',4,0.9));
-[sigLines,pulses].forEach(o=>{ o.frustumCulled=false; o.raycast=noop; scene.add(o); });
-const _a=V(0,0,0), _p=V(0,0,0);
-function arc(a,b,t,out){ out.lerpVectors(a,b,t); out.y += Math.sin(Math.PI*t)*a.distanceTo(b)*0.07; return out; }
-function updateSignal(t){
-  const lk=S.items.find(i=>i.kind==='link'), act=S.items.find(i=>i.kind==='act');
-  const on=!!lk && !isHidden('link'); sigLines.visible=pulses.visible=on; if(!on) return;
-  const base=floorY(lk.x,lk.z), ends=collars.slice();
-  if(act && !isHidden('act')) ends.push(V(act.x, floorY(act.x,act.z)+1.42*act.sy, act.z-0.2));
-  let k=0, q=0;
-  [-1,1].forEach((s,si)=>{
-    _a.set(lk.x+s*9.6*lk.sx, base+3.2*lk.sy, lk.z);
-    ends.forEach((e,ei)=>{
-      for(let i=0;i<SIG_SEG;i++){
-        arc(_a,e,i/SIG_SEG,_p); sigPos[k++]=_p.x; sigPos[k++]=_p.y; sigPos[k++]=_p.z;
-        arc(_a,e,(i+1)/SIG_SEG,_p); sigPos[k++]=_p.x; sigPos[k++]=_p.y; sigPos[k++]=_p.z;
+/* derived: all link. short streaks of light, straight from device to device, a burst about once a second */
+const LK={speed:150, burst:3, gap:0.05, r:0.026};
+const lkMat=reg('link', new THREE.MeshBasicMaterial(Object.assign({color:lit('link').multiplyScalar(1.6), toneMapped:false}, ADD)));
+const lkGeo=new THREE.CylinderGeometry(1,0.12,1,6,1).rotateX(Math.PI/2).translate(0,0,-0.5);   // head at 0, tail at -1
+const lkRoutes=[], LK_MAX=(collars.length+sources.length+2)*LK.burst;
+const lkMesh=new THREE.InstancedMesh(lkGeo, lkMat, LK_MAX); lkMesh.frustumCulled=false; lkMesh.raycast=noop;
+lkMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); scene.add(lkMesh);
+for(let i=0;i<LK_MAX;i++) lkMesh.setColorAt(i, new THREE.Color().setScalar(1-(i%LK.burst)*0.28));
+const _d=new THREE.Object3D(), _h=V(0,0,0), _t=V(0,0,0), _dir=V(0,0,0), _w=V(0,0,0);
+let lkSeed=0;
+function lkRoute(list,a,b){ const r=lkRoutes[list.n] || (lkRoutes[list.n]={a:V(0,0,0), b:V(0,0,0), period:0.95+((lkSeed++*0.618)%1)*0.4, phase:(lkSeed*0.377)%1}); r.a.copy(a); r.b.copy(b); r.on=true; list.n++; }
+function devicePoint(kind, x,y,z){ const it=S.items.find(i=>i.kind===kind); if(!it || isHidden(it.line)) return null; const o=objs.get(it.id); o.group.updateMatrixWorld(true); return o.group.localToWorld(V(x,y,z)); }
+function updateLink(t){
+  const lk=S.items.find(i=>i.kind==='link'), on=!!lk && !isHidden('link'); lkMesh.visible=on; if(!on) return;
+  const act=devicePoint('act',0,1.02,0.3), foh=devicePoint('antiphon',0,0.97,0), list={n:0};
+  if(act){
+    collars.forEach(c=>lkRoute(list, act, _w.copy(c).setY(c.y+0.22)));   // show device to each performer's in-ears
+    sources.forEach(p=>lkRoute(list, p, act));                          // mics and instruments to the show device
+    if(foh){ lkRoute(list, act, foh); lkRoute(list, foh, act); }        // stage to foh and back
+  }
+  let k=0;
+  for(let i=0;i<list.n;i++){
+    const r=lkRoutes[i], len=r.a.distanceTo(r.b), travel=Math.max(0.09, len/LK.speed), L=Math.min(2.4, len*0.3);
+    _dir.subVectors(r.b,r.a).normalize();
+    const tc=((t+r.phase*r.period)%r.period);
+    for(let j=0;j<LK.burst;j++,k++){
+      const tk=tc-j*LK.gap, head=Math.min(len, tk/travel*len), tail=Math.max(0, tk/travel*len-L);
+      if(tk<0 || tail>=len){ _d.scale.set(0,0,0); _d.position.set(0,-99,0); }
+      else {
+        _h.copy(r.a).addScaledVector(_dir, head);
+        _d.position.copy(_h); _d.lookAt(_t.copy(_h).add(_dir)); _d.scale.set(LK.r, LK.r, Math.max(0.001, head-tail));
       }
-      for(let j=0;j<PULSES;j++){
-        const u=(t*0.2 + j/PULSES + ei*0.137 + si*0.31)%1;
-        arc(_a,e, j%2 ? 1-u : u, _p); pulsePos[q++]=_p.x; pulsePos[q++]=_p.y; pulsePos[q++]=_p.z;
-      }
-    });
-  });
-  sigGeo.setDrawRange(0,k/3); pulseGeo.setDrawRange(0,q/3);
-  sigGeo.attributes.position.needsUpdate=true; pulseGeo.attributes.position.needsUpdate=true;
+      _d.updateMatrix(); lkMesh.setMatrixAt(k, _d.matrix);
+    }
+  }
+  lkMesh.count=k; lkMesh.instanceMatrix.needsUpdate=true;
 }
 
 /* derived: room graphs floating over foh */
@@ -2890,38 +2893,67 @@ function updateHolo(t){
   });
 }
 
-/* derived: remote mixing. fibre leaves the venue and ends at two clocks, one per time zone */
-const CLOCKS = CFG.clocks.map((tz,i)=>({tz, x:i?24:-24, z:-54, y:18.5}));
-const CR = 3.1;
+/* derived: remote mixing. fibre leaves the venue for two small rooms; each shows only its local time */
+const STUDIOS = CFG.clocks.map((tz,i)=>({tz, x:i?30:-30, z:-78, y:13.2}));
+const CR = 2.0;
 const ckFace = reg('link', new THREE.MeshBasicMaterial({color:0x000000, opacity:0.72, depthWrite:false, side:THREE.DoubleSide}));
 const ckRim  = reg('link', new THREE.MeshBasicMaterial({color:0xd8d8d8, opacity:0.85, toneMapped:false, side:THREE.DoubleSide}));
 const ckHand = reg('link', new THREE.MeshBasicMaterial({color:0xf2f2f2, toneMapped:false, side:THREE.DoubleSide}));
 const ckTick = reg('link', new THREE.LineBasicMaterial({color:0xbdbdbd, opacity:0.7, toneMapped:false}));
 const ckDot  = reg('link', new THREE.MeshBasicMaterial({color:lit('link'), toneMapped:false, side:THREE.DoubleSide}));
+const stSlab = reg('link', new THREE.MeshStandardMaterial({color:0x121212, roughness:0.8}));
+const stWall = reg('link', new THREE.MeshStandardMaterial({color:0x1a1a1a, roughness:0.9}));
+const stDesk = reg('link', new THREE.MeshStandardMaterial({color:0x0e0e0e, roughness:0.5, metalness:0.2}));
+const stFig  = reg('link', new THREE.MeshStandardMaterial({color:0x9a9a9a, roughness:0.65}));
+const stScr  = reg('link', new THREE.MeshBasicMaterial({color:0xb4b8bc, toneMapped:false}));
+const stEdge = reg('link', new THREE.LineBasicMaterial({color:0x5c5c5c, opacity:0.75}));
 const fibreDots=dotMat('link',3.5,0.95), fibres=[], clocks=[];
 box(0.8, 0.6, 0.5, M.black, 0, 0.3, -28.1);                   // stage box the fibre leaves from
-const handGeo=(w,len)=>new THREE.PlaneGeometry(w,len).translate(0,len/2-0.18,0);
-CLOCKS.forEach(ck=>{
-  const g=new THREE.Group(); g.position.set(ck.x,ck.y,ck.z); scene.add(g);
+const handGeo=(w,len)=>new THREE.PlaneGeometry(w,len).translate(0,len/2-0.13,0);
+STUDIOS.forEach(st=>{
+  // the room: slab, back wall, glass outline, desk with monitors, one engineer facing them
+  const r=new THREE.Group(); r.position.set(st.x,st.y,st.z); r.rotation.y=Math.atan2(-st.x*0.6, 80-st.z); scene.add(r);
+  const put=(geo,mat,x,y,z,ry)=>{ const m=new THREE.Mesh(geo,mat); m.position.set(x,y,z); m.rotation.y=ry||0; m.raycast=noop; m.castShadow=m.receiveShadow=true; r.add(m); return m; };
+  const RW=6.4, RD=4.6, RH=2.7;
+  put(new THREE.BoxGeometry(RW,0.16,RD), stSlab, 0,-0.08,0);
+  put(new THREE.BoxGeometry(RW,RH,0.12), stWall, 0,RH/2,-RD/2+0.06);
+  const vol=new THREE.BoxGeometry(RW,RH,RD).translate(0,RH/2,0), e=new THREE.LineSegments(new THREE.EdgesGeometry(vol), stEdge); e.raycast=noop; r.add(e);
+  put(new THREE.BoxGeometry(2.8,0.74,0.8), stDesk, 0,0.37,-1.25);
+  put(new THREE.BoxGeometry(2.9,0.03,0.86), stDesk, 0,0.755,-1.25);
+  put(new THREE.BoxGeometry(1.5,0.04,0.42), stDesk, 0,0.79,-1.12);                 // the console
+  [[-0.62,0.22],[0.62,-0.22]].forEach(([x,ry])=>{
+    put(new THREE.BoxGeometry(0.03,0.32,0.03), stDesk, x,0.93,-1.48);
+    put(new THREE.BoxGeometry(1.02,0.6,0.04), stDesk, x,1.32,-1.5,ry);
+    put(new THREE.PlaneGeometry(0.96,0.54), stScr, x+Math.sin(ry)*0.025,1.32,-1.475+Math.cos(ry)*0.002,ry).castShadow=false;
+  });
+  [-1.28,1.28].forEach(x=>put(new THREE.BoxGeometry(0.2,0.32,0.22), stDesk, x,0.93,-1.4));
+  put(new THREE.BoxGeometry(0.5,0.06,0.5), stDesk, 0,0.47,-0.32);
+  put(new THREE.BoxGeometry(0.5,0.5,0.06), stDesk, 0,0.75,-0.06);
+  put(new THREE.CylinderGeometry(0.03,0.03,0.44,6), stDesk, 0,0.22,-0.32);
+  person(r, stFig, {sit:true, z:-0.36, ry:Math.PI, lean:0.12, arms:[[0.85,0.55,-0.12],[0.85,0.55,-0.12]]}).traverse(m=>{ m.castShadow=true; });
+  const hit=new THREE.Mesh(vol, proxyMat); hit.userData.line='link'; r.add(hit); partHits.push(hit);
+  r.updateMatrixWorld(true);
+  // the clock, above the room
+  const g=new THREE.Group(); g.position.set(st.x, st.y+RH+0.7+CR, st.z-0.6); scene.add(g);
   const add=(o,z)=>{ o.position.z=z||0; o.raycast=noop; g.add(o); return o; };
   add(new THREE.Mesh(new THREE.CircleGeometry(CR,72), ckFace));
-  add(new THREE.Mesh(new THREE.RingGeometry(CR-0.045,CR,120), ckRim), 0.01);
+  add(new THREE.Mesh(new THREE.RingGeometry(CR-0.04,CR,120), ckRim), 0.01);
   const tk=[];
-  for(let i=0;i<60;i++){
-    const a=i/60*Math.PI*2, major=i%15===0, hour=i%5===0, r0=CR-(major?0.62:hour?0.4:0.16), r1=CR-0.12;
-    if(!hour) continue;
+  for(let i=0;i<12;i++){
+    const a=i/12*Math.PI*2, r0=CR-(i%3===0?0.48:0.3), r1=CR-0.1;
     tk.push(Math.sin(a)*r0,Math.cos(a)*r0,0.02, Math.sin(a)*r1,Math.cos(a)*r1,0.02);
   }
   const tg=new THREE.BufferGeometry(); tg.setAttribute('position', new THREE.Float32BufferAttribute(tk,3));
   add(new THREE.LineSegments(tg, ckTick));
-  const hh=add(new THREE.Mesh(handGeo(0.13,CR*0.56), ckHand), 0.03);
-  const mh=add(new THREE.Mesh(handGeo(0.08,CR*0.84), ckHand), 0.04);
-  add(new THREE.Mesh(new THREE.CircleGeometry(0.15,32), ckDot), 0.05);
-  const hit=new THREE.Mesh(new THREE.CircleGeometry(CR*1.1,24), proxyMat); hit.userData.line='link'; g.add(hit); partHits.push(hit);
-  let fmt=null; try{ fmt=new Intl.DateTimeFormat('en-GB',{timeZone:ck.tz, hour:'numeric', minute:'numeric', second:'numeric', hourCycle:'h23'}); }catch(err){}
+  const hh=add(new THREE.Mesh(handGeo(0.11,CR*0.56), ckHand), 0.03);
+  const mh=add(new THREE.Mesh(handGeo(0.065,CR*0.84), ckHand), 0.04);
+  add(new THREE.Mesh(new THREE.CircleGeometry(0.11,32), ckDot), 0.05);
+  const ch=new THREE.Mesh(new THREE.CircleGeometry(CR*1.1,24), proxyMat); ch.userData.line='link'; g.add(ch); partHits.push(ch);
+  let fmt=null; try{ fmt=new Intl.DateTimeFormat('en-GB',{timeZone:st.tz, hour:'numeric', minute:'numeric', second:'numeric', hourCycle:'h23'}); }catch(err){}
   clocks.push({g, hh, mh, fmt});
-  const s=Math.sign(ck.x), foot=V(ck.x,0.06,ck.z+0.6);
-  const curve=new THREE.CatmullRomCurve3([V(0,0.06,-28.4),V(0,0.06,-36),V(s*10,0.06,-43),V(ck.x*0.82,0.06,ck.z+1.4),foot,V(ck.x,ck.y-CR-0.6,ck.z+0.6),V(ck.x,ck.y-CR,ck.z+0.3)], false, 'centripetal');
+  // fibre: along the floor from the stage box, then straight up into the room
+  const s=Math.sign(st.x), entry=r.localToWorld(V(0,0,RD/2-0.3)), foot=V(entry.x,0.06,entry.z);
+  const curve=new THREE.CatmullRomCurve3([V(0,0.06,-28.4),V(0,0.06,-36),V(s*10,0.06,-43),V(foot.x*0.8,0.06,foot.z+1.6),foot,V(entry.x,entry.y*0.5,entry.z),V(entry.x,entry.y-0.08,entry.z)], false, 'centripetal');
   const pts=curve.getSpacedPoints(320);
   const ln=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), MAT.link.faint); ln.raycast=noop; scene.add(ln);
   const N=40, pos=new Float32Array(N*3), geo=new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
@@ -2950,7 +2982,7 @@ function updateClocks(){
     c.mh.rotation.z=-m/60*Math.PI*2; c.hh.rotation.z=-h/12*Math.PI*2;
   });
 }
-function updateDerived(t){ updateSignal(t); updateHolo(t); updateFibre(t); updateClocks(); }
+function updateDerived(t){ updateLink(t); updateHolo(t); updateFibre(t); updateClocks(); }
 
 /* focus: tapping a line lifts its parts and dims the rest */
 const lineA={act:1,link:1,antiphon:1}, lineH={act:0,link:0,antiphon:0};
