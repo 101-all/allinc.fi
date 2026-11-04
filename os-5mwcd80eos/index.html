@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-03-towers">
+<html lang="en" data-build="2026-11-03-dim">
 <head>
 <meta charset="utf-8">
 <script>
-/* build 2026-11-03-towers: if a cached copy is showing, fetch the page fresh once and reload */
+/* build 2026-11-03-dim: if a cached copy is showing, fetch the page fresh once and reload */
 (function(){ try{ var b=document.documentElement.getAttribute('data-build');
   fetch(location.pathname+'?build='+Date.now(),{cache:'no-store'}).then(function(r){return r.text();}).then(function(h){
     var m=h.match(/data-build="([^"]+)"/); if(m && m[1]!==b && sessionStorage.getItem('allinc.rb')!==m[1]){ sessionStorage.setItem('allinc.rb',m[1]); location.reload(); }
@@ -2258,7 +2258,7 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.0;
+renderer.toneMappingExposure = 0.58;                        // a dim room: the stage wash, phones and line accents carry the picture
 host.appendChild(renderer.domElement);
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(BG);
@@ -2308,7 +2308,7 @@ const DECK = 1.8;
 /* ------------------------------------------------------------------ light */
 // neutral warm-white on the stage, a faint spill on the front rows; the room stays dark
 const WARM = 0xffd2a8;                                        // about 4200 K, linear
-scene.add(new THREE.HemisphereLight(0xf2f2f2, 0x060606, 0.22));
+scene.add(new THREE.HemisphereLight(0xf2f2f2, 0x060606, 0.13));
 const key = new THREE.DirectionalLight(0xfff4ea, 0.3);
 key.position.set(-28, 46, 30); key.target.position.set(0, 0, 4);
 key.castShadow = true;
@@ -3259,7 +3259,7 @@ function updateDerived(t){ updateLink(t); updateHolo(t); updateFibre(t); updateC
 
 /* focus: tapping a line lifts its parts and dims the rest */
 const lineA={act:1,link:1,antiphon:1}, lineH={act:0,link:0,antiphon:0};
-let expo=1.0, lastF;
+let expo=0.58, lastF;
 function updateFocus(dt){
   const it=state.sel && getItem(state.sel), f=it ? it.line : null, k=1-Math.exp(-dt*7);
   if(f!==lastF){
@@ -3278,7 +3278,7 @@ function updateFocus(dt){
       if(m.emissive) m.emissiveIntensity=m.userData.e0+(m.userData.e1-m.userData.e0)*lineH[l];
     });
   });
-  const te=f ? 0.72 : 1.0;
+  const te=f ? 0.66 : 0.58;
   if(Math.abs(te-expo)>0.002){ expo+=(te-expo)*k; renderer.toneMappingExposure=expo; shaftMat.uniforms.uK.value=expo; }
 }
 
@@ -3339,8 +3339,9 @@ function updateLabels(){
 let tween=null, home=true, booted=false;
 const DUR=2000;
 // top view: about 75 degrees down from the audience side, framing the bowl, stage, foh and both studios
-const TOP={fov:30, dir:V(0,Math.sin(1.31),Math.cos(1.31)), t:V(0,4,-2),
-  pts:[[-54.5,16,12],[54.5,16,12],[0,16,-53.5],[0,16,77.5],[-38.5,16,58],[38.5,16,58],[-38.5,16,-34],[38.5,16,-34],[-34,21,-80],[34,21,-80],[-34,11,-80],[34,11,-80]].map(p=>V(p[0],p[1],p[2]))};
+// top view: nearly straight down, cropped to the bowl: the floor and the first rows fill the frame, stage at the top, foh below centre
+const TOP={fov:30, dir:V(0,Math.sin(1.4),Math.cos(1.4)), t:V(0,0,18),
+  pts:[[-33,4,18],[33,4,18],[0,2,-28],[0,4,64]].map(p=>V(p[0],p[1],p[2]))};
 // one point of view per line: low on the band and the vocalist, along the stage for the link paths, over the desk from behind foh
 const POV={
   act:     {fov:34, dir:V(-0.2,0.07,1),  t:V(0,3.1,-6),  pts:[[-8.6,2,-18],[8.6,2,-18],[0,7.5,-23],[-2.5,1.8,3.5],[2.5,1.8,3.5],[0,0.4,7.5]]},
@@ -3349,8 +3350,8 @@ const POV={
 };
 Object.values(POV).forEach(v=>{ v.pts=v.pts.map(p=>V(p[0],p[1],p[2])); });
 const _c=new THREE.PerspectiveCamera(), _p=V(0,0,0);
-function fit(t, dir, pts, fov, m){                           // the point along dir from t at which every point sits inside the frame
-  _c.fov=fov; _c.aspect=VW/VH; _c.near=0.3; _c.far=3000; _c.updateProjectionMatrix();
+function fit(t, dir, pts, fov, m, minA){              // minA: on narrow screens crop the sides instead of backing off                           // the point along dir from t at which every point sits inside the frame
+  _c.fov=fov; _c.aspect=Math.max(VW/VH, minA||0); _c.near=0.3; _c.far=3000; _c.updateProjectionMatrix();
   const u=dir.clone().normalize(); let lo=2, hi=1400;
   for(let i=0;i<26;i++){
     const d=(lo+hi)/2; _c.position.copy(t).addScaledVector(u,d); _c.lookAt(t); _c.updateMatrixWorld(true);
@@ -3358,11 +3359,11 @@ function fit(t, dir, pts, fov, m){                           // the point along 
   }
   return t.clone().addScaledVector(u,hi);
 }
-function topView(){ return {pos:fit(TOP.t, TOP.dir, TOP.pts, TOP.fov, 0.94), target:TOP.t.clone(), fov:TOP.fov}; }
+function topView(){ return {pos:fit(TOP.t, TOP.dir, TOP.pts, TOP.fov, 1.0), target:TOP.t.clone(), fov:TOP.fov}; }
 function povView(line){
   const v=POV[line], it=lineItem(line), dx=line==='act'&&it ? it.x : 0;
   const t=v.t.clone(); t.x+=dx;
-  return {pos:fit(t, v.dir, v.pts.map(p=>p.clone().setX(p.x+dx)), v.fov, 0.88), target:t, fov:v.fov};
+  return {pos:fit(t, v.dir, v.pts.map(p=>p.clone().setX(p.x+dx)), v.fov, 0.88, 0.7), target:t, fov:v.fov};
 }
 // eased flight: the target slides, the view direction turns on a great circle, the distance changes geometrically
 function flyTo(v,dur){
