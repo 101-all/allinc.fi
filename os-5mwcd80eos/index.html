@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-03-dials">
+<html lang="en" data-build="2026-11-03-console">
 <head>
 <meta charset="utf-8">
 <script>
-/* build 2026-11-03-dials: if a cached copy is showing, fetch the page fresh once and reload */
+/* build 2026-11-03-console: if a cached copy is showing, fetch the page fresh once and reload */
 (function(){ try{ var b=document.documentElement.getAttribute('data-build');
   fetch(location.pathname+'?build='+Date.now(),{cache:'no-store'}).then(function(r){return r.text();}).then(function(h){
     var m=h.match(/data-build="([^"]+)"/); if(m && m[1]!==b && sessionStorage.getItem('allinc.rb')!==m[1]){ sessionStorage.setItem('allinc.rb',m[1]); location.reload(); }
@@ -14,9 +14,9 @@
 window.ALLINC = {
   title: 'all inc.',
   lines: {
-    act:      {name:'all act',      short:'act',      line:'all act is a digital live performance system.', status:['EU pilot · 500+ shows', 'EU + US H1 2027']},
-    link:     {name:'all link',     short:'link',     line:'all link is next-generation optical wireless.', status:['6 patents + licensing', 'H2 2027']},
-    antiphon: {name:'all antiphon', short:'antiphon', line:'all antiphon is an AI-supported LLM for autonomous and remote audio and AoIP show control.', status:['H2 2027']}
+    act:      {name:'all act',      short:'act',      line:'all act runs the whole show from one device: playback, vocal chain and in-ear mix, digital end to end.', status:['EU pilot · 500+ shows', 'EU + US H1 2027']},
+    link:     {name:'all link',     short:'link',     line:'all link carries stage audio on light: next-generation optical wireless, with no radio spectrum to coordinate.', status:['6 patents + licensing', 'H2 2027']},
+    antiphon: {name:'all antiphon', short:'antiphon', line:'all antiphon reads the room: an AI-supported model that measures the show and mixes it remotely or on its own, over AoIP.', status:['H2 2027']}
   },
   clocks: ['Europe/Helsinki', 'America/Los_Angeles'],   // remote mixing, two time zones
   ui: {legend:'lines', build:'build', close:'close', undo:'undo', block:'block', deleted:'deleted', fixed:'fixed',
@@ -3099,71 +3099,162 @@ function updateLink(t){
   lkMesh.count=k; lkMesh.instanceMatrix.needsUpdate=true;
 }
 
-/* derived: room graphs floating over foh */
-const holo=new THREE.Group(); holo.scale.setScalar(1.7); scene.add(holo);
-const HW=2.7, HH=1.25, cA=lit('antiphon');
-// faint by default; hf lifts them to full when antiphon is in focus
-const hLine=reg('antiphon', new THREE.LineBasicMaterial(Object.assign({color:cA, opacity:0.05}, ADD)));
-const hFrame=reg('antiphon', new THREE.LineBasicMaterial(Object.assign({color:cA, opacity:0.016}, ADD)));
-const hFill=reg('antiphon', new THREE.MeshBasicMaterial(Object.assign({color:lin(COL.antiphon), opacity:0.0035, side:THREE.DoubleSide}, ADD)));
-const hDot=dotMat('antiphon',7,0.1);
-[hLine,hFrame,hFill,hDot].forEach(m=>m.userData.hf=14);
-const holoPanels=[], hBeams=[];
-[[-3.1,2.2,0.28],[0,2.5,0],[3.1,2.2,-0.28]].forEach(([x,y,r],i)=>{
-  const p=new THREE.Group(); p.position.set(x,y,0); p.rotation.y=r; holo.add(p);
-  const fill=new THREE.Mesh(new THREE.PlaneGeometry(HW,HH), hFill); fill.raycast=noop; p.add(fill);
-  const fr=[], w=HW/2, h=HH/2, c=0.16;
-  [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(([sx,sy])=>fr.push(sx*w,sy*h,0, sx*(w-c),sy*h,0, sx*w,sy*h,0, sx*w,sy*(h-c),0));
-  fr.push(-w+0.14,-h+0.14,0, w-0.14,-h+0.14,0);
-  if(i===1) for(let xx=-w+0.14; xx<w-0.14; xx+=0.12) fr.push(xx,-h+0.14+0.62*(HH-0.32),0, xx+0.05,-h+0.14+0.62*(HH-0.32),0);
-  const fg=new THREE.BufferGeometry(); fg.setAttribute('position', new THREE.Float32BufferAttribute(fr,3));
-  const fl=new THREE.LineSegments(fg,hFrame); fl.raycast=noop; p.add(fl);
-  const N=i===0?36:64, pos=new Float32Array((i===0?N*2:N)*3), geo=new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
-  const ln=i===0? new THREE.LineSegments(geo,hLine) : new THREE.Line(geo,hLine); ln.frustumCulled=false; ln.raycast=noop; p.add(ln);
-  let dot=null;
-  if(i===2){ const dg=new THREE.BufferGeometry(); dg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(3),3)); dot=new THREE.Points(dg, hDot); dot.frustumCulled=false; p.add(dot); }
-  holoPanels.push({kind:i, N, pos, geo, dot});
-  hBeams.push(0,1.0,0, x,y-HH/2,0);
+/* derived: antiphon's console over foh: the analyzer with the eq it is applying, loudness, and the stereo image */
+const holo=new THREE.Group(); holo.scale.setScalar(1.15); scene.add(holo);
+const hash=i=>{ const x=Math.sin(i*127.1+311.7)*43758.5453; return x-Math.floor(x); };
+const vnoise=x=>{ const i=Math.floor(x), f=x-i, u=f*f*(3-2*f); return hash(i)*(1-u)+hash(i+1)*u; };
+const fbm=(x,s)=>vnoise(x+s*17.3)*0.6+vnoise(x*2.3+s*5.1+3.1)*0.28+vnoise(x*5.7+s*9.7+7.7)*0.12;   // smooth 0..1
+const gss=(x,w)=>Math.exp(-(x*x)/(w*w));
+const HF=(wt,px)=>wt+' '+px+'px Inter, -apple-system, "Helvetica Neue", sans-serif';
+const AC='#5ab4ff', AC2='#2e9be6';
+// three graphite glass panels in a shallow arc, the side ones turned in toward the viewer
+const PANELS=[{key:'lu', w:1.9, h:1.6, x:-3.2, y:3.85, ry:0.26, cw:620}, {key:'eq', w:4.2, h:1.6, x:0, y:3.85, ry:0, cw:1300}, {key:'st', w:1.6, h:1.6, x:3.06, y:3.85, ry:-0.26, cw:540}];
+PANELS.forEach(p=>{
+  const c=document.createElement('canvas'); c.width=p.cw; c.height=Math.round(p.cw*p.h/p.w); p.c=c; p.g=c.getContext('2d');
+  const t=new THREE.CanvasTexture(c); t.encoding=THREE.sRGBEncoding; t.anisotropy=renderer.capabilities.getMaxAnisotropy(); p.tex=t;
+  p.mat=new THREE.MeshBasicMaterial({map:t, transparent:true, opacity:0, depthWrite:false, toneMapped:false, side:THREE.DoubleSide});
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(p.w,p.h), p.mat); m.position.set(p.x,p.y,0); m.rotation.y=p.ry; m.raycast=noop; m.renderOrder=3; holo.add(m);
+  if('letterSpacing' in p.g) p.ls=true;
 });
-(function(){
-  const bg=new THREE.BufferGeometry(); bg.setAttribute('position', new THREE.Float32BufferAttribute(hBeams,3));
-  const bm=reg('antiphon', new THREE.LineBasicMaterial(Object.assign({color:cA, opacity:0.01}, ADD))); bm.userData.hf=14;
-  const b=new THREE.LineSegments(bg, bm); b.raycast=noop; holo.add(b);
-  const h=new THREE.Mesh(new THREE.BoxGeometry(9.6,2,0.6), new THREE.MeshBasicMaterial({visible:false})); h.position.y=2.4; h.userData.line='antiphon'; holo.add(h); partHits.push(h);
-})();
+(function(){ const h=new THREE.Mesh(new THREE.BoxGeometry(10,2,0.6), new THREE.MeshBasicMaterial({visible:false})); h.position.y=3.85; h.userData.line='antiphon'; holo.add(h); partHits.push(h); })();
+function rr(g,x,y,w,h,r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); }
+function chrome(p, title, right){
+  const g=p.g, W=p.c.width, H=p.c.height, s=W/620;
+  g.clearRect(0,0,W,H);
+  rr(g,1.5,1.5,W-3,H-3,22); const bg=g.createLinearGradient(0,0,0,H); bg.addColorStop(0,'rgba(28,30,34,0.94)'); bg.addColorStop(1,'rgba(12,13,15,0.94)');
+  g.fillStyle=bg; g.fill(); g.lineWidth=1.5; g.strokeStyle='rgba(255,255,255,0.14)'; g.stroke();
+  g.fillStyle='rgba(255,255,255,0.05)'; g.fillRect(24,58,W-48,1);
+  if(p.ls) g.letterSpacing='2px';
+  g.font=HF(600,20); g.textBaseline='middle'; g.textAlign='left'; g.fillStyle='rgba(235,240,247,0.78)'; g.fillText(title,26,32);
+  if(right){ g.textAlign='right'; g.fillStyle=AC; g.fillText(right,W-26,32); }
+  if(p.ls) g.letterSpacing='0px';
+}
+// a plausible show: kick and snare on the beat, hats on the eighths, a bass line by the bar, a voice in the mids, sections that swell
+const NB=120, AU={spec:new Float32Array(NB).fill(-60), peak:new Float32Array(NB).fill(-60), m:-16, s:-15, i:-14.2, hist:new Float32Array(160).fill(-15), hk:0, lastH:0, corr:0.7};
+const FB=[]; for(let i=0;i<NB;i++) FB.push(20*Math.pow(1000,(i+0.5)/NB));
+const BASS=[0,0,-5,-2,3,3,-5,-7];
+function audio(t,dt){
+  const b=t*BPM/60, fr=x=>x-Math.floor(x);
+  const kick=Math.exp(-fr(b)*9), sn=Math.exp(-fr((b-1)/2)*6.5), hh=Math.exp(-fr(b*2)*14)*(0.6+0.4*fbm(t*2,3)), sec=fbm(t*0.045,1);
+  const note=55*Math.pow(2,BASS[Math.floor(b/4)%8]/12), voc=fbm(t*1.7,5);
+  for(let i=0;i<NB;i++){
+    const f=FB[i], o=Math.log2(f/150);
+    let v=-17-Math.max(0,o)*4.3-Math.max(0,Math.log2(45/f))*9+(sec-0.5)*5;
+    v+=13*kick*gss(Math.log2(f/58),0.8)+9*sn*gss(Math.log2(f/1900),1.5)+8*hh*gss(Math.log2(f/9500),0.75);
+    v+=7*gss(Math.log2(f/note),0.22)+4*gss(Math.log2(f/(note*2)),0.2)+6*voc*gss(Math.log2(f/1100),1.1);
+    v+=(fbm(t*6+i*0.31,i)-0.5)*8;
+    const c=AU.spec[i]; AU.spec[i]= v>c ? c+(v-c)*Math.min(1,dt*28) : c+(v-c)*Math.min(1,dt*5);
+    AU.peak[i]=Math.max(AU.peak[i]-dt*7, AU.spec[i]);
+  }
+  const mt=-14.6+(sec-0.5)*5+kick*1.4+sn*0.8+(fbm(t*2.7,8)-0.5)*1.6;
+  AU.m+=(mt-AU.m)*Math.min(1,dt*7); AU.s+=(AU.m-AU.s)*Math.min(1,dt/3); AU.i+=(AU.s-AU.i)*Math.min(1,dt/60);
+  if(t-AU.lastH>0.19){ AU.lastH=t; AU.hist[AU.hk++%AU.hist.length]=AU.s; }
+}
+// eq bands, drifting a little as if the system keeps adjusting
+const BANDS=[{f:120,g:1.6,q:0.9,c:'#9fd3ff'},{f:340,g:-2.4,q:1.3,c:AC2},{f:1200,g:-0.8,q:1.6,c:'#cfe6ff'},{f:2800,g:1.7,q:1.0,c:AC},{f:7200,g:-1.3,q:1.4,c:'#7fa8ff'}];
+function eqDb(f,t){
+  let d=-10*Math.log10(1+Math.pow(36/f,4));                      // high pass
+  BANDS.forEach((bd,k)=>{ const g=bd.g+(fbm(t*0.06,k+2)-0.5)*1.6, fc=bd.f*Math.pow(2,(fbm(t*0.045,k+11)-0.5)*0.35); bd.cg=g; bd.cf=fc; d+=g*gss(Math.log2(f/fc)*bd.q,0.9); });
+  return d;
+}
+function drawEq(p,t){
+  chrome(p,'CHANNEL EQ  ·  ANALYZER','AUTO');
+  const g=p.g, W=p.c.width, H=p.c.height, x0=74, x1=W-30, y0=78, y1=H-56, pw=x1-x0, ph=y1-y0;
+  const X=f=>x0+Math.log10(f/20)/3*pw, YA=db=>y0+(-db/66)*ph, YE=db=>y0+ph/2-db/15*(ph/2);
+  g.lineWidth=1;
+  [20,30,40,50,60,80,100,200,300,400,500,600,800,1000,2000,3000,4000,5000,6000,8000,10000,20000].forEach(f=>{ const x=Math.round(X(f))+0.5; g.strokeStyle=[30,100,300,1000,3000,10000].includes(f)?'rgba(255,255,255,0.1)':'rgba(255,255,255,0.04)'; g.beginPath(); g.moveTo(x,y0); g.lineTo(x,y1); g.stroke(); });
+  [-12,-6,0,6,12].forEach(db=>{ const y=Math.round(YE(db))+0.5; g.strokeStyle=db?'rgba(255,255,255,0.05)':'rgba(255,255,255,0.13)'; g.beginPath(); g.moveTo(x0,y); g.lineTo(x1,y); g.stroke(); });
+  g.font=HF(500,19); g.fillStyle='rgba(220,228,238,0.5)'; g.textAlign='center'; g.textBaseline='top';
+  [[30,'30'],[100,'100'],[300,'300'],[1000,'1k'],[3000,'3k'],[10000,'10k']].forEach(([f,l])=>g.fillText(l,X(f),y1+12));
+  g.textAlign='right'; g.textBaseline='middle'; [12,6,0,-6,-12].forEach(db=>g.fillText((db>0?'+':'')+db,x0-14,YE(db)));
+  // spectrum: soft filled gradient, crisp top line, faint peak hold
+  const grad=g.createLinearGradient(0,y0,0,y1); grad.addColorStop(0,'rgba(150,205,255,0.55)'); grad.addColorStop(0.6,'rgba(46,155,230,0.16)'); grad.addColorStop(1,'rgba(46,155,230,0.02)');
+  g.beginPath(); g.moveTo(x0,y1);
+  for(let i=0;i<NB;i++) g.lineTo(X(FB[i]), Math.min(y1,YA(AU.spec[i])));
+  g.lineTo(x1,y1); g.closePath(); g.fillStyle=grad; g.fill();
+  g.beginPath(); for(let i=0;i<NB;i++){ const x=X(FB[i]), y=Math.min(y1,YA(AU.spec[i])); i?g.lineTo(x,y):g.moveTo(x,y); }
+  g.strokeStyle='rgba(225,238,255,0.9)'; g.lineWidth=2; g.stroke();
+  g.beginPath(); for(let i=0;i<NB;i++){ const x=X(FB[i]), y=Math.min(y1,YA(AU.peak[i])); i?g.lineTo(x,y):g.moveTo(x,y); }
+  g.strokeStyle='rgba(225,238,255,0.18)'; g.lineWidth=1; g.stroke();
+  // the eq curve it is applying, with its band nodes
+  const pts=[]; for(let k=0;k<=160;k++){ const f=20*Math.pow(1000,k/160); pts.push([X(f),YE(eqDb(f,t))]); }
+  g.beginPath(); g.moveTo(pts[0][0],YE(0)); pts.forEach(q=>g.lineTo(q[0],q[1])); g.lineTo(x1,YE(0)); g.closePath(); g.fillStyle='rgba(46,155,230,0.13)'; g.fill();
+  g.beginPath(); pts.forEach((q,k)=>k?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1])); g.strokeStyle=AC; g.lineWidth=3; g.shadowColor='rgba(90,180,255,0.6)'; g.shadowBlur=8; g.stroke(); g.shadowBlur=0;
+  BANDS.forEach(bd=>{ const x=X(bd.cf), y=YE(eqDb(bd.cf,t)); g.beginPath(); g.arc(x,y,8,0,Math.PI*2); g.fillStyle=bd.c; g.fill(); g.lineWidth=2; g.strokeStyle='rgba(10,12,14,0.9)'; g.stroke(); });
+}
+function drawLu(p,t){
+  chrome(p,'LOUDNESS','LUFS');
+  const g=p.g, W=p.c.width, H=p.c.height, top=86, bot=H-150, Y=v=>top+(Math.max(-36,Math.min(0,v))/-36)*(bot-top);
+  [['M',AU.m],['S',AU.s],['I',AU.i]].forEach(([l,v],k)=>{
+    const x=34+k*58, w=34;
+    rr(g,x,top,w,bot-top,6); g.fillStyle='rgba(255,255,255,0.05)'; g.fill();
+    const gr=g.createLinearGradient(0,bot,0,top); gr.addColorStop(0,'rgba(46,155,230,0.35)'); gr.addColorStop(1,'rgba(200,228,255,0.95)');
+    rr(g,x,Y(v),w,bot-Y(v),6); g.fillStyle=gr; g.fill();
+    g.font=HF(600,19); g.fillStyle='rgba(220,228,238,0.55)'; g.textAlign='center'; g.textBaseline='top'; g.fillText(l,x+w/2,bot+12);
+  });
+  g.strokeStyle='rgba(90,180,255,0.7)'; g.lineWidth=1.5; g.setLineDash([6,5]); g.beginPath(); g.moveTo(26,Y(-14)); g.lineTo(200,Y(-14)); g.stroke(); g.setLineDash([]);
+  // readouts
+  g.textAlign='left'; g.textBaseline='alphabetic';
+  g.font=HF(500,76); g.fillStyle='rgba(240,245,252,0.95)'; g.fillText(AU.i.toFixed(1).replace('-','−'),232,170);
+  g.font=HF(600,20); g.fillStyle=AC; g.fillText('LUFS-I',238,202);
+  g.font=HF(500,22); g.fillStyle='rgba(220,228,238,0.62)';
+  g.fillText('M  '+AU.m.toFixed(1).replace('-','−'),238,250); g.fillText('S  '+AU.s.toFixed(1).replace('-','−'),238,284);
+  g.fillText('LRA  6.'+Math.floor(fbm(t*0.05,4)*9)+' LU',238,318); g.fillText('TP  −1.'+(2+Math.floor(fbm(t*0.3,6)*6))+' dB',238,352);
+  // short-term history, the last thirty seconds
+  const hx0=26, hx1=W-26, hy0=H-118, hy1=H-28, n=AU.hist.length, HY=v=>hy0+(Math.max(-24,Math.min(-6,v))+6)/-18*(hy1-hy0);
+  rr(g,hx0,hy0,hx1-hx0,hy1-hy0,8); g.fillStyle='rgba(255,255,255,0.035)'; g.fill();
+  g.strokeStyle='rgba(90,180,255,0.4)'; g.setLineDash([4,5]); g.beginPath(); g.moveTo(hx0,HY(-14)); g.lineTo(hx1,HY(-14)); g.stroke(); g.setLineDash([]);
+  g.beginPath(); for(let k=0;k<n;k++){ const v=AU.hist[(AU.hk+k)%n], x=hx0+k/(n-1)*(hx1-hx0); k?g.lineTo(x,HY(v)):g.moveTo(x,HY(v)); }
+  g.strokeStyle='rgba(225,238,255,0.85)'; g.lineWidth=2; g.stroke();
+}
+function drawSt(p,t){
+  chrome(p,'STEREO','PHASE');
+  const g=p.g, W=p.c.width, H=p.c.height, cx=W/2, cy=78+(H-78-96)/2, R=Math.min(W*0.4,(H-78-96)/2-6);
+  g.strokeStyle='rgba(255,255,255,0.08)'; g.lineWidth=1;
+  g.beginPath(); g.moveTo(cx,cy-R); g.lineTo(cx+R,cy); g.lineTo(cx,cy+R); g.lineTo(cx-R,cy); g.closePath(); g.stroke();
+  g.beginPath(); g.moveTo(cx,cy-R); g.lineTo(cx,cy+R); g.moveTo(cx-R,cy); g.lineTo(cx+R,cy); g.moveTo(cx-R/2,cy-R/2); g.lineTo(cx+R/2,cy+R/2); g.moveTo(cx+R/2,cy-R/2); g.lineTo(cx-R/2,cy+R/2); g.stroke();
+  g.font=HF(600,17); g.fillStyle='rgba(220,228,238,0.45)'; g.textAlign='center'; g.textBaseline='middle';
+  g.fillText('M',cx,cy-R-14); g.fillText('L',cx-R/2-14,cy-R/2-12); g.fillText('R',cx+R/2+14,cy-R/2-12);
+  // the image: mostly mono low end, wider top
+  const A=Math.pow(10,(AU.m+14)/20)*0.62; let sl=0, sr=0, lr=0;
+  g.fillStyle='rgba(170,215,255,0.5)';
+  for(let j=0;j<900;j++){
+    const u=t+j/9000, n1=hash(j+Math.floor(t*60)*701)-0.5, n2=hash(j*3+Math.floor(t*60)*977)-0.5;
+    const L=A*(0.55*Math.sin(2*Math.PI*61*u)+0.3*Math.sin(2*Math.PI*233*u+1.3)+0.22*Math.sin(2*Math.PI*587*u+fbm(t,2)*6)+0.42*n1);
+    const Rr=A*(0.55*Math.sin(2*Math.PI*61*u+0.05)+0.3*Math.sin(2*Math.PI*233*u+1.9)+0.22*Math.sin(2*Math.PI*587*u+2.4+fbm(t*0.7,3)*3)+0.42*n2);
+    sl+=L*L; sr+=Rr*Rr; lr+=L*Rr;
+    const x=cx+(Rr-L)*0.7071*R, y=cy-(L+Rr)*0.7071*R;
+    g.fillRect(x-1.5,y-1.5,3,3);
+  }
+  const corr=lr/Math.sqrt(sl*sr+1e-9); AU.corr+=(corr-AU.corr)*0.1;
+  // correlation bar
+  const bx0=34, bx1=W-34, by=H-58;
+  rr(g,bx0,by-6,bx1-bx0,12,6); g.fillStyle='rgba(255,255,255,0.07)'; g.fill();
+  const mx=bx0+(AU.corr+1)/2*(bx1-bx0); g.fillStyle=AC; rr(g,mx-5,by-11,10,22,5); g.fill();
+  g.font=HF(500,17); g.fillStyle='rgba(220,228,238,0.5)'; g.textBaseline='top';
+  g.textAlign='left'; g.fillText('−1',bx0,by+16); g.textAlign='center'; g.fillText('0',(bx0+bx1)/2,by+16); g.textAlign='right'; g.fillText('+1',bx1,by+16);
+}
+const DRAW={eq:drawEq, lu:drawLu, st:drawSt};
+let holoLast=0, holoT0=0;
 function updateHolo(t){
   const ap=S.items.find(i=>i.kind==='antiphon'), on=!!ap && !isHidden('antiphon'); holo.visible=on; if(!on) return;
   holo.position.set(ap.x, floorY(ap.x,ap.z), ap.z);
   holo.rotation.y=Math.atan2(camera.position.x-holo.position.x, camera.position.z-holo.position.z);
-  const x0=-HW/2+0.14, w=HW-0.28, y0=-HH/2+0.14, hh=HH-0.32;
-  holoPanels.forEach(h=>{
-    const a=h.pos;
-    for(let i=0;i<h.N;i++){
-      const f=i/(h.N-1), x=x0+f*w;
-      if(h.kind===0){                                      // spectrum
-        const env=0.92-0.62*f+0.12*Math.sin(f*9);
-        const v=Math.max(0.04,Math.min(1, env*(0.62+0.22*Math.sin(t*1.7+i*0.8)+0.14*Math.sin(t*3.1+i*1.9))));
-        a[i*6]=x; a[i*6+1]=y0; a[i*6+2]=0; a[i*6+3]=x; a[i*6+4]=y0+v*hh; a[i*6+5]=0;
-      } else {
-        const tt=t-(1-f)*14;
-        const v = h.kind===1 ? 0.6+0.12*Math.sin(tt*0.8)+0.06*Math.sin(tt*2.1+1)+0.03*Math.sin(tt*4.7)   // loudness over time
-                             : 0.45+0.22*Math.sin(f*5+t*0.35)+0.1*Math.sin(f*13-t*0.6);              // room energy
-        a[i*3]=x; a[i*3+1]=y0+v*hh; a[i*3+2]=0;
-        if(h.dot && i===h.N-1){ const d=h.dot.geometry.attributes.position; d.setXYZ(0,x,y0+v*hh,0.01); d.needsUpdate=true; }
-      }
-    }
-    h.geo.attributes.position.needsUpdate=true;
-  });
+  const h=lineH.antiphon, op=(0.1+0.88*h)*lineA.antiphon;
+  PANELS.forEach(p=>p.mat.opacity=op);
+  const dt=Math.min(0.1,t-(holoT0||t)); holoT0=t; audio(t,dt);
+  if(op<0.01 || (h<0.5 && t-holoLast<0.15)) return;                // faint: a few frames a second; in focus: every frame
+  holoLast=t;
+  PANELS.forEach(p=>{ DRAW[p.key](p,t); p.tex.needsUpdate=true; });
 }
 
 /* derived: remote mixing: two tiny flat dials over the foh desk, local time in Helsinki and Los Angeles; only in the antiphon view */
-const CR = 0.26, clocks=[], CK=[];
+const CR = 0.17, clocks=[], CK=[];
 const ckMat=(c,o,line)=>{ const m=new THREE[line?'LineBasicMaterial':'MeshBasicMaterial']({color:c, transparent:true, opacity:0, depthWrite:false, toneMapped:false, side:THREE.DoubleSide}); m.userData.base=o; CK.push(m); return m; };
 const ckFace=ckMat(0x000000,0.4), ckRim=ckMat(0xbdbdbd,0.35), ckHand=ckMat(0xe6e6e6,0.55), ckTick=ckMat(0xa0a0a0,0.3,true);
 const handGeo=(w,len)=>new THREE.PlaneGeometry(w,len).translate(0,len/2-CR*0.06,0);
 CFG.clocks.forEach((tz,i)=>{
-  const g=new THREE.Group(); g.position.set(0.6+(i?0.34:-0.34), 3.0, 32.4); g.visible=false; scene.add(g);
+  const g=new THREE.Group(); g.position.set(0.6+(i?0.22:-0.22), 2.66, 32.4); g.visible=false; scene.add(g);
   const add=(o,z)=>{ o.position.z=z||0; o.raycast=noop; o.renderOrder=3; g.add(o); return o; };
   add(new THREE.Mesh(new THREE.CircleGeometry(CR,48), ckFace));
   add(new THREE.Mesh(new THREE.RingGeometry(CR-0.008,CR,64), ckRim), 0.002);
@@ -3288,7 +3379,7 @@ const TOP={fov:30, dir:V(0,Math.sin(1.4),Math.cos(1.4)), t:V(0,0,18),
 const POV={
   act:     {fov:42, fovWide:34, pos:V(-4.6,3.2,14), t:V(2.6,1.6,-6), pts:[]},   // placed, not fitted: front three-quarter from the crowd
   link:    {fov:34, dir:V(1,0.4,0.5),    t:V(0,3.4,-11), pts:[[-9.6,5,-14.4],[9.6,5,-14.4],[0,3.8,1.2],[0,3,-24],[0,1.8,4]]},
-  antiphon:{fov:34, dir:V(0.1,0.24,1),   t:V(0.4,3.8,25),pts:[[-7,5.4,32.4],[7,5.4,32.4],[-7,3.2,32.4],[7,3.2,32.4],[0.6,1.3,31.4],[0,9,-23]]}
+  antiphon:{fov:34, dir:V(0.08,0.22,1),  t:V(0.6,1.4,26),pts:[[-4.6,6.2,32.4],[5.8,6.2,32.4],[-4.4,1.6,30],[5.6,1.6,30],[-4.4,0.6,36],[5.6,0.6,36],[0.6,-2.6,37],[0,9,-23]]}   // the low point keeps the lower third clear of the rail
 };
 Object.values(POV).forEach(v=>{ v.pts=v.pts.map(p=>V(p[0],p[1],p[2])); });
 const _c=new THREE.PerspectiveCamera(), _p=V(0,0,0);
