@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-03-star">
+<html lang="en" data-build="2026-11-03-dials">
 <head>
 <meta charset="utf-8">
 <script>
-/* build 2026-11-03-star: if a cached copy is showing, fetch the page fresh once and reload */
+/* build 2026-11-03-dials: if a cached copy is showing, fetch the page fresh once and reload */
 (function(){ try{ var b=document.documentElement.getAttribute('data-build');
   fetch(location.pathname+'?build='+Date.now(),{cache:'no-store'}).then(function(r){return r.text();}).then(function(h){
     var m=h.match(/data-build="([^"]+)"/); if(m && m[1]!==b && sessionStorage.getItem('allinc.rb')!==m[1]){ sessionStorage.setItem('allinc.rb',m[1]); location.reload(); }
@@ -3157,63 +3157,32 @@ function updateHolo(t){
   });
 }
 
-/* derived: remote mixing, kept inside the bowl: two small clocks at foh, and fibre that runs from foh to the bowl rim and fades out there */
-const fibreMat=new THREE.ShaderMaterial({
-  uniforms:{uS:{value:2.4*renderer.getPixelRatio()}, map:{value:dotTex}, uC:{value:lit('link').multiplyScalar(0.7)}},
-  vertexShader:'attribute float aU; uniform float uS; varying float vA; void main(){ vA=1.0-smoothstep(0.45,1.0,aU); gl_PointSize=uS; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
-  fragmentShader:'uniform sampler2D map; uniform vec3 uC; varying float vA; void main(){ float a=texture2D(map,gl_PointCoord).a*vA; gl_FragColor=vec4(uC*a,1.0);\n#include <encodings_fragment>\n}',
-  blending:THREE.AdditiveBlending, transparent:true, depthWrite:false
-});
-const CR = 0.7;
-const ckFace = reg('link', new THREE.MeshBasicMaterial({color:0x000000, opacity:0.72, depthWrite:false, side:THREE.DoubleSide}));
-const ckRim  = reg('link', new THREE.MeshBasicMaterial({color:0xd8d8d8, opacity:0.85, toneMapped:false, side:THREE.DoubleSide}));
-const ckHand = reg('link', new THREE.MeshBasicMaterial({color:0xf2f2f2, toneMapped:false, side:THREE.DoubleSide}));
-const ckTick = reg('link', new THREE.LineBasicMaterial({color:0xbdbdbd, opacity:0.7, toneMapped:false}));
-const ckDot  = reg('link', new THREE.MeshBasicMaterial({color:lit('link'), toneMapped:false, side:THREE.DoubleSide}));
-const fibres=[], clocks=[];
-const handGeo=(w,len)=>new THREE.PlaneGeometry(w,len).translate(0,len/2-CR*0.065,0);
+/* derived: remote mixing: two tiny flat dials over the foh desk, local time in Helsinki and Los Angeles; only in the antiphon view */
+const CR = 0.26, clocks=[], CK=[];
+const ckMat=(c,o,line)=>{ const m=new THREE[line?'LineBasicMaterial':'MeshBasicMaterial']({color:c, transparent:true, opacity:0, depthWrite:false, toneMapped:false, side:THREE.DoubleSide}); m.userData.base=o; CK.push(m); return m; };
+const ckFace=ckMat(0x000000,0.4), ckRim=ckMat(0xbdbdbd,0.35), ckHand=ckMat(0xe6e6e6,0.55), ckTick=ckMat(0xa0a0a0,0.3,true);
+const handGeo=(w,len)=>new THREE.PlaneGeometry(w,len).translate(0,len/2-CR*0.06,0);
 CFG.clocks.forEach((tz,i)=>{
-  const s=i?1:-1;
-  // the clock: on a thin post at the back corner of the foh riser, turned to face the viewer
-  segs([0.6+s*4.2,0.6,35.6, 0.6+s*4.2,1.9-CR,35.6], L.rail);
-  const g=new THREE.Group(); g.position.set(0.6+s*4.2, 1.9, 35.6); scene.add(g);
-  const add=(o,z)=>{ o.position.z=z||0; o.raycast=noop; g.add(o); return o; };
-  add(new THREE.Mesh(new THREE.CircleGeometry(CR,64), ckFace));
-  add(new THREE.Mesh(new THREE.RingGeometry(CR-0.025,CR,96), ckRim), 0.01);
+  const g=new THREE.Group(); g.position.set(0.6+(i?0.34:-0.34), 3.0, 32.4); g.visible=false; scene.add(g);
+  const add=(o,z)=>{ o.position.z=z||0; o.raycast=noop; o.renderOrder=3; g.add(o); return o; };
+  add(new THREE.Mesh(new THREE.CircleGeometry(CR,48), ckFace));
+  add(new THREE.Mesh(new THREE.RingGeometry(CR-0.008,CR,64), ckRim), 0.002);
   const tk=[];
-  for(let k=0;k<12;k++){
-    const a=k/12*Math.PI*2, r0=CR*(k%3===0?0.76:0.85), r1=CR*0.94;
-    tk.push(Math.sin(a)*r0,Math.cos(a)*r0,0.02, Math.sin(a)*r1,Math.cos(a)*r1,0.02);
-  }
+  for(let k=0;k<12;k+=3){ const a=k/12*Math.PI*2; tk.push(Math.sin(a)*CR*0.8,Math.cos(a)*CR*0.8,0.003, Math.sin(a)*CR*0.92,Math.cos(a)*CR*0.92,0.003); }
   const tg=new THREE.BufferGeometry(); tg.setAttribute('position', new THREE.Float32BufferAttribute(tk,3));
   add(new THREE.LineSegments(tg, ckTick));
-  const hh=add(new THREE.Mesh(handGeo(CR*0.055,CR*0.52), ckHand), 0.03);
-  const mh=add(new THREE.Mesh(handGeo(CR*0.035,CR*0.8), ckHand), 0.04);
-  add(new THREE.Mesh(new THREE.CircleGeometry(CR*0.055,24), ckDot), 0.05);
-  const ch=new THREE.Mesh(new THREE.CircleGeometry(CR*1.3,24), proxyMat); ch.userData.line='link'; g.add(ch); partHits.push(ch);
+  const hh=add(new THREE.Mesh(handGeo(CR*0.05,CR*0.5), ckHand), 0.004);
+  const mh=add(new THREE.Mesh(handGeo(CR*0.03,CR*0.78), ckHand), 0.005);
   let fmt=null; try{ fmt=new Intl.DateTimeFormat('en-GB',{timeZone:tz, hour:'numeric', minute:'numeric', second:'numeric', hourCycle:'h23'}); }catch(err){}
   clocks.push({g, hh, mh, fmt});
-  // fibre: from the riser along the floor to the bowl and up the first rows, thinning out as it leaves
-  const th=Math.PI/2-s*0.36, rim=(d,y)=>V((BOWL.a+d)*Math.cos(th), y, BOWL.cz+(BOWL.b+d)*Math.sin(th));
-  const curve=new THREE.CatmullRomCurve3([V(0.6+s*4.2,0.62,36.1),V(0.6+s*4.6,0.05,37.4),V(s*7.5,0.05,45),rim(-0.6,0.05),rim(0.6,1.4),rim(5,3.4),rim(10.5,6.3)], false, 'centripetal');
-  const pts=curve.getSpacedPoints(240), N=34, pos=new Float32Array(N*3), u=new Float32Array(N);
-  const geo=new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos,3)); geo.setAttribute('aU', new THREE.BufferAttribute(u,1));
-  const dots=new THREE.Points(geo, fibreMat); dots.frustumCulled=false; dots.raycast=noop; scene.add(dots);
-  fibres.push({pts, N, pos, u, geo, off:i*0.5});
 });
-function updateFibre(t){
-  fibres.forEach(f=>{
-    const n=f.pts.length-1;
-    for(let i=0;i<f.N;i++){
-      let v=(i/f.N + t*0.03 + f.off)%1; if(i%4===3) v=1-v;   // every fourth dot is the return
-      const p=f.pts[Math.floor(v*n)]; f.pos[i*3]=p.x; f.pos[i*3+1]=p.y+0.05; f.pos[i*3+2]=p.z; f.u[i]=v;
-    }
-    f.geo.attributes.position.needsUpdate=true; f.geo.attributes.aU.needsUpdate=true;
-  });
-}
+let ckA=0;
 let lastSec=-1;
-function updateClocks(){
-  clocks.forEach(c=>c.g.lookAt(camera.position));
+function updateClocks(dt){
+  const it=state.sel && getItem(state.sel), want=it && it.line==='antiphon' && !tween ? 1 : 0;
+  ckA += (want-ckA)*Math.min(1,(dt||0.016)*2.5); if(Math.abs(want-ckA)<0.003) ckA=want;
+  CK.forEach(m=>m.opacity=m.userData.base*ckA);
+  clocks.forEach(c=>{ c.g.visible=ckA>0.002; if(c.g.visible) c.g.lookAt(camera.position); });
   const s=Math.floor(Date.now()/1000); if(s===lastSec) return; lastSec=s;
   const d=new Date();
   clocks.forEach(c=>{
@@ -3228,7 +3197,7 @@ function updateMotion(t){
   MOVERS.forEach(m=>moveOne(m,b)); objs.forEach(o=>{ if(o.mover) moveOne(o.mover,b); });
   SCREENS.forEach((m,i)=>m.color.setScalar(0.88+0.12*Math.sin(t*0.12+i*1.7)));
 }
-function updateDerived(t){ updateLink(t); updateHolo(t); updateFibre(t); updateClocks(); updateMotion(t); }
+function updateDerived(t,dt){ updateLink(t); updateHolo(t); updateClocks(dt); updateMotion(t); }
 
 /* focus: tapping a line lifts its parts and dims the rest */
 const lineA={act:1,link:1,antiphon:1}, lineH={act:0,link:0,antiphon:0};
@@ -3655,7 +3624,7 @@ function frame(now){
   scene.fog.near=cd*0.9+30; scene.fog.far=cd*2.2+160;
   updateFocus(dt);
   updateFinish(dt);
-  updateDerived(now/1000);
+  updateDerived(now/1000, dt);
   updateHandles();
   if(composer) composer.render(dt); else renderer.render(scene,camera);
   updateLabels();
