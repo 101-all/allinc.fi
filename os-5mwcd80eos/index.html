@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-03-dim">
+<html lang="en" data-build="2026-11-03-foh">
 <head>
 <meta charset="utf-8">
 <script>
-/* build 2026-11-03-dim: if a cached copy is showing, fetch the page fresh once and reload */
+/* build 2026-11-03-foh: if a cached copy is showing, fetch the page fresh once and reload */
 (function(){ try{ var b=document.documentElement.getAttribute('data-build');
   fetch(location.pathname+'?build='+Date.now(),{cache:'no-store'}).then(function(r){return r.text();}).then(function(h){
     var m=h.match(/data-build="([^"]+)"/); if(m && m[1]!==b && sessionStorage.getItem('allinc.rb')!==m[1]){ sessionStorage.setItem('allinc.rb',m[1]); location.reload(); }
@@ -14,9 +14,9 @@
 window.ALLINC = {
   title: 'all inc.',
   lines: {
-    act:      {name:'all act',      line:'digital live performance system', status:['EU pilot · 500+ shows', 'EU + US H1 2027']},
-    link:     {name:'all link',     line:'next-generation optical wireless', status:['6 patents + licensing', 'H2 2027']},
-    antiphon: {name:'all antiphon', line:'AI-supported LLM for autonomous and remote audio and AoIP show control', status:['H2 2027']}
+    act:      {name:'all act',      short:'act',      line:'all act is a digital live performance system.', status:['EU pilot · 500+ shows', 'EU + US H1 2027']},
+    link:     {name:'all link',     short:'link',     line:'all link is next-generation optical wireless.', status:['6 patents + licensing', 'H2 2027']},
+    antiphon: {name:'all antiphon', short:'antiphon', line:'all antiphon is an AI-supported LLM for autonomous and remote audio and AoIP show control.', status:['H2 2027']}
   },
   clocks: ['Europe/Helsinki', 'America/Los_Angeles'],   // remote mixing, two time zones
   ui: {legend:'lines', build:'build', close:'close', undo:'undo', block:'block', deleted:'deleted', fixed:'fixed',
@@ -3147,100 +3147,63 @@ function updateHolo(t){
   });
 }
 
-/* derived: remote mixing. fibre leaves the venue for two small rooms; each shows only its local time */
-const STUDIOS = CFG.clocks.map((tz,i)=>({tz, x:i?30:-30, z:-78, y:13.2}));
-const CR = 2.0;
+/* derived: remote mixing, kept inside the bowl: two small clocks at foh, and fibre that runs from foh to the bowl rim and fades out there */
+const fibreMat=new THREE.ShaderMaterial({
+  uniforms:{uS:{value:2.4*renderer.getPixelRatio()}, map:{value:dotTex}, uC:{value:lit('link').multiplyScalar(0.7)}},
+  vertexShader:'attribute float aU; uniform float uS; varying float vA; void main(){ vA=1.0-smoothstep(0.45,1.0,aU); gl_PointSize=uS; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
+  fragmentShader:'uniform sampler2D map; uniform vec3 uC; varying float vA; void main(){ float a=texture2D(map,gl_PointCoord).a*vA; gl_FragColor=vec4(uC*a,1.0);\n#include <encodings_fragment>\n}',
+  blending:THREE.AdditiveBlending, transparent:true, depthWrite:false
+});
+const CR = 0.7;
 const ckFace = reg('link', new THREE.MeshBasicMaterial({color:0x000000, opacity:0.72, depthWrite:false, side:THREE.DoubleSide}));
 const ckRim  = reg('link', new THREE.MeshBasicMaterial({color:0xd8d8d8, opacity:0.85, toneMapped:false, side:THREE.DoubleSide}));
 const ckHand = reg('link', new THREE.MeshBasicMaterial({color:0xf2f2f2, toneMapped:false, side:THREE.DoubleSide}));
 const ckTick = reg('link', new THREE.LineBasicMaterial({color:0xbdbdbd, opacity:0.7, toneMapped:false}));
 const ckDot  = reg('link', new THREE.MeshBasicMaterial({color:lit('link'), toneMapped:false, side:THREE.DoubleSide}));
-const stSlab = reg('link', new THREE.MeshStandardMaterial({color:lin(0x1e1915), roughness:0.85}));
-const stWall = reg('link', new THREE.MeshStandardMaterial({color:lin(0x2b2621), roughness:0.95}));
-const stDesk = reg('link', new THREE.MeshStandardMaterial({color:lin(0x151413), roughness:0.6}));
-const stWood = reg('link', new THREE.MeshStandardMaterial({color:lin(0x6a4a32), roughness:0.72}));
-const stFig  = reg('link', new THREE.MeshStandardMaterial({color:lin(0xcdcdcd), roughness:0.88}));
-const stTop  = reg('link', new THREE.MeshStandardMaterial({color:lin(0x3c3c3c), roughness:0.9}));
-const stSkin = reg('link', new THREE.MeshStandardMaterial({color:lin(0x8d8985), roughness:0.62}));
-const stScr  = reg('link', new THREE.MeshBasicMaterial({color:0x5e6266, toneMapped:false}));
-const stEdge = reg('link', new THREE.LineBasicMaterial({color:0x5c5c5c, opacity:0.14}));
-const stBulb = reg('link', new THREE.MeshBasicMaterial({color:new THREE.Color(1.3,1.2,1.05), toneMapped:false}));
-const stPool = reg('link', new THREE.MeshBasicMaterial(Object.assign({map:dotTex, color:lin(0xffe8d0), opacity:0.22}, ADD)));
-const fibreDots=dotMat('link',2.6,0.7), fibres=[], clocks=[];
-box(0.8, 0.6, 0.5, M.black, 0, 0.3, -28.1);                   // stage box the fibre leaves from
-const handGeo=(w,len)=>new THREE.PlaneGeometry(w,len).translate(0,len/2-0.13,0);
-STUDIOS.forEach(st=>{
-  // the room: slab, back wall, glass outline, desk with monitors, one engineer facing them
-  const r=new THREE.Group(); r.position.set(st.x,st.y,st.z); r.rotation.y=Math.atan2(-st.x*0.6, 80-st.z); scene.add(r);
-  const put=(geo,mat,x,y,z,ry)=>{ const m=new THREE.Mesh(geo,mat); m.position.set(x,y,z); m.rotation.y=ry||0; m.raycast=noop; m.castShadow=m.receiveShadow=true; r.add(m); return m; };
-  const RW=6.4, RD=4.6, RH=2.7;
-  put(new THREE.BoxGeometry(RW,0.16,RD), stSlab, 0,-0.08,0);
-  put(new THREE.BoxGeometry(RW,RH,0.12), stWall, 0,RH/2,-RD/2+0.06);
-  const vol=new THREE.BoxGeometry(RW,RH,RD).translate(0,RH/2,0), e=new THREE.LineSegments(new THREE.EdgesGeometry(vol), stEdge); e.raycast=noop; r.add(e);
-  put(new THREE.BoxGeometry(2.8,0.74,0.8), stWood, 0,0.37,-1.25);
-  put(new THREE.BoxGeometry(2.9,0.03,0.86), stWood, 0,0.755,-1.25);
-  put(new THREE.BoxGeometry(1.5,0.04,0.42), stDesk, 0,0.79,-1.12);                 // the console
-  [[-0.62,0.22],[0.62,-0.22]].forEach(([x,ry])=>{
-    put(new THREE.BoxGeometry(0.03,0.32,0.03), stDesk, x,0.93,-1.48);
-    put(new THREE.BoxGeometry(1.02,0.6,0.04), stDesk, x,1.32,-1.5,ry);
-    put(new THREE.PlaneGeometry(0.96,0.54), stScr, x+Math.sin(ry)*0.025,1.32,-1.475+Math.cos(ry)*0.002,ry).castShadow=false;
-  });
-  [-1.28,1.28].forEach(x=>put(new THREE.BoxGeometry(0.2,0.32,0.22), stDesk, x,0.93,-1.4));
-  put(new THREE.BoxGeometry(0.5,0.06,0.5), stDesk, 0,0.47,-0.32);
-  put(new THREE.BoxGeometry(0.5,0.5,0.06), stDesk, 0,0.75,-0.06);
-  put(new THREE.CylinderGeometry(0.03,0.03,0.44,6), stDesk, 0,0.22,-0.32);
-  person(r, {top:stTop, bottom:stDesk, shoe:stFig, skin:stSkin, hat:stTop, inner:stFig, gear:stDesk}, {sit:true, top:'hoodie', z:-0.36, ry:Math.PI, lean:0.12, phones:true, arms:[[0.85,0.55,-0.12],[0.85,0.55,-0.12]]}).traverse(m=>{ m.castShadow=true; });
-  // desk lamp: a warm pool on the desk and the wall behind
-  put(new THREE.CylinderGeometry(0.08,0.09,0.02,16), stDesk, -1.3,0.78,-1.0);
-  put(new THREE.CylinderGeometry(0.012,0.012,0.46,6), stDesk, -1.24,1.0,-1.02).rotation.z=-0.28;
-  put(new THREE.ConeGeometry(0.1,0.13,16,1,true), stDesk, -1.12,1.2,-1.04);
-  put(new THREE.SphereGeometry(0.035,10,8), stBulb, -1.12,1.15,-1.04).castShadow=false;
-  [[1.7,1.3,-0.95,0.775,-1.15,true],[3.0,2.2,-1.0,1.45,-RD/2+0.22,false]].forEach(([w,h,x,y,z,flat])=>{
-    const g=new THREE.PlaneGeometry(w,h); if(flat) g.rotateX(-Math.PI/2);
-    const m=new THREE.Mesh(g, stPool); m.position.set(x,y,z); m.raycast=noop; r.add(m);
-  });
-  const hit=new THREE.Mesh(vol, proxyMat); hit.userData.line='link'; r.add(hit); partHits.push(hit);
-  r.updateMatrixWorld(true);
-  // the clock, above the room
-  const g=new THREE.Group(); g.position.set(st.x, st.y+RH+0.7+CR, st.z-0.6); scene.add(g);
+const fibres=[], clocks=[];
+const handGeo=(w,len)=>new THREE.PlaneGeometry(w,len).translate(0,len/2-CR*0.065,0);
+CFG.clocks.forEach((tz,i)=>{
+  const s=i?1:-1;
+  // the clock: on a thin post at the back corner of the foh riser, turned to face the viewer
+  segs([0.6+s*4.2,0.6,35.6, 0.6+s*4.2,1.9-CR,35.6], L.rail);
+  const g=new THREE.Group(); g.position.set(0.6+s*4.2, 1.9, 35.6); scene.add(g);
   const add=(o,z)=>{ o.position.z=z||0; o.raycast=noop; g.add(o); return o; };
-  add(new THREE.Mesh(new THREE.CircleGeometry(CR,72), ckFace));
-  add(new THREE.Mesh(new THREE.RingGeometry(CR-0.04,CR,120), ckRim), 0.01);
+  add(new THREE.Mesh(new THREE.CircleGeometry(CR,64), ckFace));
+  add(new THREE.Mesh(new THREE.RingGeometry(CR-0.025,CR,96), ckRim), 0.01);
   const tk=[];
-  for(let i=0;i<12;i++){
-    const a=i/12*Math.PI*2, r0=CR-(i%3===0?0.48:0.3), r1=CR-0.1;
+  for(let k=0;k<12;k++){
+    const a=k/12*Math.PI*2, r0=CR*(k%3===0?0.76:0.85), r1=CR*0.94;
     tk.push(Math.sin(a)*r0,Math.cos(a)*r0,0.02, Math.sin(a)*r1,Math.cos(a)*r1,0.02);
   }
   const tg=new THREE.BufferGeometry(); tg.setAttribute('position', new THREE.Float32BufferAttribute(tk,3));
   add(new THREE.LineSegments(tg, ckTick));
-  const hh=add(new THREE.Mesh(handGeo(0.11,CR*0.56), ckHand), 0.03);
-  const mh=add(new THREE.Mesh(handGeo(0.065,CR*0.84), ckHand), 0.04);
-  add(new THREE.Mesh(new THREE.CircleGeometry(0.11,32), ckDot), 0.05);
-  const ch=new THREE.Mesh(new THREE.CircleGeometry(CR*1.1,24), proxyMat); ch.userData.line='link'; g.add(ch); partHits.push(ch);
-  let fmt=null; try{ fmt=new Intl.DateTimeFormat('en-GB',{timeZone:st.tz, hour:'numeric', minute:'numeric', second:'numeric', hourCycle:'h23'}); }catch(err){}
+  const hh=add(new THREE.Mesh(handGeo(CR*0.055,CR*0.52), ckHand), 0.03);
+  const mh=add(new THREE.Mesh(handGeo(CR*0.035,CR*0.8), ckHand), 0.04);
+  add(new THREE.Mesh(new THREE.CircleGeometry(CR*0.055,24), ckDot), 0.05);
+  const ch=new THREE.Mesh(new THREE.CircleGeometry(CR*1.3,24), proxyMat); ch.userData.line='link'; g.add(ch); partHits.push(ch);
+  let fmt=null; try{ fmt=new Intl.DateTimeFormat('en-GB',{timeZone:tz, hour:'numeric', minute:'numeric', second:'numeric', hourCycle:'h23'}); }catch(err){}
   clocks.push({g, hh, mh, fmt});
-  // fibre: from the stage box up the empty bowl behind the stage, then across into the room
-  const s=Math.sign(st.x), entry=r.localToWorld(V(0,0,RD/2-0.3)), foot=V(entry.x,0.06,entry.z);
-  const curve=new THREE.CatmullRomCurve3([V(0,0.06,-28.4),V(0,1.3,-29.1),V(s*0.6,6.4,-40.6),V(s*1.5,16.6,-52.6),V(entry.x*0.5,15.4,-63),V(entry.x,entry.y+1.4,entry.z+1),V(entry.x,entry.y-0.08,entry.z)], false, 'centripetal');
-  const pts=curve.getSpacedPoints(320);
-  const ln=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), MAT.link.faint); ln.raycast=noop; scene.add(ln);
-  const N=40, pos=new Float32Array(N*3), geo=new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
-  const dots=new THREE.Points(geo, fibreDots); dots.frustumCulled=false; dots.raycast=noop; scene.add(dots);
-  fibres.push({pts, N, pos, geo, off:s>0?0.5:0});
+  // fibre: from the riser along the floor to the bowl and up the first rows, thinning out as it leaves
+  const th=Math.PI/2-s*0.36, rim=(d,y)=>V((BOWL.a+d)*Math.cos(th), y, BOWL.cz+(BOWL.b+d)*Math.sin(th));
+  const curve=new THREE.CatmullRomCurve3([V(0.6+s*4.2,0.62,36.1),V(0.6+s*4.6,0.05,37.4),V(s*7.5,0.05,45),rim(-0.6,0.05),rim(0.6,1.4),rim(5,3.4),rim(10.5,6.3)], false, 'centripetal');
+  const pts=curve.getSpacedPoints(240), N=34, pos=new Float32Array(N*3), u=new Float32Array(N);
+  const geo=new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos,3)); geo.setAttribute('aU', new THREE.BufferAttribute(u,1));
+  const dots=new THREE.Points(geo, fibreMat); dots.frustumCulled=false; dots.raycast=noop; scene.add(dots);
+  fibres.push({pts, N, pos, u, geo, off:i*0.5});
 });
 function updateFibre(t){
   fibres.forEach(f=>{
     const n=f.pts.length-1;
     for(let i=0;i<f.N;i++){
-      let u=(i/f.N + t*0.03 + f.off)%1; if(i%4===3) u=1-u;   // every fourth dot is the return
-      const p=f.pts[Math.floor(u*n)]; f.pos[i*3]=p.x; f.pos[i*3+1]=p.y+0.05; f.pos[i*3+2]=p.z;
+      let v=(i/f.N + t*0.03 + f.off)%1; if(i%4===3) v=1-v;   // every fourth dot is the return
+      const p=f.pts[Math.floor(v*n)]; f.pos[i*3]=p.x; f.pos[i*3+1]=p.y+0.05; f.pos[i*3+2]=p.z; f.u[i]=v;
     }
-    f.geo.attributes.position.needsUpdate=true;
+    f.geo.attributes.position.needsUpdate=true; f.geo.attributes.aU.needsUpdate=true;
   });
 }
 let lastSec=-1;
 function updateClocks(){
-  clocks.forEach(c=>c.g.rotation.y=Math.atan2(camera.position.x-c.g.position.x, camera.position.z-c.g.position.z));
+  clocks.forEach(c=>c.g.lookAt(camera.position));
   const s=Math.floor(Date.now()/1000); if(s===lastSec) return; lastSec=s;
   const d=new Date();
   clocks.forEach(c=>{
@@ -3535,9 +3498,9 @@ function renderPanel(){
 function wireClose(){ const x=panel.querySelector('.x'); if(x) x.onclick=()=>select(null); }
 function viewHtml(it){
   const name = it.kind==='block' ? (it.label||UI.block) : LINES[it.line].name;
-  if(it.kind!=='block'){                                   // name, what it is, where it stands
+  if(it.kind!=='block'){                                   // short name, one sentence, where it stands
     const L=LINES[it.line];
-    return '<div class="pi">'+ICON[it.line]+'<h2>'+esc(name)+'</h2></div><p class="ds">'+esc(L.line)+'</p>'+(L.status&&L.status.length?'<p class="fn">'+esc(L.status.join(' · '))+'</p>':'');
+    return '<div class="pi">'+ICON[it.line]+'<h2>'+esc(L.short||name)+'</h2></div><p class="ds">'+esc(L.line)+'</p>'+(L.status&&L.status.length?'<p class="fn">'+esc(L.status.join(' · '))+'</p>':'');
   }
   return '<div class="pi">'+ICON[it.line]+'<h2>'+esc(name)+'</h2></div>'+(stateOf(it)?'<p class="fn">'+esc(stateOf(it))+'</p>':'');
 }
