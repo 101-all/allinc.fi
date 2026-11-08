@@ -1,12 +1,54 @@
-# act 0.3 show test sheet
+# act 0.5: on-site show test (12 minutes)
 
-1. Install act from TestFlight on the iPad; on the Mac, unzip and open act Receiver (allow Local Network).
-2. Same network for both (wired is best; on Wi-Fi the receiver uses Wi-Fi Safe, 50 ms). The receiver shows act, PTP and Connected.
-3. Import a song with 8 stereo stems: the status shows Sending 16 ch and the receiver's 16 meters move.
-4. Play, pause, next and previous: the receiver follows with no dropouts after the first 10 s.
-5. Mixer: drag a fader, double-tap for 0 dB, then mute and solo. The receiver's meters follow.
-6. Hold Talk on the iPad: the Mac hears it. Talk from the receiver: the iPad hears it. Note the delay.
-7. Pads: a tap fires on touch-down. In edit mode (long-press or Edit), tap a pad to change its action.
-8. Home grid: move and resize blocks, relaunch, and check the layout is kept. Reset Layout restores it.
-9. Pull the cable or change Wi-Fi mid-song: note the time to recover and what the receiver shows.
-10. Run a 30-minute set end to end. Log dropouts, clicks, heat and battery; send notes with times.
+For Markus, before a show: the iPad with act, the Mac with act Receiver, one USB-C Ethernet adapter
+on each. Do the items in order and mark **Pass** or **Fail**. Any Fail: take a screenshot of act's
+Network screen (tap the Network widget) and of act Receiver's window, and note the time.
+
+The 2-hour run (item 9) starts in the middle and ends after the sheet. Leave it playing.
+
+## Set up (2 min)
+
+| # | Do | Pass when | Pass / Fail |
+|---|---|---|---|
+| 1 | Cable the iPad and the Mac to the show switch (or to each other). Settings › Interface: **Automatic** on both. | act's Network widget shows **Interface: Ethernet · en…**. act Receiver's **In Use** shows the USB adapter's name, not Wi-Fi. | |
+| 2 | Open act Receiver, then act. | Receiver window: **Connected**, **16 ch · 2 streams**. act: **Sending · 16 ch**, **Clock: PTP**, **Receiver: Connected**. | |
+| 3 | Check **Buffer** in act Receiver. | **Wired, 2 ms** (it picks Wi-Fi Safe, 50 ms, only on Wi-Fi). | |
+| 4 | Check the venue settings match the house network (act › Settings › Venue Network; act Receiver › Connection). Ask the network tech for: the PTP domain, the QoS scheme (AES67, Dante before 4.2, RAVENNA), and a block of 5 multicast addresses. | Both apps show the same **PTP Domain** and **QoS**; act's **Uses** shows the 5 addresses you were given. | |
+
+## Play (3 min)
+
+| # | Do | Pass when | Pass / Fail |
+|---|---|---|---|
+| 5 | Play a song with 8 stereo stems. Watch act Receiver's meters. | All 16 meters move. Lost, Late, Dropouts stay **0**. | |
+| 6 | Let the song run into the next one (Continue on). | The change is gapless and the counters stay **0**. | |
+| 7 | Hold **Talk** on the iPad and speak; then hold **Hold to Talk** on the Mac. First press on each asks for the microphone: allow, press again. | The Mac hears the iPad on the chosen output pair; the iPad hears the Mac in its headphones. The other side's dot lights while talking. | |
+| 8 | Tap each pad. | Each fires at the touch (no wait for release). | |
+
+## Vocals (2 min)
+
+| # | Do | Pass when | Pass / Fail |
+|---|---|---|---|
+| V1 | Tap the Vocal 1 widget. Stream: the stage box (or console) stream; Channel: the singer's input. Same for Vocal 2. | The widget shows **stream · channel**; its In meter moves when the singer sings. | |
+| V2 | Add Effect › All Pitch (or the effect you use) on Vocal 1; tap it to open its own view and set key and scale. | Out meter moves; act Receiver's **Vocals** section shows both meters moving, Lost · Dropouts **0 · 0**. | |
+| V3 | Unplug the stage box stream for 5 s (or pick Local Input Only), with Use When Stream Is Missing on. | The vocal carries on from the iPad's audio interface (status **Input 1 · Fallback**) and goes back to the stream by itself. | |
+
+## Faults (4 min)
+
+| # | Do | Pass when | Pass / Fail |
+|---|---|---|---|
+| 9 | Start the 2-hour run now: Loop on (Settings), Play, leave it. | (Checked at the end, item 13.) | |
+| 10 | **Cable pull:** pull the iPad's Ethernet for 10 s, plug it back. | During: act shows **No Network · Waiting** (or moves to Wi-Fi if it has one). After: **Sending**, **Receiver: Connected** again **within 5 s**, the song still playing where it should be. | |
+| 11 | **Lock:** press the iPad's top button for 30 s, unlock. | The Mac kept playing the whole time (no gap on the meters, Dropouts unchanged). | |
+| 12 | **Call:** have someone call or FaceTime the iPad. Decline from the banner. Then Siri ("Hey Siri, what time is it?"). | The Mac keeps playing through both. Network › Talkback › Audio shows **Interrupted** during, **Running** after, by itself. | |
+
+Before the show: turn on **Do Not Disturb** (Focus) on the iPad and keep it charging. Wi-Fi can stay
+off; the wired adapter works in Airplane mode. If a call is *answered*, iPadOS may stop act until
+you return to it: then it resumes on its own within a few seconds (item 10's recovery).
+
+## After 2 hours (1 min)
+
+| # | Do | Pass when | Pass / Fail |
+|---|---|---|---|
+| 13 | Read act Receiver's Buffer section and act's Network › Receiver. | **Dropouts 0** and **Lost 0** apart from the cable pull in item 10 (that pull may add 1 dropout). Clock still **PTP**, Leader/Locked. No audible clicks noted. | |
+
+Send the sheet back with the screenshots of any Fail.
