@@ -1,0 +1,12 @@
+# act 0.3 show test sheet
+
+1. Install act from TestFlight on the iPad; on the Mac, unzip and open act Receiver (allow Local Network).
+2. Same network for both (wired is best; on Wi-Fi the receiver uses Wi-Fi Safe, 50 ms). The receiver shows act, PTP and Connected.
+3. Import a song with 8 stereo stems: the status shows Sending 16 ch and the receiver's 16 meters move.
+4. Play, pause, next and previous: the receiver follows with no dropouts after the first 10 s.
+5. Mixer: drag a fader, double-tap for 0 dB, then mute and solo. The receiver's meters follow.
+6. Hold Talk on the iPad: the Mac hears it. Talk from the receiver: the iPad hears it. Note the delay.
+7. Pads: a tap fires on touch-down. In edit mode (long-press or Edit), tap a pad to change its action.
+8. Home grid: move and resize blocks, relaunch, and check the layout is kept. Reset Layout restores it.
+9. Pull the cable or change Wi-Fi mid-song: note the time to recover and what the receiver shows.
+10. Run a 30-minute set end to end. Log dropouts, clicks, heat and battery; send notes with times.
