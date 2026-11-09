@@ -1,8 +1,8 @@
-# act 0.5: on-site show test (14 minutes)
+# act 0.6: on-site show test (17 minutes)
 
 For Markus, before a show: the iPad with act, the Mac with act Receiver, one USB-C Ethernet adapter
 on each. Do the items in order and mark **Pass** or **Fail**. Any Fail: take a screenshot of act's
-Network screen (tap the Network widget) and of act Receiver's window, and note the time.
+Network screen (gear › Network, Clock, Buffer) and of act Receiver's window, and note the time.
 
 The 2-hour run (item 9) starts in the middle and ends after the sheet. Leave it playing.
 
@@ -10,7 +10,7 @@ The 2-hour run (item 9) starts in the middle and ends after the sheet. Leave it 
 
 | # | Do | Pass when | Pass / Fail |
 |---|---|---|---|
-| 1 | Cable the iPad and the Mac to the show switch (or to each other). Settings › Interface: **Automatic** on both. | act's Network widget shows **Interface: Ethernet · en…**. act Receiver's **In Use** shows the USB adapter's name, not Wi-Fi. | |
+| 1 | Cable the iPad and the Mac to the show switch (or to each other). Settings › Interface: **Automatic** on both. | act's gear › Status shows **Interface: Ethernet · en…**. act Receiver's **In Use** shows the USB adapter's name, not Wi-Fi. | |
 | 2 | Open act Receiver, then act. In act Receiver › Streams, click your iPad's program once (it is remembered: from then on only that program is played, never another act on the network). | Receiver window: **Connected**, **16 ch · 2 streams**. act: **Sending · 16 ch**, **Clock: PTP**, **Receiver: Connected**. | |
 | 3 | Check **Buffer** in act Receiver. | **Wired, 2 ms** (it picks Wi-Fi Safe, 50 ms, only on Wi-Fi). | |
 | 4 | Check the venue settings match the house network (act › Settings › Venue Network; act Receiver › Connection). Ask the network tech for: the PTP domain, the QoS scheme (AES67, Dante before 4.2, RAVENNA), and a block of 5 multicast addresses. | Both apps show the same **PTP Domain** and **QoS**; act's **Uses** shows the 5 addresses you were given. | |
@@ -28,18 +28,26 @@ The 2-hour run (item 9) starts in the middle and ends after the sheet. Leave it 
 
 | # | Do | Pass when | Pass / Fail |
 |---|---|---|---|
-| V1 | Tap the Vocal 1 widget. Stream: the stage box (or console) stream; Channel: the singer's input. Same for Vocal 2. | The widget shows **stream · channel**; its In meter moves when the singer sings. | |
+| V1 | Perform › tap **Vocal 1**. Stream: the stage box (or console) stream; Channel: the singer's input. Same for Vocal 2. | Vocal 1 shows **stream · channel**; its In meter moves when the singer sings. | |
 | V2 | Add Effect › All Pitch (or the effect you use) on Vocal 1; tap it to open its own view and set key and scale. | Out meter moves; act Receiver's **Vocals** section shows both meters moving, Lost · Dropouts **0 · 0**. | |
 | V3 | Unplug the stage box stream for 5 s (or pick Local Input Only), with Use When Stream Is Missing on. | The vocal carries on from the iPad's audio interface (status **Input 1 · Fallback**) and goes back to the stream by itself. | |
 
-## Mixer, pads, search (2 min)
+## Tabs: Playback, Perform, Mix (2 min)
 
 | # | Do | Pass when | Pass / Fail |
 |---|---|---|---|
-| M1 | Play. In the Mixer, drag anywhere on a stem's bar, slowly then fast. Double-tap the bar. Tap a stem's name; hold another's name. | The white line moves with your finger from where it was (slow = fine); a tick at 0 dB and at the bottom; double-tap: 0 dB and back; tap: muted (white), hold: solo (yellow). Meters fall smoothly, no jumps. | |
-| M2 | Edit › + › FX Pads › Add. Edit, tap an FX pad, Choose Sample…, Plays: Loop, Quantise: Bar (set the song tempo). Done. Tap the pad during the song. | The pad starts on the next bar (yellow outline while it waits), loops, stops on the next tap. act Receiver's FX meters move. | |
-| M3 | Type part of a song or stem name in the Setlist's search. | The list filters as you type; clear it with ×. | |
-| M4 | Lock the iPad for 2 minutes during a song (Settings › Background › Lock Screen Controls on). Use play/pause on the lock screen. | act Receiver hears the whole time (Dropouts unchanged); the lock screen shows the song and controls it. Swiping act away in the app switcher stops everything: never do that during a show. | |
+| M1 | Play. **Mix**: drag anywhere on a stem's bar, slowly then fast. Double-tap the bar. Tap a stem's name; hold another's name. | The white line moves with your finger from where it was (slow = fine); a tick at 0 dB and at the bottom; double-tap: 0 dB and back; tap: muted, hold: solo. Meters fall smoothly. | |
+| M2 | **Perform** › Edit Pads, tap an FX pad, Choose Sample…, Plays: Loop, Quantise: Bar. Done. Tap the pad during the song. | The pad starts on the next bar, loops, stops on the next tap. act Receiver's FX meters move. | |
+| M3 | **Playback**: type part of a song or stem name in Search Songs (top right). | The list filters as you type. | |
+| M4 | Lock the iPad for 2 minutes during a song (gear › Background › Lock Screen Controls on). Use play/pause on the lock screen. | act Receiver hears the whole time (Dropouts unchanged). Swiping act away in the app switcher stops everything: never do that during a show. | |
+
+## IEMs (3 min)
+
+| # | Do | Pass when | Pass / Fail |
+|---|---|---|---|
+| I1 | act Receiver › **IEMs**: IEM 1 to one output pair, IEM 2 to another. Plug headphones into each. | Each pair plays its own mix. | |
+| I2 | act › **IEMs** › IEM 1: pull one stem down, mute another; raise Vocal 1. Then **Mix**: pull the same stem down. | IEM 1 changes with its own strips only; Mix's levels never change what IEM 1 hears (sends are before the main levels). IEM 2 unchanged. | |
+| I3 | IEM 2 › **Listen on iPad** on, with AirPods connected to the iPad. Then take the AirPods out and put them back during the song. | IEM 2 plays in the AirPods (later than the wired pair: the Latency row shows how much). Taking them out and back: act Receiver's Lost · Dropouts stay **0 · 0**. Hold Talk: the microphone is the iPad's or the interface's, never the AirPods'. | |
 
 ## Faults (4 min)
 
