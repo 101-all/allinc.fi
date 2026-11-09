@@ -1,4 +1,4 @@
-# act 0.6: on-site show test (17 minutes)
+# act 0.8: on-site show test (20 minutes)
 
 For Markus, before a show: the iPad with act, the Mac with act Receiver, one USB-C Ethernet adapter
 on each. Do the items in order and mark **Pass** or **Fail**. Any Fail: take a screenshot of act's
@@ -48,6 +48,15 @@ The 2-hour run (item 9) starts in the middle and ends after the sheet. Leave it 
 | I1 | act Receiver › **IEMs**: IEM 1 to one output pair, IEM 2 to another. Plug headphones into each. | Each pair plays its own mix. | |
 | I2 | act › **IEMs** › IEM 1: pull one stem down, mute another; raise Vocal 1. Then **Mix**: pull the same stem down. | IEM 1 changes with its own strips only; Mix's levels never change what IEM 1 hears (sends are before the main levels). IEM 2 unchanged. | |
 | I3 | IEM 2 › **Listen on iPad** on, with AirPods connected to the iPad. Then take the AirPods out and put them back during the song. | IEM 2 plays in the AirPods (later than the wired pair: the Latency row shows how much). Taking them out and back: act Receiver's Lost · Dropouts stay **0 · 0**. Hold Talk: the microphone is the iPad's or the interface's, never the AirPods'. | |
+
+## Network: Routing and Health (3 min)
+
+| # | Do | Pass when | Pass / Fail |
+|---|---|---|---|
+| N1 | First launch of act Receiver 0.8: macOS asks to find devices on local networks. Click **Allow**. | act › **Routing** › Health lists the Mac under Other nodes; act Receiver › **Health** lists the iPad. | |
+| N2 | act Receiver › Health: **Preferred clock** on. | The Mac shows **Clock: Leads (preferred)**; the iPad **Follows**. | |
+| N3 | Quit act Receiver during a song. | The iPad leads the clock by itself and keeps playing; its Lost stays **0**. Open act Receiver again: it leads again. | |
+| N4 | With a second iPad: act › **Routing** on it, tap the dot where the first iPad's Ch 1 meets **IEM 1**. | IEM 1 on the second iPad gets a strip for that channel and hears it. Quit and reopen act on the first iPad: the route comes back by itself. | |
 
 ## Faults (4 min)
 
