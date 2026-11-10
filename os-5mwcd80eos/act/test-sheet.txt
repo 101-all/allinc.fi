@@ -1,4 +1,4 @@
-# act 0.8.1: on-site show test (20 minutes)
+# act 0.8.1: on-site show test (21 minutes)
 
 For Markus, before a show: the iPad with act, the Mac with act Receiver, one USB-C Ethernet adapter
 on each. Do the items in order and mark **Pass** or **Fail**. Any Fail: take a screenshot of act's
@@ -49,14 +49,19 @@ The 2-hour run (item 9) starts in the middle and ends after the sheet. Leave it 
 | I2 | act › **IEMs** › IEM 1: pull one stem down, mute another; raise Vocal 1. Then **Mix**: pull the same stem down. | IEM 1 changes with its own strips only; Mix's levels never change what IEM 1 hears (sends are before the main levels). IEM 2 unchanged. | |
 | I3 | IEM 2 › **Listen on iPad** on, with AirPods connected to the iPad. Then take the AirPods out and put them back during the song. | IEM 2 plays in the AirPods (later than the wired pair: the Latency row shows how much). Taking them out and back: act Receiver's Lost · Dropouts stay **0 · 0**. Hold Talk: the microphone is the iPad's or the interface's, never the AirPods'. | |
 
-## Network: Routing and Health (3 min)
+## Network: Routing (4 min)
+
+Every device sends and receives numbered channels. Routing only shows numbers; what each number is
+lives in gear › **I/O** (iPad: Tx 01–16 stems, 17–18 vocals, 19–22 IEM 1/2, 23 talkback; Rx 01–08
+into the IEM inputs).
 
 | # | Do | Pass when | Pass / Fail |
 |---|---|---|---|
-| N1 | First launch of act Receiver 0.8.1: macOS asks to find devices on local networks. Click **Allow**. | act › **Routing › Devices** lists the Mac; act Receiver › **Routing › Devices** lists the iPad. | |
-| N2 | act Receiver › Health: **Preferred clock** on. | The Mac shows **Clock: Leads (preferred)**; the iPad **Follows**. | |
-| N3 | Quit act Receiver during a song. | The iPad leads the clock by itself and keeps playing; its Lost stays **0**. Open act Receiver again: it leads again. | |
-| N4 | With a second iPad: on it, **Routing › Devices** › this iPad › **IEM In 1** › the first iPad › **Ch 1**. | IEM In 1 shows **Ch 1 @** the first iPad, with a green dot. Quit and reopen act on the first iPad: the subscription comes back by itself. **Matrix**: the crossing of the two iPads shows a dot. | |
+| N1 | First launch of act Receiver 0.8.1: macOS asks to find devices on local networks. Click **Allow**. | act › **Routing**: the Mac is under Transmitters and Receivers; act Receiver › **Routing** shows the iPad. | |
+| N2 | act Receiver › Routing › **Clock Status**: **Preferred Clock** on. | The Mac is **Leader (Preferred)**; the iPad **Follower**. The status bar says **Clock:** the Mac. | |
+| N3 | Quit act Receiver during a song. | The iPad leads the clock by itself and keeps playing; Network Status: its Lost stays **0**. | |
+| N4 | act Receiver › **I/O**: Device: your interface. Then on the iPad › Routing: open the iPad (left) and the Mac (top), tap Rx **01** × Tx **01**. iPad › IEMs: raise **Rx 01** in IEM 1. | A blue dot; Rx 01 shows a green check. What goes into the Mac's input 1 is heard in IEM 1. | |
+| N5 | act Receiver › I/O › Receive **01**: Output 3. On the Mac's Routing: open the Mac (left) and the iPad (top), tap Rx 01 × Tx **05**. | The iPad's stem 5 plays on the Mac's output 3. Long-press the Mac × iPad crossing (closed) › **Patch 1:1**: Rx 01–16 take Tx 01–16. | |
 
 ## Faults (4 min)
 
