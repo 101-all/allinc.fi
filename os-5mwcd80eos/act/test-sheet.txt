@@ -1,4 +1,4 @@
-# act 0.8: on-site show test (20 minutes)
+# act 0.8.1: on-site show test (20 minutes)
 
 For Markus, before a show: the iPad with act, the Mac with act Receiver, one USB-C Ethernet adapter
 on each. Do the items in order and mark **Pass** or **Fail**. Any Fail: take a screenshot of act's
@@ -53,10 +53,10 @@ The 2-hour run (item 9) starts in the middle and ends after the sheet. Leave it 
 
 | # | Do | Pass when | Pass / Fail |
 |---|---|---|---|
-| N1 | First launch of act Receiver 0.8: macOS asks to find devices on local networks. Click **Allow**. | act › **Routing** › Health lists the Mac under Other nodes; act Receiver › **Health** lists the iPad. | |
+| N1 | First launch of act Receiver 0.8.1: macOS asks to find devices on local networks. Click **Allow**. | act › **Routing › Devices** lists the Mac; act Receiver › **Routing › Devices** lists the iPad. | |
 | N2 | act Receiver › Health: **Preferred clock** on. | The Mac shows **Clock: Leads (preferred)**; the iPad **Follows**. | |
 | N3 | Quit act Receiver during a song. | The iPad leads the clock by itself and keeps playing; its Lost stays **0**. Open act Receiver again: it leads again. | |
-| N4 | With a second iPad: act › **Routing** on it, tap the dot where the first iPad's Ch 1 meets **IEM 1**. | IEM 1 on the second iPad gets a strip for that channel and hears it. Quit and reopen act on the first iPad: the route comes back by itself. | |
+| N4 | With a second iPad: on it, **Routing › Devices** › this iPad › **IEM In 1** › the first iPad › **Ch 1**. | IEM In 1 shows **Ch 1 @** the first iPad, with a green dot. Quit and reopen act on the first iPad: the subscription comes back by itself. **Matrix**: the crossing of the two iPads shows a dot. | |
 
 ## Faults (4 min)
 
