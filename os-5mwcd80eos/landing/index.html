@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-12-landing-17">
+<html lang="en" data-build="2026-11-12-landing-18">
 <head>
 <meta charset="utf-8">
 <script>
@@ -54,6 +54,9 @@ body.ready .chrome{opacity:1}
 .lbl.dim{opacity:.22}
 #brand,#labels,#bBuild{transition:opacity .7s ease,color .2s,background .2s}
 body.quiet #brand,body.quiet #bBuild,body.quiet #labels{opacity:0;pointer-events:none}
+#hero{position:fixed;left:0;top:0;pointer-events:none;opacity:0;transition:opacity .9s ease;background:#000;object-fit:fill}
+#hero.on{opacity:1}
+#hero.off{transition-duration:.22s}
 #vig{position:fixed;inset:0;pointer-events:none;background:radial-gradient(125% 100% at 50% 42%,rgba(0,0,0,0) 58%,rgba(0,0,0,.38) 100%)}
 #legend{position:fixed;left:50%;bottom:calc(var(--sb) + 16px);transform:translateX(-50%);display:flex;gap:2px;padding:4px;border-radius:14px;z-index:5}
 #foot{position:fixed;left:calc(var(--sl) + 22px);bottom:calc(var(--sb) + 18px);font-size:11px;line-height:16px;color:var(--mute);z-index:4;pointer-events:none;white-space:nowrap}
@@ -178,6 +181,7 @@ main{position:relative;z-index:3;pointer-events:none}
 </head>
 <body class="quiet">
 <div id="view"></div>
+<video id="hero" muted playsinline webkit-playsinline loop preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1"></video>
 <div id="vig"></div>
 <div id="labels" class="chrome"></div>
 
@@ -3662,7 +3666,7 @@ const DRIFT={on:false, p:V(0,0,0), t:V(0,0,0), t0:0}, _up=V(0,1,0);
 function updateDerived(t,dt){
   if(window.__closeup && !tween && !REDUCE){                         // resting on the product: a slow sway of about a degree around it
     if(!DRIFT.on){ DRIFT.on=true; DRIFT.p.copy(camera.position); DRIFT.t.copy(controls.target); DRIFT.t0=t; }
-    const a=0.02*Math.sin((t-DRIFT.t0)*0.32);
+    const a=0;                                                    // the close view holds still: the rendered film takes over from exactly this frame
     camera.position.copy(DRIFT.p).sub(ACT_DEV).applyAxisAngle(_up,a).add(ACT_DEV); controls.target.copy(DRIFT.t).sub(ACT_DEV).applyAxisAngle(_up,a).add(ACT_DEV);
   } else DRIFT.on=false;
   WAVE.value=REDUCE?6:t; WAVEK.value+=((lineH.antiphon>0.5?1:0)-WAVEK.value)*(REDUCE?1:0.05);
@@ -4170,7 +4174,7 @@ flyTo(tv, 4200); booted=true;
 host.addEventListener('pointerdown', ()=>{ tween=null; }, true);
 host.addEventListener('wheel', ()=>{ tween=null; }, {passive:true, capture:true});
 requestAnimationFrame(t=>{ lastT=t; document.body.classList.add('ready'); frame(t); });
-window.__twin = {flyTo, flyPath, flyQuat, topView, povView, V, screen:()=>ACT_SCREEN.mesh, tier:()=>tier, lk:()=>lkMesh, setBloom:b=>{ composer = b ? (composer||makeComposer()) : null; if(composer) resize(); }, S:()=>S, state, select, setMode, camera, controls, objs, getItem, handles:{rotKnob,sclKnob}, renderer, bloom:()=>!!composer, clocks};
+window.__twin = {shot:()=>{ if(composer) composer.render(0); else renderer.render(scene,camera); return renderer.domElement.toDataURL('image/png'); }, ui:()=>ACT_SCREEN, settled:()=>!tween, flyTo, flyPath, flyQuat, topView, povView, V, screen:()=>ACT_SCREEN.mesh, tier:()=>tier, lk:()=>lkMesh, setBloom:b=>{ composer = b ? (composer||makeComposer()) : null; if(composer) resize(); }, S:()=>S, state, select, setMode, camera, controls, objs, getItem, handles:{rotKnob,sclKnob}, renderer, bloom:()=>!!composer, clocks};
 })();
 </script>
 <script>
@@ -4205,6 +4209,7 @@ window.__twin = {flyTo, flyPath, flyQuat, topView, povView, V, screen:()=>ACT_SC
     }
     else if (tw && line === 'antiphon') { if (reduce) tw.flyTo(tw.topView(), 1); else tw.flyQuat(tw.topView(), 3400); }   /* antiphon is seen from above: the pulse through the audience */
     wasClose = close; curLine = line;
+    if (close) heroOn(); else heroOff();
     marks.forEach(function (a) { if (a.getAttribute('href') === '#' + mark) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
   }
   if ('IntersectionObserver' in window) {
@@ -4218,6 +4223,31 @@ window.__twin = {flyTo, flyPath, flyQuat, topView, povView, V, screen:()=>ACT_SC
     var W = innerWidth, H = innerHeight, upright = W / H <= 1 || W < 700, cx, cy;
     if (upright) { var rh = H * 0.56; cx = W / 2; cy = 56 + (rh - 56) / 2 + H * 0.03; } else { cx = W * 0.69; cy = H * 0.5; }
     tw.camera.setViewOffset(W, H, W / 2 - cx, H / 2 - cy, W, H); tw.camera.updateProjectionMatrix();
+  }
+  /* the act close view as a rendered film: the same camera, frame for frame, laid over the realtime picture once it rests */
+  var hero = document.getElementById('hero'), HERO = { land: { w: 2680, h: 1640, W0: 1340, H0: 820, cx: 924.6, cy: 410 }, port: { w: 1800, h: 2360, W0: 900, H0: 1180, cx: 450, cy: 393.8 } }, heroMode = null, heroT = 0;
+  function heroFit() {
+    var W = innerWidth, H = innerHeight, upright = W / H <= 1 || W < 700, m = upright ? 'port' : 'land', d = HERO[m], k = H / d.H0;
+    var cx = upright ? W / 2 : W * 0.69, cy = upright ? 56 + (H * 0.56 - 56) / 2 + H * 0.03 : H / 2;
+    var left = cx - d.cx * k, top = cy - d.cy * k, w = d.W0 * k, h = d.H0 * k;
+    if (left > 0.5 || left + w < W - 0.5 || Math.abs(top) > 12) return null;      /* a window this shape is not covered: the realtime picture stays */
+    hero.style.left = left + 'px'; hero.style.top = top + 'px'; hero.style.width = w + 'px'; hero.style.height = h + 'px';
+    return m;
+  }
+  function heroOff() { clearInterval(heroT); hero.classList.add('off'); hero.classList.remove('on'); try { hero.pause(); } catch (e) {} }
+  function heroOn() {
+    clearInterval(heroT); if (reduce || !hero.canPlayType || !hero.canPlayType('video/mp4; codecs="avc1.640033"')) return;
+    heroT = setInterval(function () {
+      if (!window.__closeup) return heroOff();
+      var m = heroFit(); if (!m) return heroOff();
+      if (m !== heroMode) { heroMode = m; hero.classList.remove('on'); hero.poster = 'hero-' + m + '.jpg'; hero.src = 'hero-' + m + '.mp4'; hero.load(); }
+      if (!tw.settled() || hero.readyState < 3) { if (hero.readyState < 3 && hero.preload !== 'auto') { hero.preload = 'auto'; hero.load(); } return; }
+      if (!hero.classList.contains('on')) {
+        try { hero.currentTime = (performance.now() / 1000) % 24; } catch (e) {}       /* the same moment of the loop the realtime screens are showing */
+        var pr = hero.play(); if (pr && pr.catch) pr.catch(function () {});
+        hero.classList.remove('off'); hero.classList.add('on');
+      }
+    }, 160);
   }
   function refit() { if (window.__closeup) tw.flyTo(ipadView(), 600); else if (curLine === 'antiphon') tw.flyTo(tw.topView(), 600); }   /* the twin refits to its own views on a resize; these two are the landing's */
   place(); addEventListener('resize', function () { place(); setTimeout(refit, 40); });
