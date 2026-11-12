@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-12-landing-14">
+<html lang="en" data-build="2026-11-12-landing-15">
 <head>
 <meta charset="utf-8">
 <script>
@@ -164,6 +164,11 @@ main{position:relative;z-index:3;pointer-events:none}
 .copy footer{margin-top:22px;display:flex;flex-wrap:wrap;gap:4px 16px;font-size:11px;line-height:16px;color:var(--mute)}
 .copy footer a{color:var(--ink)}
 @media (max-aspect-ratio:1/1),(max-width:699px){ .s{padding-bottom:calc(var(--sb) + clamp(34px,6vh,72px))} .copy{width:min(100%,560px)} }
+.s[data-line] .copy h2{font-size:32px;font-weight:700;letter-spacing:-.03em;line-height:1.1}
+.s[data-line] .copy .pi{gap:12px}
+.s[data-line] .copy .pi img{width:30px;height:30px}
+.s[data-line] .copy p.ds{margin-top:10px;font-size:18px;font-weight:400;letter-spacing:-.01em;line-height:1.3;color:rgba(255,255,255,.72)}
+@media (max-width:640px){ .s[data-line] .copy h2{font-size:26px} .s[data-line] .copy p.ds{font-size:16px} }
 @media (max-width:640px){ .copy h2{font-size:19px} .copy p.ds{font-size:14px} .places{gap:20px;font-size:14px} }
 @media (prefers-reduced-motion:reduce){ html{scroll-snap-type:none;scroll-behavior:auto} .copy{transition:none;transform:none} }
 </style>
@@ -2808,7 +2813,7 @@ const ACT_DEV=V(0,0,0);
 const ACT_SCREEN=(function(){
   const PW=LOW?834:1668, PH=LOW?1210:2420, CW=900, K=PW/CW, CH=PH/K, c=document.createElement('canvas'); c.width=PW; c.height=PH; const g=c.getContext('2d');   // the 11-inch panel's own pixels
   const tex=new THREE.CanvasTexture(c); tex.encoding=THREE.sRGBEncoding; tex.anisotropy=renderer.capabilities.getMaxAnisotropy(); tex.generateMipmaps=true; tex.minFilter=THREE.LinearMipmapLinearFilter;
-  const mat=new THREE.MeshBasicMaterial({map:tex, toneMapped:false, color:new THREE.Color(0.82,0.82,0.82)});
+  const mat=new THREE.MeshBasicMaterial({map:tex, toneMapped:false, color:new THREE.Color(1.04,1.04,1.04)});
   const F=(w,px)=>w+' '+px+'px -apple-system, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Inter, sans-serif';
   const SONGS=[{name:'Famous', len:40, stems:['01 drums','02 bass','03 other','04 vocals','05 drums 2','06 bass 2','07 other 2','08 vocals 2']},
                {name:'iClout', len:40, stems:['01 drums','02 bass','03 other','04 vocals']}];
@@ -2993,7 +2998,7 @@ const ACT_SCREEN=(function(){
   // the phone: the same app, its Mix tab on one in-ear mix. A musician's own faders
   const pc=document.createElement('canvas'); pc.width=LOW?603:1206; pc.height=LOW?1311:2622; const h=pc.getContext('2d'), PK=pc.width/402;
   const ptex=new THREE.CanvasTexture(pc); ptex.encoding=THREE.sRGBEncoding; ptex.anisotropy=renderer.capabilities.getMaxAnisotropy(); ptex.generateMipmaps=true; ptex.minFilter=THREE.LinearMipmapLinearFilter;
-  const pmat=new THREE.MeshBasicMaterial({map:ptex, toneMapped:false, color:new THREE.Color(0.82,0.82,0.82)});
+  const pmat=new THREE.MeshBasicMaterial({map:ptex, toneMapped:false, color:new THREE.Color(1.04,1.04,1.04)});
   const hr=(x,y,w,hh,r)=>{ h.beginPath(); h.moveTo(x+r,y); h.arcTo(x+w,y,x+w,y+hh,r); h.arcTo(x+w,y+hh,x,y+hh,r); h.arcTo(x,y+hh,x,y,r); h.arcTo(x,y,x+w,y,r); h.closePath(); };
   const plv=new Float32Array(6);
   function phone(t){
@@ -3110,21 +3115,32 @@ box(3.4, 0.4, 2.4, M.black, 0, DECK+0.2, -21.4);
   (function(){
     const BW=0.1775, BH=0.2497, BD=0.0053, SW=0.1605, SH=0.2328, A=1.2;
     const round=(w,h,r)=>{ const sh=new THREE.Shape(), x=w/2, y=h/2; sh.moveTo(-x+r,-y); sh.lineTo(x-r,-y); sh.absarc(x-r,-y+r,r,-Math.PI/2,0,false); sh.lineTo(x,y-r); sh.absarc(x-r,y-r,r,0,Math.PI/2,false); sh.lineTo(-x+r,y); sh.absarc(-x+r,y-r,r,Math.PI/2,Math.PI,false); sh.lineTo(-x,-y+r); sh.absarc(-x+r,-y+r,r,Math.PI,Math.PI*1.5,false); return sh; };
-    const ec=document.createElement('canvas'); ec.width=256; ec.height=128; const eg=ec.getContext('2d');      // what the metal and glass reflect: a dark room, the rig's light overhead
-    const gr=eg.createLinearGradient(0,0,0,128); gr.addColorStop(0,'#8a8782'); gr.addColorStop(0.3,'#4a4846'); gr.addColorStop(0.55,'#2c2b2a'); gr.addColorStop(1,'#1c1b1a'); eg.fillStyle=gr; eg.fillRect(0,0,256,128);
-    const env=new THREE.CanvasTexture(ec); env.mapping=THREE.EquirectangularReflectionMapping; env.encoding=THREE.sRGBEncoding;
-    const alu=new THREE.MeshStandardMaterial({color:lin(0xc9cacc), metalness:0.72, roughness:0.38, envMap:env, envMapIntensity:1.3});
-    const glass=new THREE.MeshStandardMaterial({color:0x020202, metalness:0, roughness:0.12, envMap:env, envMapIntensity:0.35});
+    const studio=(function(){
+      const sc=new THREE.Scene(); sc.background=new THREE.Color(0x020202);
+      const lamp=(w,h,d,x,y,z,r,g2,b)=>{ const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d), new THREE.MeshBasicMaterial({color:new THREE.Color(r,g2,b), side:THREE.DoubleSide})); m.position.set(x,y,z); m.lookAt(0,0,0); sc.add(m); };
+      lamp(7,4,0.1,   0,9,-2,    5.5,5.2,4.9);      // a large soft box overhead: the top faces and the upper chamfer
+      lamp(1.2,7,0.1, 9,2.5,1.5, 9,7.2,5.2);        // a warm strip at the side: the highlight along the edge
+      lamp(1,5,0.1,  -9,3,-3,    2.4,2.5,2.8);      // a cool, weak strip opposite, so the far edge is not lost
+      lamp(8,3,0.1,   0,5,-9,    0.5,0.5,0.52);     // a faint wall of light behind the eye: what the glass picks up at a glance
+      const gen=new THREE.PMREMGenerator(renderer), t=gen.fromScene(sc,0.035).texture; gen.dispose(); return t;
+    })();
+    const alu=new THREE.MeshStandardMaterial({color:lin(0xd4d5d8), metalness:1, roughness:0.3, envMap:studio, envMapIntensity:1.15});      // anodised aluminium
+    const glass=new THREE.MeshStandardMaterial({color:0x010101, metalness:0, roughness:0.06, envMap:studio, envMapIntensity:0.9});         // the black border under glass
+    const sheen=new THREE.MeshStandardMaterial({color:0x000000, metalness:0, roughness:0.05, envMap:studio, envMapIntensity:0.55, transparent:true, blending:THREE.AdditiveBlending, depthWrite:false});   // the glass over the picture: only its reflection
+    const glowTex=(function(){ const c=document.createElement('canvas'); c.width=c.height=256; const x=c.getContext('2d'); const rg=x.createRadialGradient(128,36,4,128,36,210); rg.addColorStop(0,'rgba(255,255,255,1)'); rg.addColorStop(0.35,'rgba(255,255,255,0.42)'); rg.addColorStop(1,'rgba(255,255,255,0)'); x.fillStyle=rg; x.fillRect(0,0,256,256);
+      x.globalCompositeOperation='destination-in'; const lg=x.createLinearGradient(0,0,0,40); lg.addColorStop(0,'rgba(0,0,0,0)'); lg.addColorStop(1,'rgba(0,0,0,1)'); x.fillStyle=lg; x.fillRect(0,0,256,256); return new THREE.CanvasTexture(c); })();
+    const spill=(w,d,x,z,ry,op)=>{ const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d).rotateX(-Math.PI/2).translate(0,0,d/2), new THREE.MeshBasicMaterial({map:glowTex, transparent:true, opacity:op, blending:THREE.AdditiveBlending, depthWrite:false, toneMapped:false, color:new THREE.Color(0.86,0.92,1)})); m.position.set(x,0.0012,z); m.rotation.y=ry; m.raycast=noop; m.renderOrder=2; pad.add(m); };   // the screen's light on the table; it starts a finger's width out, so the foot of the device stays dark
     const pad=new THREE.Group(); pad.position.set(0.86,0.941,-0.12); pad.rotation.set(0,Math.PI+0.22,0); g.add(pad);
     const Z0=0.085, Y0=0.001;                                     // the lower edge, nearest the dj, almost on the table
     const tilt=new THREE.Group(); tilt.position.set(0,Y0+Math.sin(A)*BH/2+Math.cos(A)*BD,Z0-Math.cos(A)*BH/2+Math.sin(A)*BD); tilt.rotation.x=-(Math.PI/2-A); pad.add(tilt);
-    const bev=0.0005, body=new THREE.ExtrudeGeometry(round(BW-2*bev,BH-2*bev,0.018-bev), {depth:BD-2*bev, bevelEnabled:true, bevelThickness:bev, bevelSize:bev, bevelSegments:2, curveSegments:16}).translate(0,0,-(BD-bev));
+    const bev=0.0009, body=new THREE.ExtrudeGeometry(round(BW-2*bev,BH-2*bev,0.018-bev), {depth:BD-2*bev, bevelEnabled:true, bevelThickness:bev, bevelSize:bev, bevelSegments:4, curveSegments:24}).translate(0,0,-(BD-bev));
     mk(body, alu, tilt, 0,0,0);
     mk(new THREE.ShapeGeometry(round(BW-0.0012,BH-0.0012,0.0174),16), glass, tilt, 0,0,0.00012).castShadow=false;
     ACT_SCREEN.mesh=mk(new THREE.PlaneGeometry(SW,SH), ACT_SCREEN.mat, tilt, 0,0,0.00024); ACT_SCREEN.mesh.castShadow=false; ACT_SCREEN.mesh.receiveShadow=false;
+    mk(new THREE.PlaneGeometry(SW,SH), sheen, tilt, 0,0,0.0004).castShadow=false; spill(0.62,0.46,0,Z0+0.004,0,0.13);
     const lens=new THREE.MeshBasicMaterial({color:0x15161a}); mk(new THREE.CircleGeometry(0.0017,20), lens, tilt, -BW/2+0.0043,0,0.0003).castShadow=false;   // front camera, on the long edge: at the side when upright
     // light for the product: a soft key from the dj's side, and a small rim from behind that catches the aluminium edge
-    const keyL=new THREE.SpotLight(0xfff4ea, 0.85, 5, 0.42, 1, 1.4); keyL.position.set(-0.55,0.95,1.0); keyL.target.position.set(0.06,0.1,0); pad.add(keyL); pad.add(keyL.target);
+    const keyL=new THREE.SpotLight(0xfff4ea, 0.5, 5, 0.42, 1, 1.4); keyL.position.set(-0.55,0.95,1.0); keyL.target.position.set(0.06,0.1,0); pad.add(keyL); pad.add(keyL.target);
     const rimL=new THREE.PointLight(0xffffff, 0.22, 1.1, 1.8); rimL.position.set(0.2,0.42,-0.3); pad.add(rimL);
     // the phone beside it: 71.9 x 150.0 x 8.75 mm, lying back on the table, turned a little to the eye
     (function(){
@@ -3133,6 +3149,8 @@ box(3.4, 0.4, 2.4, M.black, 0, DECK+0.2, -21.4);
       const bv=0.0012; mk(new THREE.ExtrudeGeometry(round(pw-2*bv,ph-2*bv,0.0115-bv), {depth:pd-2*bv, bevelEnabled:true, bevelThickness:bv, bevelSize:bv, bevelSegments:3, curveSegments:16}).translate(0,0,-(pd-bv)), alu, tl, 0,0,0);
       mk(new THREE.ShapeGeometry(round(pw-0.0016,ph-0.0016,0.0108),16), glass, tl, 0,0,0.00012).castShadow=false;
       const sc=mk(new THREE.PlaneGeometry(0.0666,0.1448), ACT_SCREEN.pmat, tl, 0,0,0.00024); sc.castShadow=false; sc.receiveShadow=false;
+      mk(new THREE.PlaneGeometry(0.0666,0.1448), sheen, tl, 0,0,0.0004).castShadow=false;
+      const sp=new THREE.Mesh(new THREE.PlaneGeometry(0.22,0.18).rotateX(-Math.PI/2).translate(0,0,0.09), new THREE.MeshBasicMaterial({map:glowTex, transparent:true, opacity:0.08, blending:THREE.AdditiveBlending, depthWrite:false, toneMapped:false, color:new THREE.Color(0.86,0.92,1)})); sp.position.set(0,0.0012,0.003); sp.raycast=noop; sp.renderOrder=2; ph0.add(sp);
     })();
   })();
   (function(){
@@ -3631,7 +3649,14 @@ function updateMotion(t){
   MOVERS.forEach(m=>moveOne(m,b)); objs.forEach(o=>{ if(o.mover) moveOne(o.mover,b); });
   SCREENS.forEach((m,i)=>m.color.setScalar(0.88+0.12*Math.sin(t*0.12+i*1.7)));
 }
-function updateDerived(t,dt){ WAVE.value=REDUCE?6:t; WAVEK.value+=((lineH.antiphon>0.5?1:0)-WAVEK.value)*(REDUCE?1:0.05);
+const DRIFT={on:false, p:V(0,0,0), t:V(0,0,0), t0:0}, _up=V(0,1,0);
+function updateDerived(t,dt){
+  if(window.__closeup && !tween && !REDUCE){                         // resting on the product: a slow sway of about a degree around it
+    if(!DRIFT.on){ DRIFT.on=true; DRIFT.p.copy(camera.position); DRIFT.t.copy(controls.target); DRIFT.t0=t; }
+    const a=0.02*Math.sin((t-DRIFT.t0)*0.32);
+    camera.position.copy(DRIFT.p).sub(ACT_DEV).applyAxisAngle(_up,a).add(ACT_DEV); controls.target.copy(DRIFT.t).sub(ACT_DEV).applyAxisAngle(_up,a).add(ACT_DEV);
+  } else DRIFT.on=false;
+  WAVE.value=REDUCE?6:t; WAVEK.value+=((lineH.antiphon>0.5?1:0)-WAVEK.value)*(REDUCE?1:0.05);
   if(ACT_SCREEN.mirror) ACT_SCREEN.mirror();
   if(ACT_SCREEN.mesh && t-ACT_SCREEN.last>0.06 && camera.position.distanceTo(ACT_DEV)<26){ ACT_SCREEN.last=t; ACT_SCREEN.draw(REDUCE?1:t); if(t-ACT_SCREEN.plast>0.1 && camera.position.distanceTo(ACT_DEV)<8){ ACT_SCREEN.plast=t; ACT_SCREEN.phone(REDUCE?1:t); } } updateLink(REDUCE?0.31:t); return updateDerivedRest(t,dt); }
 const REDUCE=window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; let movedOnce=false;
@@ -4148,9 +4173,9 @@ window.__twin = {flyTo, flyPath, flyQuat, topView, povView, V, screen:()=>ACT_SC
     var m = tw.screen(); m.updateWorldMatrix(true, false);
     var e = m.matrixWorld.elements, P = tw.V(e[12], e[13], e[14]), N = tw.V(e[8], e[9], e[10]).normalize(), U = tw.V(e[4], e[5], e[6]).normalize(), R = tw.V(e[0], e[1], e[2]).normalize();
     var upright = innerWidth / innerHeight <= 1 || innerWidth < 700;
-    var pos = P.clone().addScaledVector(N, upright ? 0.78 : 0.66).addScaledVector(U, -0.07).addScaledVector(R, upright ? -0.1 : -0.17);
-    var dir = P.clone().addScaledVector(R, upright ? -0.04 : -0.03).addScaledVector(U, upright ? 0.0 : 0.012).sub(pos).normalize();
-    return { pos: pos, target: pos.clone().addScaledVector(dir, 3.2), fov: upright ? 49 : 37 };
+    var pos = P.clone().addScaledVector(N, upright ? 0.62 : 0.5).addScaledVector(U, -0.085).addScaledVector(R, upright ? -0.2 : -0.3);
+    var dir = P.clone().addScaledVector(R, upright ? -0.07 : -0.1).addScaledVector(U, upright ? 0.0 : 0.02).sub(pos).normalize();
+    return { pos: pos, target: pos.clone().addScaledVector(dir, 3.2), fov: upright ? 46 : 34 };
   }
   var wasClose = false, curLine = null;
   function pick(sec) {
