@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-12-landing-22">
+<html lang="en" data-build="2026-11-12-landing-23">
 <head>
 <meta charset="utf-8">
 <script>
@@ -4252,7 +4252,7 @@ window.__twin = {shot:()=>{ if(composer) composer.render(0); else renderer.rende
       if (tok !== heroTok) return;
       if (!window.__closeup) return heroOff();
       var m = heroFit(); if (!m) { hero.classList.remove('on'); return; }
-      if (m !== heroMode) { heroMode = m; asked = false; hero.classList.remove('on'); hero.preload = 'auto'; hero.poster = 'hero-' + m + '.jpg'; hero.src = 'hero-' + m + '.mp4?v=3'; hero.load(); }
+      if (m !== heroMode) { heroMode = m; asked = false; hero.classList.remove('on'); hero.preload = 'auto'; hero.poster = 'hero-' + m + '.jpg'; hero.src = 'hero-' + m + '.mp4?v=4'; hero.load(); }
       heroStill = tw.settled() ? heroStill + 1 : 0;
       if (asked || heroStill < 4 || hero.readyState < 3) return;                           /* the camera at rest for half a second, the film buffered */
       asked = true; heroShow(tok);
