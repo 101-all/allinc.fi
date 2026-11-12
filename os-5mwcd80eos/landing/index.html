@@ -1,7 +1,9 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-12-landing-24">
+<html lang="en" data-build="2026-11-12-landing-25">
 <head>
 <meta charset="utf-8">
+<link rel="preload" as="image" type="image/avif" href="intro-port.avif" media="(max-aspect-ratio: 1/1), (max-width: 699px)">
+<link rel="preload" as="image" type="image/avif" href="intro-land.avif" media="(min-aspect-ratio: 1001/1000) and (min-width: 700px)">
 <script>
 /* build 2026-11-03-console: if a cached copy is showing, fetch the page fresh once and reload */
 (function(){ try{ var b=document.documentElement.getAttribute('data-build');
@@ -56,6 +58,9 @@ body.ready .chrome{opacity:1}
 body.quiet #brand,body.quiet #bBuild,body.quiet #labels{opacity:0;pointer-events:none}
 #hero{position:fixed;left:0;top:0;pointer-events:none;opacity:0;transition:opacity .3s linear;background:#000;object-fit:fill}
 #hero.on{opacity:1}
+#intro{position:fixed;left:0;top:0;pointer-events:none;opacity:0;transition:opacity .25s linear;background:#000;object-fit:fill}
+#intro.on{opacity:1}
+html.film .s .copy{opacity:0!important;transform:translateY(10px)!important}
 #vig{display:none;position:fixed;inset:0;pointer-events:none;background:radial-gradient(125% 100% at 50% 42%,rgba(0,0,0,0) 58%,rgba(0,0,0,.38) 100%)}
 #legend{position:fixed;left:50%;bottom:calc(var(--sb) + 16px);transform:translateX(-50%);display:flex;gap:2px;padding:4px;border-radius:14px;z-index:5}
 #foot{position:fixed;left:calc(var(--sl) + 22px);bottom:calc(var(--sb) + 18px);font-size:11px;line-height:16px;color:var(--mute);z-index:4;pointer-events:none;white-space:nowrap}
@@ -183,6 +188,23 @@ main{position:relative;z-index:3;pointer-events:none}
 <body class="quiet">
 <div id="view"></div>
 <video id="hero" muted playsinline webkit-playsinline loop preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1"></video>
+<video id="intro" muted playsinline webkit-playsinline preload="auto" disablepictureinpicture aria-hidden="true" tabindex="-1"></video>
+<script>
+/* the opening: a rendered film of the move in over the arena, shown from its first frame at once; it lands on the act view, where a second film loops */
+(function(){
+  var HERO={land:{W0:1340,H0:820,cx:924.6,cy:410},port:{W0:900,H0:1180,cx:450,cy:393.8}};
+  window.__heroFit=function(el){ var W=innerWidth,H=innerHeight,up=W/H<=1||W<700,m=up?'port':'land',d=HERO[m],k=H/d.H0,cx=up?W/2:W*0.69,cy=up?56+(H*0.56-56)/2+H*0.03:H/2,left=cx-d.cx*k,top=cy-d.cy*k,w=d.W0*k,h=d.H0*k;
+    if(left>0.5||left+w<W-0.5||Math.abs(top)>12) return null; el.style.left=left+'px'; el.style.top=top+'px'; el.style.width=w+'px'; el.style.height=h+'px'; return m; };
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches, i=document.getElementById('intro'), h=document.getElementById('hero');
+  var m=window.__heroFit(i); window.__film={mode:m,state:'none'};
+  if(!m||!i.canPlayType||!i.canPlayType('video/mp4; codecs="avc1.640033"')||location.hash.length>1) return;
+  window.__heroFit(h);
+  if(reduce){ h.poster='hero-'+m+'.jpg'; h.classList.add('on'); window.__film.state='still'; return; }
+  document.documentElement.classList.add('film');
+  i.poster='intro-'+m+'.avif'; i.src='intro-'+m+'.mp4'; i.classList.add('on'); window.__film.state='intro';
+  var p=i.play(); if(p&&p.catch) p.catch(function(){});
+})();
+</script>
 <div id="vig"></div>
 <div id="labels" class="chrome"></div>
 
@@ -207,7 +229,6 @@ main{position:relative;z-index:3;pointer-events:none}
 </nav>
 
 <main>
-  <section class="s" id="top" aria-label="all inc."></section>
   <section class="s" id="act" data-line="act" data-view="ipad" aria-label="all act">
     <div class="copy"><div class="pi"><img src="../brand/act-icon.svg" alt=""><h2>all act</h2></div>
       <p class="ds">Digital live performance system.</p></div>
@@ -2422,7 +2443,7 @@ const M = {
   crowd:  new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.95}),
   seat:   new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.95}),
   tier:   new THREE.MeshStandardMaterial({color:0x111111, roughness:0.85}),
-  figure: new THREE.MeshStandardMaterial({color:lin(0xa6a6a6), roughness:0.9}),
+  figure: new THREE.MeshStandardMaterial({color:lin(0x2b2b2b), roughness:0.95}),      // crew: dark clothes, in the shadows
   pa:     new THREE.MeshStandardMaterial({color:0x191919, roughness:0.7, metalness:0.1}),
   lamp:   new THREE.MeshBasicMaterial({color:new THREE.Color(1.15,1.12,1.06), toneMapped:false}),
   glow:   new THREE.MeshBasicMaterial({color:lin(0x26282b), toneMapped:false}),
@@ -2719,7 +2740,7 @@ const SEATED=merge([[lathe([[0.001,0],[0.15,0],[0.17,0.25],[0.2,0.62],[0.205,0.7
   for(let x=-10;x<=10;x+=4) if(Math.abs(x)>3) pts.push([x,0,-12.2,0]);
   [[-3.6,-8],[3.6,-8],[-4.8,4.8],[4.8,4.8]].forEach(([x,z])=>pts.push([x,0,z,x<0?Math.PI/2:-Math.PI/2]));
   [[-2.6,33.6],[-1.2,33.4],[1.6,33.5],[3,33.4],[-0.4,35.6],[2.2,35.4]].forEach(([x,z])=>pts.push([x,0.6,z,Math.PI]));
-  const mh=new THREE.MeshStandardMaterial({color:lin(0xa6a6a6), roughness:0.9, vertexColors:true});
+  const mh=new THREE.MeshStandardMaterial({color:lin(0x4a4a4a), roughness:0.9, vertexColors:true});
   pts.forEach(([x,y,z,r],i)=>{
     const b=new THREE.Mesh(CREW_BODY[i%3], M.figure), h=new THREE.Mesh(CROWD_HEAD[(i*3+1)%4], mh), s=0.92+((i*0.618)%1)*0.14;
     b.position.set(x,y,z); b.rotation.y=r; b.scale.set(s,1.48*s,s); h.position.set(x,y+(1.48+0.135)*s,z); h.rotation.y=r; h.scale.setScalar(s*1.06);
@@ -4176,7 +4197,7 @@ flyTo(tv, 4200); booted=true;
 host.addEventListener('pointerdown', ()=>{ tween=null; }, true);
 host.addEventListener('wheel', ()=>{ tween=null; }, {passive:true, capture:true});
 requestAnimationFrame(t=>{ lastT=t; document.body.classList.add('ready'); frame(t); });
-window.__twin = {shot:()=>{ if(composer) composer.render(0); else renderer.render(scene,camera); return renderer.domElement.toDataURL('image/png'); }, ui:()=>ACT_SCREEN, settled:()=>!tween, flyTo, flyPath, flyQuat, topView, povView, V, screen:()=>ACT_SCREEN.mesh, tier:()=>tier, lk:()=>lkMesh, setBloom:b=>{ composer = b ? (composer||makeComposer()) : null; if(composer) resize(); }, S:()=>S, state, select, setMode, camera, controls, objs, getItem, handles:{rotKnob,sclKnob}, renderer, bloom:()=>!!composer, clocks};
+window.__twin = {fog:()=>scene.fog, frame:()=>{ if(finish) finish.uniforms.uAmt.value=0; if(composer) composer.render(0); else renderer.render(scene,camera); return renderer.domElement; }, shot:()=>{ if(composer) composer.render(0); else renderer.render(scene,camera); return renderer.domElement.toDataURL('image/png'); }, ui:()=>ACT_SCREEN, settled:()=>!tween, flyTo, flyPath, flyQuat, topView, povView, V, screen:()=>ACT_SCREEN.mesh, tier:()=>tier, lk:()=>lkMesh, setBloom:b=>{ composer = b ? (composer||makeComposer()) : null; if(composer) resize(); }, S:()=>S, state, select, setMode, camera, controls, objs, getItem, handles:{rotKnob,sclKnob}, renderer, bloom:()=>!!composer, clocks};
 })();
 </script>
 <script>
@@ -4227,33 +4248,45 @@ window.__twin = {shot:()=>{ if(composer) composer.render(0); else renderer.rende
     tw.camera.setViewOffset(W, H, W / 2 - cx, H / 2 - cy, W, H); tw.camera.updateProjectionMatrix();
   }
   /* the act close view as a rendered film: the same camera, frame for frame, laid over the realtime picture once it rests */
-  var hero = document.getElementById('hero'), HERO = { land: { w: 2680, h: 1640, W0: 1340, H0: 820, cx: 924.6, cy: 410 }, port: { w: 1800, h: 2360, W0: 900, H0: 1180, cx: 450, cy: 393.8 } }, heroMode = null, heroT = 0;
-  function heroFit() {
-    var W = innerWidth, H = innerHeight, upright = W / H <= 1 || W < 700, m = upright ? 'port' : 'land', d = HERO[m], k = H / d.H0;
-    var cx = upright ? W / 2 : W * 0.69, cy = upright ? 56 + (H * 0.56 - 56) / 2 + H * 0.03 : H / 2;
-    var left = cx - d.cx * k, top = cy - d.cy * k, w = d.W0 * k, h = d.H0 * k;
-    if (left > 0.5 || left + w < W - 0.5 || Math.abs(top) > 12) return null;      /* a window this shape is not covered: the realtime picture stays */
-    hero.style.left = left + 'px'; hero.style.top = top + 'px'; hero.style.width = w + 'px'; hero.style.height = h + 'px';
-    return m;
+  var hero = document.getElementById('hero'), intro = document.getElementById('intro'), film = window.__film || { state: 'none' }, heroMode = null, heroT = 0;
+  function heroFit() { return window.__heroFit(hero); }
+  function introBail() {                       /* the opening is cut short (a scroll away, an error, a stall): the realtime picture is underneath */
+    if (film.state !== 'intro') return; film.state = 'done'; document.documentElement.classList.remove('film'); intro.classList.remove('on'); try { intro.pause(); } catch (e) {}
   }
+  if (film.state === 'intro') {
+    heroMode = film.mode; hero.preload = 'auto'; hero.poster = 'hero-' + film.mode + '.jpg'; hero.src = 'hero-' + film.mode + '.mp4?v=5'; hero.load();
+    var landed = false;
+    intro.addEventListener('timeupdate', function () { if (!landed && intro.duration && intro.currentTime > intro.duration - 1.0) { landed = true; document.documentElement.classList.remove('film'); } });
+    intro.addEventListener('ended', function () {
+      if (film.state !== 'intro') return;
+      var fin = function () { if (film.state !== 'intro') return; hero.style.transition = 'none'; hero.classList.add('on'); void hero.offsetWidth; hero.style.transition = ''; setTimeout(function () { intro.classList.remove('on'); film.state = 'done'; document.documentElement.classList.remove('film'); }, 150); };
+      var go = function () { if (hero.requestVideoFrameCallback) hero.requestVideoFrameCallback(function () { fin(); }); else setTimeout(fin, 80); };
+      try { hero.currentTime = 0; } catch (e) {}
+      var pr = hero.play(); if (pr && pr.then) pr.then(go).catch(function () { introBail(); if (window.__closeup) heroOn(); }); else go();
+    });
+    intro.addEventListener('error', function () { introBail(); if (window.__closeup) heroOn(); });
+    setTimeout(function () { if (film.state === 'intro' && intro.currentTime < 0.2) { introBail(); if (window.__closeup) heroOn(); } }, 7000);
+  }
+  addEventListener('resize', function () { window.__heroFit(intro); if (film.state === 'intro') introBail(); if (window.__closeup) heroOn(); });
   var heroTok = 0, heroStill = 0;
-  function heroOff() { heroTok++; clearInterval(heroT); hero.classList.remove('on'); try { hero.pause(); } catch (e) {} }
+  function heroOff() { introBail(); heroTok++; clearInterval(heroT); hero.classList.remove('on'); try { hero.pause(); } catch (e) {} }
   function heroShow(tok) {
     var go = function () { if (tok === heroTok && window.__closeup) hero.classList.add('on'); };
     var started = function () { if (hero.requestVideoFrameCallback) hero.requestVideoFrameCallback(function () { requestAnimationFrame(go); }); else setTimeout(go, 120); };
     var play = function () { if (tok !== heroTok) return; var pr = hero.play(); if (pr && pr.then) pr.then(started).catch(function () {}); else hero.addEventListener('playing', started, { once: true }); };
-    var t = (performance.now() / 1000 + 0.12) % 24;                                       /* the moment of the loop the realtime screens will be showing */
+    var t = ((performance.now() / 1000 + 0.12 - 2) % 24 + 24) % 24;                       /* the film opens two seconds into the screens' cycle */                                       /* the moment of the loop the realtime screens will be showing */
     if (Math.abs(hero.currentTime - t) < 0.05) play();
     else { hero.addEventListener('seeked', play, { once: true }); try { hero.currentTime = t; } catch (e) { play(); } }
   }
   function heroOn() {
+    if (film.state === 'intro') return;
     clearInterval(heroT); if (reduce || !hero.canPlayType || !hero.canPlayType('video/mp4; codecs="avc1.640033"')) return;
     var tok = ++heroTok, asked = false; heroStill = 0;
     heroT = setInterval(function () {
       if (tok !== heroTok) return;
       if (!window.__closeup) return heroOff();
       var m = heroFit(); if (!m) { hero.classList.remove('on'); return; }
-      if (m !== heroMode) { heroMode = m; asked = false; hero.classList.remove('on'); hero.preload = 'auto'; hero.poster = 'hero-' + m + '.jpg'; hero.src = 'hero-' + m + '.mp4?v=4'; hero.load(); }
+      if (m !== heroMode) { heroMode = m; asked = false; hero.classList.remove('on'); hero.preload = 'auto'; hero.poster = 'hero-' + m + '.jpg'; hero.src = 'hero-' + m + '.mp4?v=5'; hero.load(); }
       heroStill = tw.settled() ? heroStill + 1 : 0;
       if (asked || heroStill < 4 || hero.readyState < 3) return;                           /* the camera at rest for half a second, the film buffered */
       asked = true; heroShow(tok);
