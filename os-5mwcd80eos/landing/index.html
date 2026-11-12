@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-12-landing-16">
+<html lang="en" data-build="2026-11-12-landing-17">
 <head>
 <meta charset="utf-8">
 <script>
@@ -46,7 +46,7 @@ body.ready #view{opacity:1}
 #view canvas{display:block;touch-action:none;outline:none}
 .chrome{opacity:0;transition:opacity 1.2s ease 1.4s}
 body.ready .chrome{opacity:1}
-#labels{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+#labels{display:none}
 .lbl{position:absolute;left:0;top:0;display:flex;flex-direction:column;align-items:center;will-change:transform;transition:opacity .45s ease}
 .lbl img{width:20px;height:20px;display:block;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
 .lbl:after{content:"";display:block;width:1px;height:9px;margin-top:3px;background:rgba(255,255,255,.32)}
@@ -2360,7 +2360,7 @@ const FinishShader = {
       vec4 c=texture2D(tDiffuse,vUv);
       float r=uAmt*smoothstep(0.26,0.66,abs(vUv.y-uFocus));
       if(r>0.15){ vec3 s=c.rgb; for(int i=0;i<8;i++){ float a=float(i)*2.39996+0.4; float d=sqrt((float(i)+0.5)/8.0); s+=texture2D(tDiffuse,vUv+vec2(cos(a),sin(a))*d*r/uRes).rgb; } c.rgb=s/9.0; }
-      c.rgb+=(fract(sin(dot(gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453)-0.5)/255.0;
+      c.rgb+=(fract(52.9829189*fract(dot(gl_FragCoord.xy,vec2(0.06711056,0.00583715))))-0.5)/255.0;
       gl_FragColor=c;
     }`
 };
@@ -2413,7 +2413,7 @@ const M = {
   deck:   new THREE.MeshStandardMaterial({color:0x0b0b0b, roughness:0.55, metalness:0.1}),
   black:  new THREE.MeshStandardMaterial({color:0x0a0a0a, roughness:0.6}),
   desk:   new THREE.MeshStandardMaterial({color:0x040404, roughness:0.42}),      // the dj's table: deep charcoal, a little gloss
-  grey:   new THREE.MeshStandardMaterial({color:0x3a3a3a, roughness:0.8}),
+  grey:   new THREE.MeshStandardMaterial({color:0x121212, roughness:0.9}),
   crowd:  new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.95}),
   seat:   new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.95}),
   tier:   new THREE.MeshStandardMaterial({color:0x111111, roughness:0.85}),
@@ -2892,13 +2892,13 @@ const ACT_SCREEN=(function(){
       g.fillStyle=Wt(0.1); rr(x,166,w,30,8); g.fill(); g.fillStyle=Wt(0.4); g.font=F(400,15); g.fillText('Filter '+word,x+30,186);
       g.strokeStyle=Wt(0.45); g.lineWidth=1.6; g.beginPath(); g.arc(x+14,180,5,0,6.2832); g.moveTo(x+18,184); g.lineTo(x+22,188); g.stroke(); };
     side(26,'Receivers (3)','Receivers',226); side(276,'Transmitters (3)','Transmitters',300);
-    const RH=250, X0=26+RH, C=40, top=210, NH=130, Y0=top+24+NH+28;
+    const RH=250, X0=26+RH, C=50, top=210, NH=130, Y0=top+24+NH+28;
     const txOpen=r>1.05, rxOpen=r>2.15, when=[-9,-9,3.1,3.8,4.5,5.2], on=k=>k<6 && r>=when[k], n=when.filter(w=>r>=w).length;
     let last=-1; when.forEach((w,k)=>{ if(w>0 && r>=w) last=k; });
     const TX=['act','Stage Box','FOH'], RX=['Stage Box','FOH','In-Ears'], cols=[], rows=[];
     if(txOpen) for(let c=0;c<8;c++) cols.push({d:0,c,first:c===0}); else cols.push({d:0,c:-1,first:true});
     cols.push({d:1,c:-1,first:true},{d:2,c:-1,first:true});
-    rows.push({d:0,c:-1}); if(rxOpen) for(let c=0;c<6;c++) rows.push({d:0,c}); rows.push({d:1,c:-1},{d:2,c:-1});
+    rows.push({d:0,c:-1}); if(rxOpen) for(let c=0;c<6;c++) rows.push({d:0,c}); rows.push({d:1,c:-1}); for(let c=0;c<4;c++) rows.push({d:1,c}); rows.push({d:2,c:-1});
     const GW=cols.length*C, GH=rows.length*C;
     g.fillStyle=Wt(0.12); g.fillRect(0,top-4,CW,1); g.fillRect(X0-1,top-3,1,CH-top-44); g.fillRect(0,Y0-1,CW,1);
     cols.forEach((c,i)=>{ const x=X0+i*C;
@@ -2911,7 +2911,7 @@ const ACT_SCREEN=(function(){
       if(w.d%2===1){ g.fillStyle=Wt(0.04); g.fillRect(0,y,X0+GW,C); }
       if(last>=0 && w.d===0 && w.c===last){ g.fillStyle=ACa(0.14); g.fillRect(0,y,X0+GW,C); }
       g.textAlign='left';
-      if(w.c<0){ sq(46,y+C/2,w.d===0&&rxOpen); g.fillStyle='#fff'; g.font=F(600,17); g.fillText(RX[w.d],66,y+C/2+6); }
+      if(w.c<0){ sq(46,y+C/2,(w.d===0&&rxOpen)||w.d===1); g.fillStyle='#fff'; g.font=F(600,17); g.fillText(RX[w.d],66,y+C/2+6); }
       else { g.fillStyle=Wt(0.55); g.font=F(400,15); g.fillText('0'+(w.c+1),70,y+C/2+5);
         if(on(w.c)){ g.strokeStyle='#30d158'; g.lineWidth=2.2; g.beginPath(); g.moveTo(X0-30,y+C/2); g.lineTo(X0-25,y+C/2+5); g.lineTo(X0-16,y+C/2-6); g.stroke(); } }
       cols.forEach((c,i)=>{ const x=X0+i*C+C/2, cy=y+C/2; let kind=0, small=true, grow=1;
@@ -2921,7 +2921,7 @@ const ACT_SCREEN=(function(){
         } else if(w.d===1 && c.d===1) kind=2;
         else if(w.d===2 && c.d===0) kind = c.c<0 ? 1 : c.c<2 ? 2 : 0;
         if(kind===0){ g.strokeStyle=Wt(0.2); g.lineWidth=1.3; g.beginPath(); g.arc(x,cy,4.5,0,6.2832); g.stroke(); }
-        else { const R=(small?7:9.5)*grow; g.fillStyle=AC; g.beginPath(); if(kind===2) g.arc(x,cy,R,0,6.2832); else g.arc(x,cy,R,Math.PI/2,Math.PI*1.5); g.fill(); if(kind===1){ g.strokeStyle=AC; g.lineWidth=1.6; g.beginPath(); g.arc(x,cy,R-0.8,0,6.2832); g.stroke(); } }
+        else { const R=(small?8.5:11.5)*grow; g.fillStyle=AC; g.beginPath(); if(kind===2) g.arc(x,cy,R,0,6.2832); else g.arc(x,cy,R,Math.PI/2,Math.PI*1.5); g.fill(); if(kind===1){ g.strokeStyle=AC; g.lineWidth=1.6; g.beginPath(); g.arc(x,cy,R-0.8,0,6.2832); g.stroke(); } }
       });
     });
     if(r>0.7&&r<1.2) tap(X0+C/2,top+14); if(r>1.8&&r<2.3) tap(46,Y0+C/2);
@@ -2945,41 +2945,44 @@ const ACT_SCREEN=(function(){
     g.fillStyle=PANEL; rr(26,288,CW-52,46,14); g.fill(); g.textAlign='left'; g.fillStyle='#fff'; g.font=F(600,17); g.fillText('Chorus',40,317);
     g.fillStyle=Wt(0.55); g.font=F(400,15); g.fillText('0:20 – 0:31',118,317); g.textAlign='right'; g.fillStyle=AC; g.font=F(400,16); g.fillText('Minor',CW-44,317); g.fillText('A',CW-118,317);
     // the chain
-    const cy=348; g.fillStyle=PANEL; rr(26,cy,CW-52,154,18); g.fill();
-    g.textAlign='left'; g.fillStyle='#fff'; g.font=F(600,17); g.fillText('Vocal 1',40,cy+36); g.fillStyle=Wt(0.55); g.font=F(400,13); g.fillText('Input 1',116,cy+35);
-    [0,1].forEach(k=>{ const lv=0.35+0.3*Math.abs(Math.sin(t*(2.1+k*0.6)+k)); g.fillStyle=Wt(0.1); rr(180,cy+25+k*7,220,4,2); g.fill(); g.fillStyle='#fff'; rr(180,cy+25+k*7,220*lv,4,2); g.fill(); });
+    const open=r>1.3, chain=(cy,vi)=>{
+    g.fillStyle=PANEL; rr(26,cy,CW-52,154,18); g.fill();
+    g.textAlign='left'; g.fillStyle='#fff'; g.font=F(600,17); g.fillText('Vocal '+(vi+1),40,cy+36); g.fillStyle=Wt(0.55); g.font=F(400,13); g.fillText('Input '+(vi+1),116,cy+35);
+    [0,1].forEach(k=>{ const lv=0.35+0.3*Math.abs(Math.sin(t*(2.1+k*0.6)+k+vi*1.7)); g.fillStyle=Wt(0.1); rr(180,cy+25+k*7,220,4,2); g.fill(); g.fillStyle='#fff'; rr(180,cy+25+k*7,220*lv,4,2); g.fill(); });
     g.strokeStyle=Wt(0.3); g.lineWidth=2; g.beginPath(); g.moveTo(CW-52,cy+25); g.lineTo(CW-46,cy+31); g.lineTo(CW-52,cy+37); g.stroke();
-    const open=r>1.3, names=['pitch','level','ess','smooth','tone'], ms=['2.7 ms','','1.0 ms','',''];
+    const names=vi?['pitch','level','ess','tone']:['pitch','level','ess','smooth','tone'], ms=['2.7 ms','','1.0 ms','',''];
     const tw5=(CW-80-64-5*8)/5;
     names.forEach((nm,i)=>{ const x=40+i*(tw5+8), y=cy+56, w=tw5, h=84;
-      g.fillStyle=Wt(0.09); rr(x,y,w,h,12); g.fill(); if(open&&i===0){ g.strokeStyle=AC; g.lineWidth=2; rr(x+1,y+1,w-2,h-2,11); g.stroke(); }
+      g.fillStyle=Wt(0.09); rr(x,y,w,h,12); g.fill(); if(open&&i===0&&!vi){ g.strokeStyle=AC; g.lineWidth=2; rr(x+1,y+1,w-2,h-2,11); g.stroke(); }
       g.fillStyle='#fff'; g.font=F(600,15); g.textAlign='left'; g.fillText(nm,x+10,y+25);
       g.fillStyle=AC; [5,10,7].forEach((bh,k)=>g.fillRect(x+10+k*4,y+41-bh/2,2,bh)); g.fillStyle=Wt(0.35); g.font=F(400,11); g.fillText(ms[i],x+27,y+45);
       g.fillStyle=AC; g.beginPath(); g.arc(x+w-21,y+h-20,15,0,6.2832); g.fill(); g.strokeStyle='#fff'; g.lineWidth=2.2; g.lineCap='round'; g.beginPath(); g.arc(x+w-21,y+h-19.5,6.5,-Math.PI*0.3,Math.PI*1.3); g.moveTo(x+w-21,y+h-28.5); g.lineTo(x+w-21,y+h-21); g.stroke(); g.lineCap='butt'; });
-    g.fillStyle=Wt(0.05); rr(40+5*(tw5+8),cy+56,64,84,12); g.fill(); g.strokeStyle='#fff'; g.lineWidth=2.2; plus(40+5*(tw5+8)+32,cy+98,8);
+    g.fillStyle=Wt(0.05); rr(40+names.length*(tw5+8),cy+56,64,84,12); g.fill(); g.strokeStyle='#fff'; g.lineWidth=2.2; plus(40+names.length*(tw5+8)+32,cy+98,8);
+    };
+    const cy=348; chain(cy,0); chain(cy+166,1);
     if(r>1.0&&r<1.5) tap(115,cy+98);
     // the open effect: pitch's own panel
     const a=sm(1.3,1.75,r); if(a<=0) return;
     g.globalAlpha=a;
-    const dy=516, HX=40, HY=dy+40, HW=CW-80, HH=410, MUT='#8e8e93', KEY='#38373d', PB='#2f6bff';
+    const dy=682, HX=40, HY=dy+40, HW=CW-80, HH=CH-dy-40-34, MUT='#8e8e93', KEY='#38373d', PB='#2f6bff';
     g.fillStyle=PANEL; rr(26,dy,CW-52,HH+54,18); g.fill();
     g.fillStyle='#fff'; g.font=F(600,15); g.textAlign='left'; g.fillText('Vocal 1 · pitch',40,dy+26);
     g.strokeStyle=Wt(0.5); g.lineWidth=2; g.beginPath(); g.moveTo(CW-56,dy+15); g.lineTo(CW-46,dy+25); g.moveTo(CW-46,dy+15); g.lineTo(CW-56,dy+25); g.stroke();
     g.fillStyle='#252528'; rr(HX,HY,HW,HH,12); g.fill();
     const L=HX+26, Rr=HX+HW-26; g.fillStyle='#fff'; g.font=F(600,19); g.fillText('pitch',L,HY+36);
     g.textAlign='right'; g.font=F(500,13); g.fillStyle=MUT; g.fillText('all inc.',Rr,HY+35); g.fillText('settings',Rr-70,HY+35); g.fillStyle='#fff'; g.fillText('main',Rr-146,HY+35);
-    const RW=200, LW=Rr-RW-44-L, y1=HY+70;
+    const RW=200, LW=Rr-RW-44-L, y1=HY+92;
     const keys=(lab,list,sel,x,y,w,strong)=>{ g.textAlign='left'; g.fillStyle=MUT; g.font=F(500,12); g.fillText(lab,x,y+11); const kw=(w-(list.length-1)*6)/list.length;
       list.forEach((k,i)=>{ const kx=x+i*(kw+6); g.fillStyle=i===sel?'#fff':KEY; rr(kx,y+19,kw,38,10); g.fill(); g.fillStyle=i===sel?'#000':'#fff'; g.font=F(strong?600:500,12.5); g.textAlign='center'; g.fillText(k,kx+kw/2,y+43); }); };
     keys('key',['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'],9,L,y1,LW,true);
-    keys('scale',['major','minor','chromatic'],1,L,y1+86,300,false);
-    const spd=20+100*sm(3.0,5.0,r), bw=(LW-20)/2, by=y1+190;
+    keys('scale',['major','minor','chromatic'],1,L,y1+124,300,false);
+    const spd=20+100*sm(3.0,5.0,r), bw=(LW-20)/2, by=y1+290;
     const bar=(lab,val,f,x)=>{ g.textAlign='left'; g.fillStyle=MUT; g.font=F(500,12); g.fillText(lab,x,by+11); g.textAlign='right'; g.fillStyle='#fff'; g.fillText(val,x+bw,by+11);
       const gx=x+2.5+f*(bw-5); g.fillStyle=KEY; rr(x,by+27,bw,3,1.5); g.fill(); g.fillStyle='#fff'; rr(x,by+27,Math.max(3,gx-x),3,1.5); g.fill(); rr(gx-2.5,by+19,5,19,2.5); g.fill(); return gx; };
     const gx=bar('retune speed',Math.round(spd)+' ms',Math.sqrt(spd/400),L); bar('humanize','0 %',0,L+bw+20);
     if(r>2.75&&r<5.3) tap(gx,by+28);
-    const VX=Rr-RW; g.textAlign='left'; g.fillStyle='#fff'; g.font=F(600,66); g.fillText('A',VX,y1+120); g.fillStyle=MUT; g.font=F(500,13); g.fillText('minor',VX+52,y1+120);
-    const dx=VX+RW/2+Math.sin(t*2.3)*Math.sin(t*0.71+1)*(RW/2-12)*0.55, dyv=y1+178;
+    const VX=Rr-RW; g.textAlign='left'; g.fillStyle='#fff'; g.font=F(600,66); g.fillText('A',VX,y1+150); g.fillStyle=MUT; g.font=F(500,13); g.fillText('minor',VX+52,y1+150);
+    const dx=VX+RW/2+Math.sin(t*2.3)*Math.sin(t*0.71+1)*(RW/2-12)*0.55, dyv=y1+230;
     g.fillStyle='#fff'; g.fillRect(VX,dyv-1.5,RW,3);
     const hg=g.createRadialGradient(dx,dyv,11,dx,dyv,30); hg.addColorStop(0,'rgba(47,107,255,0.3)'); hg.addColorStop(1,'rgba(47,107,255,0)'); g.fillStyle=hg; g.beginPath(); g.arc(dx,dyv,30,0,6.2832); g.fill();
     g.fillStyle=PB; g.beginPath(); g.arc(dx,dyv,11.5,0,6.2832); g.fill();
@@ -2994,7 +2997,7 @@ const ACT_SCREEN=(function(){
     g.save(); rr(0,0,CW,CH,52); g.clip();                        // the display's rounded corners
     if(i===0) show(6.3+r,t); else if(i===1) routing(r); else vocals(r,t);
     tabs(SCENES[i][1]);
-    const k=Math.min(sm(0,0.5,r), 1-sm(d-0.5,d,r)); if(k<1){ g.fillStyle='rgba(0,0,0,'+(1-k)+')'; g.fillRect(0,0,CW,CH); }
+    const k=Math.min(sm(0,0.32,r), 1-sm(d-0.32,d,r)); if(k<1){ g.fillStyle='rgba(0,0,0,'+((1-k)*0.9)+')'; g.fillRect(0,0,CW,CH); }
     g.restore(); tex.needsUpdate=true;
   }
   draw(1);
@@ -3112,8 +3115,8 @@ box(3.4, 0.4, 2.4, M.black, 0, DECK+0.2, -21.4);
 (function(){
   const g=at(0, DECK+0.4, -21.4, 0);
   ACT_SCREEN.dj=collar(dance(person(g, {top:W.coal, bottom:W.ink, shoe:W.white, skin:W.skin2, hat:W.ink, inner:W.bone, gear:M.inst}, {z:-0.45, top:'bomber', phones:'half', lean:0.16, look:-0.28, tilt:0.1, girth:1.05, arms:[[2.1,2.4,0.6],[0.45,0.95,0.12]]}),0.9), 1.4);
-  mk(bx(2.3,0.9,0.7), M.desk, g, 0,0.45,0, 0,0,0, true);
-  mk(bx(2.4,0.04,0.8), M.desk, g, 0,0.92,0, 0,0,0, true);
+  mk(bx(2.3,0.9,0.7), M.desk, g, 0,0.45,0, 0,0,0, true).receiveShadow=false;
+  mk(bx(2.4,0.04,0.8), M.desk, g, 0,0.92,0, 0,0,0, true).receiveShadow=false;   // lit by the product light only: the arena's one shadow map is far too coarse for a table seen this close
   // the all act show device: an 11-inch tablet at its real size (249.7 x 177.5 x 5.3 mm) standing at a steep tilt at the end of the table, turned to the dj; nothing under it
   (function(){
     const BW=0.1775, BH=0.2497, BD=0.0053, SW=0.1605, SH=0.2328, A=1.2;
@@ -3121,14 +3124,14 @@ box(3.4, 0.4, 2.4, M.black, 0, DECK+0.2, -21.4);
     const studio=(function(){
       const sc=new THREE.Scene(); sc.background=new THREE.Color(0x020202);
       const lamp=(w,h,d,x,y,z,r,g2,b)=>{ const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d), new THREE.MeshBasicMaterial({color:new THREE.Color(r,g2,b), side:THREE.DoubleSide})); m.position.set(x,y,z); m.lookAt(0,0,0); sc.add(m); };
-      lamp(7,4,0.1,   0,9,-2,    5.5,5.2,4.9);      // a large soft box overhead: the top faces and the upper chamfer
-      lamp(0.5,14,0.1, 9,3,1.5, 20,15.5,10.5);      // a long, narrow, warm lamp at the side: on the chamfer it draws out into one line along the edge
-      lamp(14,0.4,0.1, 0,8,5,   12,10.6,9);         // and one across, for the top and bottom edges
+      lamp(7,4,0.1,   0,9,-2,    2.2,2.1,2.0);      // a large soft box overhead: the top faces and the upper chamfer
+      lamp(0.5,14,0.1, 9,3,1.5, 7,6.2,5.4);      // a long, narrow, warm lamp at the side: on the chamfer it draws out into one line along the edge
+      lamp(14,0.4,0.1, 0,8,5,   4,3.8,3.5);         // and one across, for the top and bottom edges
       lamp(1,5,0.1,  -9,3,-3,    2.4,2.5,2.8);      // a cool, weak strip opposite, so the far edge is not lost
       lamp(8,3,0.1,   0,5,-9,    0.5,0.5,0.52);     // a faint wall of light behind the eye: what the glass picks up at a glance
       const gen=new THREE.PMREMGenerator(renderer), t=gen.fromScene(sc,0.035).texture; gen.dispose(); return t;
     })();
-    const alu=new THREE.MeshStandardMaterial({color:lin(0xe9dfd0), metalness:1, roughness:0.22, envMap:studio, envMapIntensity:1.1});      // anodised aluminium
+    const alu=new THREE.MeshStandardMaterial({color:lin(0x38383b), metalness:1, roughness:0.36, envMap:studio, envMapIntensity:0.9});      // space black      // anodised aluminium
     const glass=new THREE.MeshStandardMaterial({color:0x010101, metalness:0, roughness:0.06, envMap:studio, envMapIntensity:0.9});         // the black border under glass
     const sheen=new THREE.MeshStandardMaterial({color:0x000000, metalness:0, roughness:0.05, envMap:studio, envMapIntensity:0.55, transparent:true, blending:THREE.AdditiveBlending, depthWrite:false});   // the glass over the picture: only its reflection
     const glowTex=(function(){ const c=document.createElement('canvas'); c.width=c.height=256; const x=c.getContext('2d'); const rg=x.createRadialGradient(128,36,4,128,36,210); rg.addColorStop(0,'rgba(255,255,255,1)'); rg.addColorStop(0.35,'rgba(255,255,255,0.42)'); rg.addColorStop(1,'rgba(255,255,255,0)'); x.fillStyle=rg; x.fillRect(0,0,256,256);
@@ -3143,10 +3146,10 @@ box(3.4, 0.4, 2.4, M.black, 0, DECK+0.2, -21.4);
     mk(body, alu, tilt, 0,0,0);
     mk(new THREE.ShapeGeometry(round(BW-0.0012,BH-0.0012,0.0174),16), glass, tilt, 0,0,0.00012).castShadow=false;
     ACT_SCREEN.mesh=mk(new THREE.PlaneGeometry(SW,SH), ACT_SCREEN.mat, tilt, 0,0,0.00024); ACT_SCREEN.mesh.castShadow=false; ACT_SCREEN.mesh.receiveShadow=false;
-    mk(new THREE.PlaneGeometry(SW,SH), sheen, tilt, 0,0,0.0004).castShadow=false; spill(0.62,0.46,0,Z0+0.004,0,0.16); shadow(pad,0.3,0.1,0,Z0-0.012,0.92);
+    mk(new THREE.PlaneGeometry(SW,SH), sheen, tilt, 0,0,0.0004).castShadow=false; spill(0.62,0.46,0,Z0+0.004,0,0.06); shadow(pad,0.3,0.1,0,Z0-0.012,0.92);
     const lens=new THREE.MeshBasicMaterial({color:0x15161a}); mk(new THREE.CircleGeometry(0.0017,20), lens, tilt, -BW/2+0.0043,0,0.0003).castShadow=false;   // front camera, on the long edge: at the side when upright
     // light for the product: a soft key from the dj's side, and a small rim from behind that catches the aluminium edge
-    const keyL=new THREE.SpotLight(0xfff4ea, 0.85, 5, 0.42, 1, 1.4); keyL.position.set(-0.55,0.95,1.0); keyL.target.position.set(0.06,0.1,0); pad.add(keyL); pad.add(keyL.target);
+    const keyL=new THREE.SpotLight(0xfff4ea, 0.4, 5, 0.42, 1, 1.4); keyL.position.set(-0.55,0.95,1.0); keyL.target.position.set(0.06,0.1,0); pad.add(keyL); pad.add(keyL.target);
     const rimL=new THREE.PointLight(0xffffff, 0.22, 1.1, 1.8); rimL.position.set(0.2,0.42,-0.3); pad.add(rimL);
     // the phone beside it: 71.9 x 150.0 x 8.75 mm, lying back on the table, turned a little to the eye
     (function(){
