@@ -3362,7 +3362,7 @@ function updateMotion(t){
   MOVERS.forEach(m=>moveOne(m,b)); objs.forEach(o=>{ if(o.mover) moveOne(o.mover,b); });
   SCREENS.forEach((m,i)=>m.color.setScalar(0.88+0.12*Math.sin(t*0.12+i*1.7)));
 }
-function updateDerived(t,dt){ updateLink(t); updateHolo(t); updateClocks(dt); updateMotion(t); }
+function updateDerived(t,dt){ updateLink(t); holo.visible=false; clocks.forEach(c=>{ c.g.visible=false; }); updateMotion(t); }   // landing: no antiphon console, no dials
 
 /* focus: tapping a line lifts its parts and dims the rest */
 const lineA={act:1,link:1,antiphon:1}, lineH={act:0,link:0,antiphon:0};
