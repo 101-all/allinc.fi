@@ -21,7 +21,7 @@
   var camera = new T.PerspectiveCamera(24, 1, 1, 2400);
 
   /* ---------- light: one soft key, one sky ---------- */
-  scene.add(new T.HemisphereLight(0xffffff, 0xbdb9b2, 0.57));
+  var hemi = new T.HemisphereLight(0xffffff, 0xbdb9b2, 0.57); scene.add(hemi);
   var key = new T.DirectionalLight(0xfff0dc, 0.6);
   key.position.set(-110, 105, 50);
   key.castShadow = true;
@@ -34,10 +34,10 @@
 
   /* ---------- materials ---------- */
   var BLUE = 0x2f6bff;
-  var plaster = new T.MeshLambertMaterial({ color: 0xf3f1ec });
-  var floorMat = new T.MeshLambertMaterial({ color: 0xe9e7e2 });
+  var plaster = new T.MeshStandardMaterial({ color: 0xf3f1ec, roughness: 1 });
+  var floorMat = new T.MeshStandardMaterial({ color: 0xe9e7e2, roughness: 1 });
   var ink = new T.MeshLambertMaterial({ color: 0x18181a });
-  var uni = { uT: { value: 0 }, uAmp: { value: 0 }, uBlue: { value: new T.Color(BLUE).convertSRGBToLinear() } };
+  var uni = { uT: { value: 0 }, uAmp: { value: 0 }, uGlow: { value: 0 }, uBlue: { value: new T.Color(BLUE).convertSRGBToLinear() } };
 
   function mesh(geo, mat, x, y, z, cast) {
     var m = new T.Mesh(geo, mat); m.position.set(x || 0, y || 0, z || 0);
@@ -131,6 +131,31 @@
   });
   var scr = new T.Mesh(new T.PlaneGeometry(15.2, 8.9), screenMat); scr.position.set(0, DECK + 0.35 + 4.45, -24.86); scene.add(scr);
 
+  /* ---------- show light, from the venue twin: warm spots on the deck, thrust and b-stage, a follow spot from foh,
+     a faint spill on the front rows, and soft shafts in the haze. they come up as the house lights go down. ---------- */
+  var WARM = 0xffd2a8, SHOW = [];
+  [[-7, -19], [-2.5, -19.5], [2.5, -19.5], [7, -19], [0, -8], [0, 1]].forEach(function (p, i) {
+    var sp = new T.SpotLight(WARM, 0, 34, 0.32, 0.65, 1.4); sp.userData.full = i < 4 ? 1.25 : 1.6;
+    sp.position.set(p[0] * 0.9, 13.4, i < 4 ? -14.5 : p[1] - 1.5); sp.target.position.set(p[0], DECK, p[1]);
+    scene.add(sp); scene.add(sp.target); SHOW.push(sp);
+  });
+  var follow = new T.SpotLight(0xfff6ee, 0, 60, 0.07, 0.7, 1.2); follow.userData.full = 2.2;
+  follow.position.set(0.6, 10.5, 21); follow.target.position.set(0, DECK + 1.2, 1.2); scene.add(follow); scene.add(follow.target);
+  var spill = new T.SpotLight(0xffe6d0, 0, 44, 0.8, 1, 1.5); spill.userData.full = 0.45;
+  spill.position.set(0, 12.6, -11); spill.target.position.set(0, 0, 5); scene.add(spill); scene.add(spill.target);
+  var shaftMat = new T.ShaderMaterial({
+    uniforms: { uC: { value: new T.Color(0xf4efe8).convertSRGBToLinear().multiplyScalar(0.034) }, uK: { value: 0 } },
+    vertexShader: 'varying float vY; varying float vF; void main(){ vY=uv.y; vec4 mv=modelViewMatrix*vec4(position,1.0); vF=abs(dot(normalize(normalMatrix*normal),normalize(-mv.xyz))); gl_Position=projectionMatrix*mv; }',
+    fragmentShader: 'uniform vec3 uC; uniform float uK; varying float vY; varying float vF; void main(){ float a=pow(vF,3.0)*(0.15+0.85*vY*vY)*uK; gl_FragColor=vec4(pow(uC*a, vec3(1.0/2.2)),1.0); }',
+    blending: T.AdditiveBlending, transparent: true, depthWrite: false, side: T.DoubleSide
+  });
+  SHOW.forEach(function (sp) {
+    var a = sp.position, b = sp.target.position, len = a.distanceTo(b);
+    var m = new T.Mesh(new T.CylinderGeometry(0.14, len * Math.tan(sp.angle) * 0.72, len, 28, 1, true).translate(0, -len / 2, 0), shaftMat);
+    m.position.copy(a); m.quaternion.setFromUnitVectors(new T.Vector3(0, -1, 0), b.clone().sub(a).normalize()); m.renderOrder = 2; scene.add(m);
+  });
+  var lights = SHOW.concat([follow, spill]), showK = 0;
+
   /* ---------- people, as model-makers' pins ---------- */
   var pinPts = [[0.001, 0], [0.21, 0], [0.17, 1.16], [0.06, 1.25], [0.13, 1.32], [0.175, 1.47], [0.13, 1.62], [0.001, 1.69]];
   var pinGeo = new T.LatheGeometry(pinPts.map(function (p) { return new T.Vector2(p[0], p[1]); }), 7);
@@ -163,7 +188,7 @@
   })();
   var pinMat = new T.MeshLambertMaterial({ color: 0xffffff });
   pinMat.onBeforeCompile = function (s) {
-    s.uniforms.uT = uni.uT; s.uniforms.uAmp = uni.uAmp; s.uniforms.uBlue = uni.uBlue;
+    s.uniforms.uT = uni.uT; s.uniforms.uAmp = uni.uAmp; s.uniforms.uBlue = uni.uBlue; s.uniforms.uGlow = uni.uGlow;
     s.vertexShader = 'uniform float uT; uniform float uAmp; varying float vW;\n' + s.vertexShader.replace('#include <begin_vertex>', [
       '#include <begin_vertex>',
       '#ifdef USE_INSTANCING',
@@ -177,7 +202,7 @@
       '  vW = 0.0;',
       '#endif'
     ].join('\n'));
-    s.fragmentShader = 'uniform vec3 uBlue; varying float vW;\n' + s.fragmentShader.replace('#include <color_fragment>', '#include <color_fragment>\n  diffuseColor.rgb = mix(diffuseColor.rgb, uBlue, clamp(vW, 0.0, 1.0) * 0.92);');
+    s.fragmentShader = 'uniform vec3 uBlue; uniform float uGlow; varying float vW;\n' + s.fragmentShader.replace('#include <color_fragment>', '#include <color_fragment>\n  diffuseColor.rgb = mix(diffuseColor.rgb, uBlue, clamp(vW, 0.0, 1.0) * 0.92);').replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n  totalEmissiveRadiance += uBlue * clamp(vW, 0.0, 1.0) * uGlow * 1.6;');
   };
   var crowd = new T.InstancedMesh(pinGeo, pinMat, people.length);
   (function () {
@@ -200,7 +225,7 @@
     black: std(0x161616, 0.6), inst: std(0x242424, 0.5), shell: std(0x2e2e2e, 0.35, 0.2), metal: std(0x8c8c8c, 0.32, 0.75),
     keys: std(0xb4b4b4, 0.4), cab: std(0x151515, 0.8), grille: std(0x2a2a2a, 1), body: std(0xcfcdc8, 0.38), dark: std(0x151515, 0.45, 0.2),
     glow: new T.MeshBasicMaterial({ color: lin(0x26282b) }),
-    actGlow: new T.MeshBasicMaterial({ color: lin(0x1434b8) }), antGlow: new T.MeshBasicMaterial({ color: lin(0x2e9be6) }), linkGlow: new T.MeshBasicMaterial({ color: BLUE })
+    actGlow: new T.MeshBasicMaterial({ color: lin(0x1434b8) }), antGlow: new T.MeshBasicMaterial({ color: lin(0x2e9be6) }), linkGlow: new T.MeshBasicMaterial({ color: lin(0x6cc0ff) })
   };
   const instEdge = new T.LineBasicMaterial({ color: lin(0x1c1c1c) });
   const obox = (w, h, d, mat, x, y, z, ry) => { const m = mesh(new T.BoxGeometry(w, h, d), mat, x, y, z); if (ry) m.rotation.y = ry; return m; };
@@ -435,13 +460,13 @@
      between each device and its nearest tower; quiet by default, dense in link's own section ---------- */
   const towers = [V(-9.6, DECK + 3.2, -14.4), V(9.6, DECK + 3.2, -14.4)];
   towers.forEach(p => { mesh(bx(0.05, 3.05, 0.05), M.dark, p.x, DECK + 1.525, p.z); mesh(new T.OctahedronGeometry(0.2, 0), M.linkGlow, p.x, p.y, p.z, false); });
-  const LK = { speed: 170, burst: 2, gap: 0.04, r: 0.042, slots: 5 };
-  const lkMat = new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.92, depthWrite: false });
+  const LK = { speed: 170, burst: 2, gap: 0.04, r: 0.026, slots: 5 };
+  const lkMat = new T.MeshBasicMaterial({ color: lin(0x6cc0ff).multiplyScalar(1.1), transparent: true, opacity: 0.85, blending: T.AdditiveBlending, depthWrite: false });
   const lkGeo = new T.CylinderGeometry(1, 0.12, 1, 6, 1).rotateX(Math.PI / 2).translate(0, 0, -0.5);   /* head at 0, tail at -1 */
   const lkRoutes = [], LK_MAX = ((collars.length + sources.length + 4) * 2 + 2) * LK.slots * LK.burst;
   const lkMesh = new T.InstancedMesh(lkGeo, lkMat, LK_MAX); lkMesh.frustumCulled = false;
   lkMesh.instanceMatrix.setUsage(T.DynamicDrawUsage); scene.add(lkMesh);
-  for (let i = 0; i < LK_MAX; i++) lkMesh.setColorAt(i, new T.Color(i % LK.burst ? 0x6cc0ff : BLUE).convertSRGBToLinear());
+  for (let i = 0; i < LK_MAX; i++) lkMesh.setColorAt(i, new T.Color().setScalar(1 - (i % LK.burst) * 0.28));
   const _d = new T.Object3D(), _h = V(0, 0, 0), _t = V(0, 0, 0), _dir = V(0, 0, 0), _w = V(0, 0, 0);
   let lkSeed = 0, linkH = 0;
   function lkRoute(list, a, b, main) { const r = lkRoutes[list.n] || (lkRoutes[list.n] = { a: V(0, 0, 0), b: V(0, 0, 0), period: 0.95 + ((lkSeed++ * 0.618) % 1) * 0.4, phase: (lkSeed * 0.377) % 1 }); r.a.copy(a); r.b.copy(b); r.main = !!main; list.n++; }
@@ -481,14 +506,15 @@
   /* ---------- the three marks, each standing over its own thing ---------- */
   function tile(draw) {
     var c = document.createElement('canvas'); c.width = c.height = 256; var g = c.getContext('2d'), k = 2.56, r = 22.5 * k;
-    g.fillStyle = '#000'; g.beginPath(); g.moveTo(r, 0); g.arcTo(256, 0, 256, 256, r); g.arcTo(256, 256, 0, 256, r); g.arcTo(0, 256, 0, 0, r); g.arcTo(0, 0, 256, 0, r); g.fill();
+    g.fillStyle = '#000'; g.beginPath(); g.moveTo(r, 0); g.arcTo(256, 0, 256, 256, r); g.arcTo(256, 256, 0, 256, r); g.arcTo(0, 256, 0, 0, r); g.arcTo(0, 0, 256, 0, r); g.closePath(); g.fill();
+    g.lineWidth = 5; g.strokeStyle = 'rgba(255,255,255,.42)'; g.stroke();
     g.fillStyle = g.strokeStyle = '#fff'; g.scale(k, k); draw(g);
     var t = new T.CanvasTexture(c); t.encoding = T.sRGBEncoding; t.anisotropy = 4; return t;
   }
   function disc(g, x, y, r) { g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.fill(); }
   function ring(g, r) { g.lineWidth = 5.5; g.beginPath(); g.arc(50, 50, r, 0, 6.2832); g.stroke(); }
   var marks = [
-    { at: V(0, DECK + 2.05, 1.2), top: 4.7, tex: tile(function (g) { disc(g, 50, 50, 20); }) },
+    { at: V(ACT_DEV.x, ACT_DEV.y + 0.06, ACT_DEV.z), top: ACT_DEV.y + 1.9, tex: tile(function (g) { disc(g, 50, 50, 20); }) },
     { at: V(-9.6, DECK + 3.45, -14.4), top: 7.4, tex: tile(function (g) { disc(g, 29, 50, 11); disc(g, 71, 50, 11); g.fillRect(29, 46.5, 42, 7); }) },
     { at: V(0.6, 1.75, FZ - 0.6), top: 4.6, tex: tile(function (g) { disc(g, 50, 50, 9); ring(g, 18.25); ring(g, 30.25); }) }
   ];
@@ -538,7 +564,7 @@
     /* swing a little higher mid-move so the camera clears the rim and the screen */
     goal.el += Math.sin(u * Math.PI) * (i === 0 ? 0.22 : i === 1 ? 0.16 : i === 2 ? 0.1 : 0);
   }
-  var v = new T.Vector3(), last = 0, time = 0, started = false;
+  var v = new T.Vector3(), last = 0, time = 0, started = false, isDark = false;
   function frame(now) {
     var dt = Math.min(0.05, (now - last) / 1000 || 0.016); last = now;
     if (!reduce) time += dt;
@@ -560,6 +586,13 @@
       mk.o += (want - mk.o) * (reduce ? 1 : 0.08); mk.sprite.material.opacity = mk.o;
       var s = Math.max(0.5, Math.min(5.2, dist * 0.0125 * (upright ? 1.25 : 1))); mk.sprite.scale.set(s, s, 1);
     }
+    /* house lights down for the show, up again at the end */
+    var kd = Math.min(1, Math.max(0, (f - 0.22) / 0.5)) * (1 - Math.min(1, Math.max(0, (f - 3.3) / 0.5))); kd = kd * kd * (3 - 2 * kd);
+    showK += (kd - showK) * (reduce ? 1 : 0.1);
+    hemi.intensity = 0.57 + (0.085 - 0.57) * showK; key.intensity = 0.6 + (0.1 - 0.6) * showK;
+    for (var li = 0; li < lights.length; li++) lights[li].intensity = lights[li].userData.full * showK;
+    shaftMat.uniforms.uK.value = showK; uni.uGlow.value = showK;
+    var dark = kd > 0.5; if (dark !== isDark) { isDark = dark; root.classList.toggle('show', dark); }
     /* the band keeps time; link runs quiet, and dense in its own section */
     if (!reduce) { var beat = time * BPM / 60 * Math.PI * 2; for (var q = 0; q < MOVERS.length; q++) moveOne(MOVERS[q], beat); }
     linkH += (Math.max(0, Math.min(1, 1.6 - Math.abs(f - 2) * 2)) - linkH) * (reduce ? 1 : 0.08);

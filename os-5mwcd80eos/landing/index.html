@@ -19,14 +19,16 @@
 })();
 </script>
 <style>
-@font-face { font-family: Inter; font-style: normal; font-weight: 400 600; font-display: swap; src: url(inter.woff2) format('woff2'); }
+@font-face { font-family: Inter; font-style: normal; font-weight: 100 900; font-display: swap; src: url(inter.woff2) format('woff2'); }
 :root {
-  --ink: #1d1d1f; --ink2: #505155; --blue: #2f6bff;
+  --ink: #1d1d1f; --ink2: #505155; --blue: #2f6bff; --tile: #000; --tile-mark: #fff;
   --g0: #e4e5e7; --g1: #d8d9db; --g2: #c8c9cc;
   --m: clamp(20px, 4.4vw, 60px);
   --st: env(safe-area-inset-top, 0px); --sb: env(safe-area-inset-bottom, 0px);
   --sl: env(safe-area-inset-left, 0px); --sr: env(safe-area-inset-right, 0px);
 }
+/* house lights down: the page goes dark with the room */
+.show { --ink: #f5f5f7; --ink2: #a4a4aa; --tile: #f5f5f7; --tile-mark: #060607; }
 * { box-sizing: border-box; }
 html { background: var(--g1); scroll-snap-type: y proximity; -webkit-text-size-adjust: 100%; }
 body {
@@ -42,6 +44,10 @@ h1, h2, p, address { margin: 0; font-weight: inherit; font-size: inherit; font-s
 /* aluminium ground, the same sheet as allinc.fi */
 #ground, #stage, #veil { position: fixed; left: 0; top: 0; width: 100%; height: 100vh; height: 100lvh; pointer-events: none; }
 #ground, #veil { background: linear-gradient(180deg, var(--g0) 0%, var(--g1) 50%, var(--g2) 100%); }
+#ground::before, #veil::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, #0b0b0d 0%, #070708 50%, #040405 100%); opacity: 0; transition: opacity 1.1s ease; }
+.show #ground::before, .show #veil::before { opacity: 1; }
+body, header a, #menu-btn, .copy > p, h1, h2 { transition: color 1.1s ease; }
+.show #menu { box-shadow: 0 0 0 1px rgba(255, 255, 255, .16), 0 34px 60px -30px rgba(0, 0, 0, .8); background: #111113; }
 #ground::after {
   content: ""; position: absolute; inset: 0; mix-blend-mode: soft-light; opacity: .5;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -61,7 +67,7 @@ header {
   display: flex; justify-content: space-between; align-items: center;
   padding: calc(var(--st) + 14px) calc(var(--sr) + var(--m)) 0 calc(var(--sl) + var(--m));
 }
-.wordmark { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; padding: 8px 0; }
+.wordmark { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; padding: 8px 0; }
 header nav { display: flex; gap: 6px; }
 header nav a { width: 40px; height: 40px; display: grid; place-items: center; opacity: .32; transition: opacity .4s; }
 header nav a:hover, header nav a[aria-current] { opacity: 1; }
@@ -76,15 +82,16 @@ main { position: relative; z-index: 2; }
   padding: calc(var(--st) + 80px) calc(var(--sr) + var(--m)) calc(var(--sb) + clamp(40px, 9vh, 96px)) calc(var(--sl) + var(--m));
 }
 .copy { width: min(38vw, 620px); }
-h1, h2 { font-size: clamp(34px, 5.1vw, 80px); line-height: 1.02; font-weight: 500; letter-spacing: -0.04em; text-wrap: balance; }
+h1, h2 { font-size: clamp(38px, 5.5vw, 92px); line-height: .98; font-weight: 700; letter-spacing: -0.048em; text-wrap: balance; }
+h2 { font-size: clamp(60px, 8.6vw, 140px); line-height: .9; letter-spacing: -0.06em; }
 .copy > p { margin-top: clamp(14px, 1.6vw, 24px); max-width: 23em; font-size: clamp(16px, 1.45vw, 20px); line-height: 1.4; letter-spacing: -0.011em; color: var(--ink2); text-wrap: pretty; }
 h2 { display: flex; align-items: center; gap: .26em; }
-h2 svg { width: .78em; height: .78em; display: block; flex: none; }
-.copy > p.line { max-width: 26em; color: var(--ink); text-transform: none; }
-.copy > p.status { margin-top: 10px; font-size: clamp(14px, 1.15vw, 16px); color: var(--ink2); text-transform: none; font-variant-numeric: tabular-nums; }
+h2 svg { width: .72em; height: .72em; display: block; flex: none; margin-top: .06em; }
+.copy > p.line { max-width: 24em; font-size: clamp(17px, 1.6vw, 22px); line-height: 1.32; font-weight: 500; letter-spacing: -0.018em; color: var(--ink); text-transform: none; }
+.copy > p.status { margin-top: 12px; font-size: clamp(13px, 1.1vw, 15px); font-weight: 500; letter-spacing: 0; color: var(--ink2); text-transform: none; font-variant-numeric: tabular-nums; }
 .copy > p.mail { color: var(--ink); }
-.mail a { border-bottom: 1px solid rgba(29, 29, 31, .3); padding-bottom: 2px; }
-.mail a:hover { border-color: var(--ink); }
+.copy > p.mail { margin-top: clamp(18px, 2vw, 28px); font-weight: 600; }
+.mail a { border-bottom: 1px solid currentColor; padding-bottom: 2px; }
 .places { margin-top: clamp(22px, 2.6vw, 36px); display: grid; grid-template-columns: auto auto; justify-content: start; gap: clamp(24px, 4vw, 56px); font-size: 15px; line-height: 1.5; color: var(--ink2); }
 .places b { display: block; font-weight: 500; color: var(--ink); }
 .copy > footer { margin-top: clamp(22px, 2.6vw, 36px); display: flex; flex-wrap: wrap; gap: 2px 22px; align-items: baseline; font-size: 15px; line-height: 1.5; color: var(--ink2); text-transform: none; }
@@ -123,7 +130,9 @@ header .right { display: flex; align-items: center; gap: 10px; }
   #veil { -webkit-mask-image: linear-gradient(0deg, #000 33%, transparent 46%); mask-image: linear-gradient(0deg, #000 33%, transparent 46%); }
   .s { padding-bottom: calc(var(--sb) + clamp(34px, 6vh, 72px)); }
   .copy { width: min(100%, 560px); }
-  h1, h2 { font-size: clamp(34px, 8.6vw, 68px); }
+  h1 { font-size: clamp(38px, 9.4vw, 76px); }
+  h2 { font-size: clamp(60px, 15.5vw, 128px); }
+  .copy > p.line { font-size: clamp(17px, 2.5vw, 22px); }
   .copy > p { font-size: clamp(16px, 2.3vw, 20px); }
   .plan { right: auto; left: 50%; top: calc(var(--st) + 76px); width: min(62vw, 40vh); transform: translateX(-50%); }
 }
@@ -138,9 +147,9 @@ header .right { display: flex; align-items: center; gap: 10px; }
   <symbol id="m-act" viewBox="0 0 100 100"><circle cx="50" cy="50" r="20"/></symbol>
   <symbol id="m-link" viewBox="0 0 100 100"><circle cx="29" cy="50" r="11"/><circle cx="71" cy="50" r="11"/><rect x="29" y="46.5" width="42" height="7"/></symbol>
   <symbol id="m-antiphon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="9"/><g fill="none" stroke="currentColor" stroke-width="5.5"><circle cx="50" cy="50" r="18.25"/><circle cx="50" cy="50" r="30.25"/></g></symbol>
-  <symbol id="i-act" viewBox="0 0 100 100"><rect width="100" height="100" rx="22.5"/><use href="#m-act" fill="#fff" color="#fff"/></symbol>
-  <symbol id="i-link" viewBox="0 0 100 100"><rect width="100" height="100" rx="22.5"/><use href="#m-link" fill="#fff" color="#fff"/></symbol>
-  <symbol id="i-antiphon" viewBox="0 0 100 100"><rect width="100" height="100" rx="22.5"/><use href="#m-antiphon" fill="#fff" color="#fff"/></symbol>
+  <symbol id="i-act" viewBox="0 0 100 100"><rect width="100" height="100" rx="22.5" fill="var(--tile)"/><use href="#m-act" fill="var(--tile-mark)" color="var(--tile-mark)"/></symbol>
+  <symbol id="i-link" viewBox="0 0 100 100"><rect width="100" height="100" rx="22.5" fill="var(--tile)"/><use href="#m-link" fill="var(--tile-mark)" color="var(--tile-mark)"/></symbol>
+  <symbol id="i-antiphon" viewBox="0 0 100 100"><rect width="100" height="100" rx="22.5" fill="var(--tile)"/><use href="#m-antiphon" fill="var(--tile-mark)" color="var(--tile-mark)"/></symbol>
 </svg>
 
 <a class="skip" href="#act">skip to all act</a>
@@ -182,7 +191,7 @@ header .right { display: flex; align-items: center; gap: 10px; }
     <button id="menu-btn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="menu">menu</button>
   </div>
   <div id="menu" role="dialog" aria-modal="true" aria-label="menu"><ul>
-    <li><a href="/#toolbox">Tools</a></li>
+    <li><a href="/tools/">Tools</a></li>
     <li><a href="/newsroom/">Newsroom</a></li>
     <li><a href="mailto:us@allinc.fi">Contact</a></li>
   </ul>
@@ -224,11 +233,11 @@ header .right { display: flex; align-items: center; gap: 10px; }
   <section class="s" id="company" aria-label="contact">
     <div class="copy">
       <h2>contact</h2>
-      <p class="mail"><a href="mailto:us@allinc.fi">us@allinc.fi</a></p>
       <div class="places">
         <address><b>all inc. audio ab</b>Hämeentie 135<br>Helsinki, Uusimaa<br>Finland</address>
         <address><b>us &amp; all inc.</b>470 Ramona St.<br>Palo Alto, California<br>United States</address>
       </div>
+      <p class="mail"><a href="mailto:us@allinc.fi">us@allinc.fi</a></p>
       <footer>© 2027 all inc. 470 Ramona St, Palo Alto<a href="/privacy/">Privacy</a></footer>
     </div>
   </section>
@@ -273,6 +282,6 @@ header .right { display: flex; align-items: center; gap: 10px; }
 })();
 </script>
 <script src="three.min.js?r128" defer></script>
-<script src="scene.js?2" defer></script>
+<script src="scene.js?3" defer></script>
 </body>
 </html>
