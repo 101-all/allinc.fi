@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>all inc.</title>
+<meta name="description" content="Perform an arena show from a single device. All Inc. builds software, interfaces and connectivity for the people on stage.">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#e2e3e5">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-40 -40 320 320'%3E%3Crect x='-40' y='-40' width='320' height='320' fill='%23fff'/%3E%3Ccircle cx='120' cy='120' r='85' fill='none' stroke='%23000' stroke-width='70'/%3E%3Crect x='170' y='0' width='70' height='240' fill='%23000'/%3E%3C/svg%3E">
+<link rel="preload" href="inter.woff2" as="font" type="font/woff2" crossorigin>
+<script>
+/* the model needs webgl. without it the page shows the drawn plan instead. */
+(function () {
+  var d = document.documentElement; d.classList.add('js');
+  try { var c = document.createElement('canvas'); if (window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl'))) d.classList.add('gl'); } catch (e) {}
+})();
+</script>
+<style>
+@font-face { font-family: Inter; font-style: normal; font-weight: 400 600; font-display: swap; src: url(inter.woff2) format('woff2'); }
+:root {
+  --ink: #1d1d1f; --ink2: #505155; --blue: #2f6bff;
+  --g0: #e4e5e7; --g1: #d8d9db; --g2: #c8c9cc;
+  --m: clamp(20px, 4.4vw, 60px);
+  --st: env(safe-area-inset-top, 0px); --sb: env(safe-area-inset-bottom, 0px);
+  --sl: env(safe-area-inset-left, 0px); --sr: env(safe-area-inset-right, 0px);
+}
+* { box-sizing: border-box; }
+html { background: var(--g1); scroll-snap-type: y proximity; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; color: var(--ink);
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  text-transform: lowercase; -webkit-tap-highlight-color: transparent;
+}
+a { color: inherit; text-decoration: none; }
+h1, h2, p, address { margin: 0; font-weight: inherit; font-size: inherit; font-style: normal; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; border-radius: 4px; }
+
+/* aluminium ground, the same sheet as allinc.fi */
+#ground, #stage, #veil { position: fixed; left: 0; top: 0; width: 100%; height: 100vh; height: 100lvh; pointer-events: none; }
+#ground, #veil { background: linear-gradient(180deg, var(--g0) 0%, var(--g1) 50%, var(--g2) 100%); }
+#ground::after {
+  content: ""; position: absolute; inset: 0; mix-blend-mode: soft-light; opacity: .5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+#stage canvas { display: block; width: 100%; height: 100%; opacity: 0; transition: opacity 1.4s ease; }
+.ready #stage canvas { opacity: 1; }
+html:not(.gl) #stage canvas { display: none; }
+/* the page's own ground, laid back over the model where the words sit */
+#veil { -webkit-mask-image: linear-gradient(90deg, #000 20%, transparent 54%); mask-image: linear-gradient(90deg, #000 20%, transparent 54%); }
+
+/* the drawn plan: shown when there is no webgl */
+.plan { position: absolute; right: 4vw; top: 50%; width: min(50vw, 62vh); transform: translateY(-50%); display: block; }
+.gl .plan { display: none; }
+
+header {
+  position: fixed; z-index: 3; left: 0; right: 0; top: 0;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: calc(var(--st) + 14px) calc(var(--sr) + var(--m)) 0 calc(var(--sl) + var(--m));
+}
+.wordmark { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; padding: 8px 0; }
+header nav { display: flex; gap: 6px; margin-right: -9px; }
+header nav a { width: 40px; height: 40px; display: grid; place-items: center; opacity: .32; transition: opacity .4s; }
+header nav a:hover, header nav a[aria-current] { opacity: 1; }
+header nav svg { width: 26px; height: 26px; display: block; fill: currentColor; }
+.skip { position: fixed; z-index: 4; left: 12px; top: -60px; padding: 10px 14px; background: var(--ink); color: #fff; border-radius: 10px; font-size: 14px; }
+.skip:focus { top: 12px; }
+
+main { position: relative; z-index: 2; }
+.s {
+  min-height: 100vh; min-height: 100svh; scroll-snap-align: start;
+  display: flex; align-items: flex-end;
+  padding: calc(var(--st) + 80px) calc(var(--sr) + var(--m)) calc(var(--sb) + clamp(40px, 9vh, 96px)) calc(var(--sl) + var(--m));
+}
+.copy { width: min(41vw, 620px); }
+h1, h2 { font-size: clamp(34px, 5.1vw, 80px); line-height: 1.02; font-weight: 500; letter-spacing: -0.04em; text-wrap: balance; }
+.copy > p { margin-top: clamp(14px, 1.6vw, 24px); max-width: 23em; font-size: clamp(16px, 1.45vw, 20px); line-height: 1.4; letter-spacing: -0.011em; color: var(--ink2); text-wrap: pretty; }
+.copy > p.tag { margin: 0 0 clamp(14px, 1.5vw, 22px); display: flex; align-items: center; gap: 11px; font-size: clamp(17px, 1.5vw, 21px); font-weight: 500; letter-spacing: -0.02em; color: var(--ink); }
+.tag svg { width: 30px; height: 30px; display: block; flex: none; }
+.places { margin-top: clamp(22px, 2.6vw, 36px); display: grid; grid-template-columns: auto auto; justify-content: start; gap: clamp(24px, 4vw, 56px); font-size: 15px; line-height: 1.5; color: var(--ink2); }
+.places b { display: block; font-weight: 500; color: var(--ink); }
+.more { margin-top: clamp(22px, 2.6vw, 36px); display: flex; flex-wrap: wrap; gap: 6px 26px; align-items: baseline; font-size: 15px; color: var(--ink2); }
+.more a { color: var(--ink); padding: 8px 0; border-bottom: 1px solid rgba(29, 29, 31, .28); transition: border-color .25s; }
+.more a:hover { border-color: var(--ink); }
+
+/* words arrive with their scene */
+.js .copy > * { opacity: 0; transform: translateY(12px); transition: opacity .9s ease, transform .9s cubic-bezier(.2, .7, .2, 1); }
+.js .in .copy > * { opacity: 1; transform: none; }
+.js .in .copy > :nth-child(2) { transition-delay: .08s; }
+.js .in .copy > :nth-child(3) { transition-delay: .16s; }
+.js .in .copy > :nth-child(4) { transition-delay: .24s; }
+
+/* upright screens: the model above, the words below */
+@media (max-aspect-ratio: 1/1), (max-width: 699px) {
+  #veil { -webkit-mask-image: linear-gradient(0deg, #000 24%, transparent 50%); mask-image: linear-gradient(0deg, #000 24%, transparent 50%); }
+  .s { padding-bottom: calc(var(--sb) + clamp(34px, 6vh, 72px)); }
+  .copy { width: min(100%, 560px); }
+  h1, h2 { font-size: clamp(34px, 8.6vw, 68px); }
+  .copy > p { font-size: clamp(16px, 2.3vw, 20px); }
+  .plan { right: auto; left: 50%; top: calc(var(--st) + 76px); width: min(62vw, 40vh); transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-snap-type: none; }
+  .js .copy > *, #stage canvas { transition: none; transform: none; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="m-act" viewBox="0 0 100 100"><circle cx="50" cy="50" r="20"/></symbol>
+  <symbol id="m-link" viewBox="0 0 100 100"><circle cx="29" cy="50" r="11"/><circle cx="71" cy="50" r="11"/><rect x="29" y="46.5" width="42" height="7"/></symbol>
+  <symbol id="m-antiphon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="9"/><g fill="none" stroke="currentColor" stroke-width="5.5"><circle cx="50" cy="50" r="18.25"/><circle cx="50" cy="50" r="30.25"/></g></symbol>
+  <symbol id="i-act" viewBox="0 0 100 100"><rect width="100" height="100" rx="22.5"/><use href="#m-act" fill="#fff" color="#fff"/></symbol>
+  <symbol id="i-link" viewBox="0 0 100 100"><rect width="100" height="100" rx="22.5"/><use href="#m-link" fill="#fff" color="#fff"/></symbol>
+  <symbol id="i-antiphon" viewBox="0 0 100 100"><rect width="100" height="100" rx="22.5"/><use href="#m-antiphon" fill="#fff" color="#fff"/></symbol>
+</svg>
+
+<a class="skip" href="#act">skip to act</a>
+
+<div id="ground"></div>
+<div id="stage" aria-hidden="true">
+  <canvas id="gl"></canvas>
+  <svg class="plan" viewBox="0 0 400 520" fill="none">
+    <g stroke="#1d1d1f" stroke-opacity=".3" stroke-width="1">
+      <rect x="6" y="6" width="388" height="508" rx="120"/>
+      <rect x="26" y="26" width="348" height="468" rx="104"/>
+      <rect x="46" y="46" width="308" height="428" rx="88"/>
+      <rect x="66" y="66" width="268" height="388" rx="72"/>
+      <rect x="86" y="86" width="228" height="348" rx="56"/>
+    </g>
+    <rect x="106" y="106" width="188" height="308" rx="40" fill="#f4f3f0"/>
+    <rect x="128" y="112" width="144" height="16" rx="5" fill="#0b0b0c"/>
+    <path d="M134 120 q12 -7 24 0 t24 0 t24 0 t24 0 t24 0 t12 0" stroke="#2f6bff" stroke-width="1.6"/>
+    <rect x="128" y="132" width="144" height="46" rx="3" fill="#fff"/>
+    <rect x="191" y="178" width="18" height="44" fill="#fff"/>
+    <path d="M200 214 V356" stroke="#1d1d1f" stroke-width="1.4"/>
+    <circle cx="200" cy="262" r="3.4" fill="#2f6bff"/>
+    <use href="#i-act" x="186" y="186" width="28" height="28" fill="#000"/>
+    <use href="#i-link" x="186" y="272" width="28" height="28" fill="#000"/>
+    <use href="#i-antiphon" x="186" y="356" width="28" height="28" fill="#000"/>
+  </svg>
+</div>
+<div id="veil"></div>
+
+<header>
+  <a class="wordmark" href="#top">all inc.</a>
+  <nav aria-label="lines">
+    <a href="#act" aria-label="act"><svg aria-hidden="true"><use href="#m-act"/></svg></a>
+    <a href="#link" aria-label="link"><svg aria-hidden="true"><use href="#m-link"/></svg></a>
+    <a href="#antiphon" aria-label="antiphon"><svg aria-hidden="true"><use href="#m-antiphon"/></svg></a>
+  </nav>
+</header>
+
+<main>
+  <section class="s in" id="top" aria-label="all inc.">
+    <div class="copy">
+      <h1>perform an arena show from a single device.</h1>
+      <p>all inc. builds software, interfaces and connectivity for the people on stage.</p>
+    </div>
+  </section>
+
+  <section class="s" id="act" aria-label="act">
+    <div class="copy">
+      <p class="tag"><svg aria-hidden="true"><use href="#i-act"/></svg>act</p>
+      <h2>runs the show.</h2>
+      <p>playback, showfiles, vocal processing and visuals, on one device.</p>
+    </div>
+  </section>
+
+  <section class="s" id="link" aria-label="link">
+    <div class="copy">
+      <p class="tag"><svg aria-hidden="true"><use href="#i-link"/></svg>link</p>
+      <h2>keeps it connected.</h2>
+      <p>connectivity, from the stage to the desk.</p>
+    </div>
+  </section>
+
+  <section class="s" id="antiphon" aria-label="antiphon">
+    <div class="copy">
+      <p class="tag"><svg aria-hidden="true"><use href="#i-antiphon"/></svg>antiphon</p>
+      <h2>reads the room.</h2>
+      <p>the show calls. the room answers.</p>
+    </div>
+  </section>
+
+  <section class="s" id="company" aria-labelledby="h-company">
+    <div class="copy">
+      <h2 id="h-company">helsinki and palo alto.</h2>
+      <div class="places">
+        <address><b>all inc. audio ab</b>Hämeentie 135<br>Helsinki, Finland</address>
+        <address><b>us &amp; all inc.</b>470 Ramona St.<br>Palo Alto, California</address>
+      </div>
+      <p class="more"><a href="/#toolbox">toolbox</a><span>© all inc.</span></p>
+    </div>
+  </section>
+</main>
+
+<script>
+/* words come in with their section; the header marks follow along. */
+(function () {
+  var secs = [].slice.call(document.querySelectorAll('.s')), links = [].slice.call(document.querySelectorAll('header nav a'));
+  if (!('IntersectionObserver' in window)) { secs.forEach(function (s) { s.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('in');
+      links.forEach(function (l) { if (l.getAttribute('href') === '#' + e.target.id) l.setAttribute('aria-current', 'true'); else l.removeAttribute('aria-current'); });
+    });
+  }, { threshold: 0.5 });
+  secs.forEach(function (s) { io.observe(s); });
+})();
+</script>
+<script src="three.min.js?r128" defer></script>
+<script src="scene.js?1" defer></script>
+</body>
+</html>
