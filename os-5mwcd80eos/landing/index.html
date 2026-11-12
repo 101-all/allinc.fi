@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-12-landing-8">
+<html lang="en" data-build="2026-11-12-landing-9">
 <head>
 <meta charset="utf-8">
 <script>
@@ -3082,19 +3082,19 @@ strings( 8.2,-18.2,-0.4,0.6, 9.1,-21.6,false);
 box(3.4, 0.4, 2.4, M.black, 0, DECK+0.2, -21.4);
 (function(){
   const g=at(0, DECK+0.4, -21.4, 0);
-  ACT_SCREEN.dj=collar(dance(person(g, {top:W.coal, bottom:W.ink, shoe:W.white, skin:W.skin2, hat:W.ink, inner:W.bone, gear:M.inst}, {z:-0.45, top:'bomber', phones:'half', lean:0.2, look:-0.1, nod:0.3, tilt:0.06, girth:1.05, arms:[[2.1,2.4,0.6],[0.62,0.75,-0.3]]}),0.9), 1.4);
+  ACT_SCREEN.dj=collar(dance(person(g, {top:W.coal, bottom:W.ink, shoe:W.white, skin:W.skin2, hat:W.ink, inner:W.bone, gear:M.inst}, {z:-0.45, top:'bomber', phones:'half', lean:0.16, look:-0.28, tilt:0.1, girth:1.05, arms:[[2.1,2.4,0.6],[0.45,0.95,0.12]]}),0.9), 1.4);
   mk(bx(2.3,0.9,0.7), M.inst, g, 0,0.45,0, 0,0,0, true);
   mk(bx(2.4,0.04,0.8), M.inst, g, 0,0.92,0, 0,0,0, true);
   // the all act show device: an 11-inch tablet at its real size (249.7 x 177.5 x 5.3 mm) lying low on a wedge in front of the dj, in playing position
   (function(){
-    const BW=0.2497, BH=0.1775, BD=0.0053, SW=0.2328, SH=0.1605, A=0.17;
+    const BW=0.2497, BH=0.1775, BD=0.0053, SW=0.2328, SH=0.1605, A=0.4;
     const round=(w,h,r)=>{ const sh=new THREE.Shape(), x=w/2, y=h/2; sh.moveTo(-x+r,-y); sh.lineTo(x-r,-y); sh.absarc(x-r,-y+r,r,-Math.PI/2,0,false); sh.lineTo(x,y-r); sh.absarc(x-r,y-r,r,0,Math.PI/2,false); sh.lineTo(-x+r,y); sh.absarc(-x+r,y-r,r,Math.PI/2,Math.PI,false); sh.lineTo(-x,-y+r); sh.absarc(-x+r,-y+r,r,Math.PI,Math.PI*1.5,false); return sh; };
     const ec=document.createElement('canvas'); ec.width=256; ec.height=128; const eg=ec.getContext('2d');      // what the metal and glass reflect: a dark room, the rig's light overhead
     const gr=eg.createLinearGradient(0,0,0,128); gr.addColorStop(0,'#8a8782'); gr.addColorStop(0.3,'#4a4846'); gr.addColorStop(0.55,'#2c2b2a'); gr.addColorStop(1,'#1c1b1a'); eg.fillStyle=gr; eg.fillRect(0,0,256,128);
     const env=new THREE.CanvasTexture(ec); env.mapping=THREE.EquirectangularReflectionMapping; env.encoding=THREE.sRGBEncoding;
     const alu=new THREE.MeshStandardMaterial({color:lin(0xc9cacc), metalness:0.72, roughness:0.38, envMap:env, envMapIntensity:1.3});
     const glass=new THREE.MeshStandardMaterial({color:0x020202, metalness:0, roughness:0.12, envMap:env, envMapIntensity:0.35});
-    const pad=new THREE.Group(); pad.position.set(0,0.941,-0.14); pad.rotation.set(0,Math.PI,0); g.add(pad);
+    const pad=new THREE.Group(); pad.position.set(0.62,0.941,-0.1); pad.rotation.set(0,Math.PI+0.2,0); g.add(pad);
     const Z0=0.085, Y0=0.001;                                     // the lower edge, nearest the dj, almost on the table
     const tilt=new THREE.Group(); tilt.position.set(0,Y0+Math.sin(A)*BH/2+Math.cos(A)*BD,Z0-Math.cos(A)*BH/2+Math.sin(A)*BD); tilt.rotation.x=-(Math.PI/2-A); pad.add(tilt);
     const bev=0.0005, body=new THREE.ExtrudeGeometry(round(BW-2*bev,BH-2*bev,0.018-bev), {depth:BD-2*bev, bevelEnabled:true, bevelThickness:bev, bevelSize:bev, bevelSegments:2, curveSegments:16}).translate(0,0,-(BD-bev));
@@ -3102,20 +3102,8 @@ box(3.4, 0.4, 2.4, M.black, 0, DECK+0.2, -21.4);
     mk(new THREE.ShapeGeometry(round(BW-0.0012,BH-0.0012,0.0174),16), glass, tilt, 0,0,0.00012).castShadow=false;
     ACT_SCREEN.mesh=mk(new THREE.PlaneGeometry(SW,SH), ACT_SCREEN.mat, tilt, 0,0,0.00024); ACT_SCREEN.mesh.castShadow=false; ACT_SCREEN.mesh.receiveShadow=false;
     const lens=new THREE.MeshBasicMaterial({color:0x15161a}); mk(new THREE.CircleGeometry(0.0017,20), lens, tilt, 0,BH/2-0.0043,0.0003).castShadow=false;   // front camera, on the long edge
-    // the base: a slim aluminium wedge under the tablet, 30 mm at its back; one etherCON cable out of the back
-    const DW=0.226, zf=0.06, zk=-0.084, hAt=z=>Y0+(Z0-z)*Math.tan(A)-0.0004;
-    const prof=new THREE.Shape(); prof.moveTo(zf,0); prof.lineTo(zk,0); prof.lineTo(zk,hAt(zk)); prof.lineTo(zf,hAt(zf)); prof.closePath();
-    mk(new THREE.ExtrudeGeometry(prof,{depth:DW-0.002, bevelEnabled:true, bevelThickness:0.001, bevelSize:0.0008, bevelSegments:2}).rotateY(-Math.PI/2).translate(DW/2-0.001,0,0), alu, pad, 0,0,0);
-    const shell=new THREE.MeshStandardMaterial({color:lin(0xb8b9bb), metalness:0.85, roughness:0.3, envMap:env, envMapIntensity:1.3}), rubber=new THREE.MeshStandardMaterial({color:0x070707, roughness:0.7});
-    const zb=zk, cyv=0.0145, cx=0.06;
-    mk(cyl(0.0125,0.004,28), shell, pad, cx,cyv,zb-0.002, Math.PI/2,0,0);            // the chassis ring
-    mk(cyl(0.0105,0.034,28), shell, pad, cx,cyv,zb-0.021, Math.PI/2,0,0);            // the plug's metal shell
-    mk(bx(0.006,0.004,0.012), shell, pad, cx,cyv+0.0115,zb-0.012);                   // its latch
-    mk(new THREE.CylinderGeometry(0.0085,0.006,0.03,20), rubber, pad, cx,cyv,zb-0.053, -Math.PI/2,0,0);   // the boot
-    const path=new THREE.CatmullRomCurve3([V(cx,cyv,zb-0.066),V(cx,0.009,zb-0.1),V(cx+0.008,0.0045,zb-0.15),V(cx+0.03,0.0042,zb-0.28),V(cx+0.038,0.0042,zb-0.42),V(cx+0.04,-0.004,zb-0.462),V(cx+0.04,-0.06,zb-0.478),V(cx+0.04,-0.5,zb-0.48),V(cx+0.04,-0.94,zb-0.48)]);   // across the table and off its front edge
-    mk(new THREE.TubeGeometry(path,90,0.0036,10,false), rubber, pad, 0,0,0);
   })();
-  g.updateMatrixWorld(true); ACT_DEV.copy(g.localToWorld(V(0,0.975,-0.14)));
+  g.updateMatrixWorld(true); ACT_DEV.copy(g.localToWorld(V(0.62,0.99,-0.1)));
 })();
 (function(){                                                  // tap anywhere on the band -> all act
   const h=new THREE.Mesh(new THREE.BoxGeometry(20,2.6,9), new THREE.MeshBasicMaterial({visible:false}));
@@ -3367,11 +3355,11 @@ function refreshSelection(){ S.items.forEach(styleItem); }
 /* derived: all link. short streaks of light between each device and its nearest link tower; quiet by default, dense when all link is chosen */
 const LK={speed:170, burst:2, gap:0.04, r:0.011, slots:5};
 const lkMat=reg('link', new THREE.MeshBasicMaterial(Object.assign({color:lit('link').multiplyScalar(0.85), opacity:0.7, toneMapped:false}, ADD)));
-const lkGeo=new THREE.CylinderGeometry(1,1,1,6,1).rotateX(Math.PI/2).translate(0,0,-0.5);   // head at 0, tail at -1
+const lkGeo=new THREE.CylinderGeometry(1,0.12,1,6,1).rotateX(Math.PI/2).translate(0,0,-0.5);   // head at 0, tail at -1
 const lkRoutes=[], LK_MAX=((collars.length+sources.length+4)*2+2)*LK.slots*LK.burst;
 const lkMesh=new THREE.InstancedMesh(lkGeo, lkMat, LK_MAX); lkMesh.frustumCulled=false; lkMesh.raycast=noop;
 lkMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); scene.add(lkMesh);
-for(let i=0;i<LK_MAX;i++) lkMesh.setColorAt(i, new THREE.Color().setScalar(1));
+for(let i=0;i<LK_MAX;i++) lkMesh.setColorAt(i, new THREE.Color().setScalar(1-(i%LK.burst)*0.28));
 const _d=new THREE.Object3D(), _h=V(0,0,0), _t=V(0,0,0), _dir=V(0,0,0), _w=V(0,0,0);
 let lkSeed=0;
 function lkRoute(list,a,b,main){ const r=lkRoutes[list.n] || (lkRoutes[list.n]={a:V(0,0,0), b:V(0,0,0), period:0.95+((lkSeed++*0.618)%1)*0.4, phase:(lkSeed*0.377)%1}); r.a.copy(a); r.b.copy(b); r.main=!!main; list.n++; }
@@ -3382,15 +3370,32 @@ function viaTower(list,p,main){ const w=p.distanceTo(towers[0])<=p.distanceTo(to
 function updateLink(t){
   const lk=S.items.find(i=>i.kind==='link'), on=!!lk && !isHidden('link') && !window.__closeup; lkMesh.visible=on;   // no streaks through the lens in the close view
   if(!on) return;
-  const h=lineH.link; lkMat.opacity=0.3*h; if(h<0.02){ lkMesh.count=0; return; }
-  const ai=S.items.find(i=>i.kind==='act'), vo=ai&&objs.get(ai.id), foh=devicePoint('antiphon',0,0.97,0), ends=[];
-  collars.forEach(c=>ends.push(_w.copy(c).setY(c.y+0.22).clone()));         // each player
-  if(vo && vo.ear){ vo.ear.getWorldPosition(_w); ends.push(_w.clone()); }    // the artist
-  if(foh) ends.push(foh);                                                    // foh
+  const ai=S.items.find(i=>i.kind==='act'), vo=ai&&objs.get(ai.id), foh=devicePoint('antiphon',0,0.97,0), list={n:0};
+  const both=(p,main)=>{ if(p.distanceTo(ACT_DEV)<1.5) return; lkRoute(list,ACT_DEV,p,main); lkRoute(list,p,ACT_DEV,main); };   // tablet -> device and back; not the dj's own collar
+  if(vo && vo.mic){ vo.mic.getWorldPosition(_w); both(_w,true); }             // the artist's handheld mic
+  if(vo && vo.ear){ vo.ear.getWorldPosition(_w); both(_w,false); }            // and in-ears
+  if(foh) both(foh,true);                                                    // foh
+  collars.forEach(c=>both(_w.copy(c).setY(c.y+0.22),false));                 // each player
+  // quiet by default: the main paths, one pulse each; with all link chosen every path runs, several pulses each
+  const h=lineH.link, slots=1+Math.round(h*(LK.slots-1));
   let k=0;
-  ends.forEach(b=>{ if(b.distanceTo(ACT_DEV)<1.5) return;                    // not the dj's own collar, an arm's length away
-    _dir.subVectors(b,ACT_DEV); const len=_dir.length(); _dir.normalize();
-    _d.position.copy(b); _d.lookAt(_t.copy(b).add(_dir)); _d.scale.set(0.006,0.006,len); _d.updateMatrix(); lkMesh.setMatrixAt(k++, _d.matrix); });
+  for(let i=0;i<list.n;i++){
+    const r=lkRoutes[i]; if(!r.main && h<0.3) continue;
+    const len=r.a.distanceTo(r.b), travel=Math.max(0.09, len/LK.speed), L=Math.min(0.8, len*0.12);
+    _dir.subVectors(r.b,r.a).normalize();
+    for(let s2=0;s2<slots;s2++){
+      const tc=((t+r.phase*r.period+s2*r.period/slots)%r.period);
+      for(let j=0;j<LK.burst;j++,k++){
+        const tk=tc-j*LK.gap, head=Math.min(len, tk/travel*len), tail=Math.max(0, tk/travel*len-L);
+        if(tk<0 || tail>=len){ _d.scale.set(0,0,0); _d.position.set(0,-99,0); }
+        else {
+          _h.copy(r.a).addScaledVector(_dir, head);
+          _d.position.copy(_h); _d.lookAt(_t.copy(_h).add(_dir)); _d.scale.set(LK.r, LK.r, Math.max(0.001, head-tail));
+        }
+        _d.updateMatrix(); lkMesh.setMatrixAt(k, _d.matrix);
+      }
+    }
+  }
   lkMesh.count=k; lkMesh.instanceMatrix.needsUpdate=true;
 }
 
@@ -3583,8 +3588,7 @@ function updateMotion(t){
   MOVERS.forEach(m=>moveOne(m,b)); objs.forEach(o=>{ if(o.mover) moveOne(o.mover,b); });
   SCREENS.forEach((m,i)=>m.color.setScalar(0.88+0.12*Math.sin(t*0.12+i*1.7)));
 }
-function updateDerived(t,dt){ if(ACT_SCREEN.dj) ACT_SCREEN.dj.visible=camera.position.distanceTo(ACT_DEV)>1.4;   /* the close view is from the dj's own eyes */
-  if(ACT_SCREEN.mesh && t-ACT_SCREEN.last>0.06 && camera.position.distanceTo(ACT_DEV)<26){ ACT_SCREEN.last=t; ACT_SCREEN.draw(REDUCE?1:t); } updateLink(REDUCE?0.31:t); return updateDerivedRest(t,dt); }
+function updateDerived(t,dt){ if(ACT_SCREEN.mesh && t-ACT_SCREEN.last>0.06 && camera.position.distanceTo(ACT_DEV)<26){ ACT_SCREEN.last=t; ACT_SCREEN.draw(REDUCE?1:t); } updateLink(REDUCE?0.31:t); return updateDerivedRest(t,dt); }
 const REDUCE=window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; let movedOnce=false;
 function updateDerivedRest(t,dt){ holo.visible=false; clocks.forEach(c=>{ c.g.visible=false; }); if(!REDUCE || !movedOnce){ movedOnce=true; updateMotion(t); } }   // landing: no antiphon console, no dials
 
@@ -4069,9 +4073,10 @@ window.__twin = {flyTo, povView, V, screen:()=>ACT_SCREEN.mesh, tier:()=>tier, l
     var m = tw.screen(); m.updateWorldMatrix(true, false);
     var e = m.matrixWorld.elements, P = tw.V(e[12], e[13], e[14]), N = tw.V(e[8], e[9], e[10]).normalize(), U = tw.V(e[4], e[5], e[6]).normalize(), R = tw.V(e[0], e[1], e[2]).normalize();
     var upright = innerWidth / innerHeight <= 1 || innerWidth < 700;
-    var pos = P.clone().addScaledVector(N, upright ? 0.34 : 0.25).addScaledVector(U, upright ? -0.4 : -0.31).addScaledVector(R, upright ? 0 : -0.02);   /* where the dj's eyes are */
-    var dir = P.clone().addScaledVector(U, upright ? 0.1 : 0.11).sub(pos).normalize();
-    return { pos: pos, target: pos.clone().addScaledVector(dir, 3.2), fov: upright ? 50 : 42 };
+    var A = 0.4, back = upright ? 0.6 : 0.5, up = upright ? 0.19 : 0.15;   /* back along the table towards the dj, a little above it */
+    var pos = P.clone().addScaledVector(N, back * Math.sin(A) + up * Math.cos(A)).addScaledVector(U, -back * Math.cos(A) + up * Math.sin(A)).addScaledVector(R, upright ? -0.06 : -0.12);
+    var dir = P.clone().addScaledVector(N, 0.035).addScaledVector(R, upright ? 0 : 0.02).sub(pos).normalize();
+    return { pos: pos, target: pos.clone().addScaledVector(dir, 3.2), fov: upright ? 48 : 38 };
   }
   var wasClose = false;
   function pick(sec) {
