@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-12-landing-18">
+<html lang="en" data-build="2026-11-12-landing-19">
 <head>
 <meta charset="utf-8">
 <script>
@@ -57,7 +57,7 @@ body.quiet #brand,body.quiet #bBuild,body.quiet #labels{opacity:0;pointer-events
 #hero{position:fixed;left:0;top:0;pointer-events:none;opacity:0;transition:opacity .9s ease;background:#000;object-fit:fill}
 #hero.on{opacity:1}
 #hero.off{transition-duration:.22s}
-#vig{position:fixed;inset:0;pointer-events:none;background:radial-gradient(125% 100% at 50% 42%,rgba(0,0,0,0) 58%,rgba(0,0,0,.38) 100%)}
+#vig{display:none;position:fixed;inset:0;pointer-events:none;background:radial-gradient(125% 100% at 50% 42%,rgba(0,0,0,0) 58%,rgba(0,0,0,.38) 100%)}
 #legend{position:fixed;left:50%;bottom:calc(var(--sb) + 16px);transform:translateX(-50%);display:flex;gap:2px;padding:4px;border-radius:14px;z-index:5}
 #foot{position:fixed;left:calc(var(--sl) + 22px);bottom:calc(var(--sb) + 18px);font-size:11px;line-height:16px;color:var(--mute);z-index:4;pointer-events:none;white-space:nowrap}
 #legend button{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:10px;position:relative;transition:opacity .3s,background .3s}
@@ -149,9 +149,10 @@ html{--m:clamp(20px,4.4vw,60px)}
 #top-nav img{width:22px;height:22px;display:block}
 #top-nav a.txt{width:auto;padding:0 9px;font-size:15px;font-weight:500;letter-spacing:-.01em;line-height:20px;color:var(--ink)}
 main{position:relative;z-index:3;pointer-events:none}
+.s{background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;outline:0!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 .s{min-height:100vh;min-height:100svh;scroll-snap-align:start;scroll-snap-stop:always;display:flex;align-items:flex-end;padding:calc(var(--st) + 80px) calc(var(--sr) + var(--m)) calc(var(--sb) + clamp(40px,9vh,96px)) calc(var(--sl) + var(--m))}
 .copy{width:min(38vw,620px);pointer-events:auto;-webkit-user-select:text;user-select:text;text-shadow:0 1px 2px rgba(0,0,0,.7);opacity:0;transform:translateY(10px);transition:opacity .9s ease .1s,transform .9s cubic-bezier(.2,.8,.2,1) .1s}
-.s.in .copy{opacity:1;transform:none}
+.s.here .copy{opacity:1;transform:none}
 .copy .pi{display:flex;align-items:center;gap:10px}
 .copy .pi img{width:24px;height:24px;display:block;flex:none}
 .copy h2{font-size:22px;font-weight:600;letter-spacing:-.02em;margin:0;line-height:1.2}
@@ -4213,9 +4214,9 @@ window.__twin = {shot:()=>{ if(composer) composer.render(0); else renderer.rende
     marks.forEach(function (a) { if (a.getAttribute('href') === '#' + mark) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
   }
   if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { e.target.classList.toggle('in', e.isIntersecting); if (e.isIntersecting) pick(e.target); }); }, { threshold: 0.5 });
+    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { e.target.classList.toggle('here', e.isIntersecting); if (e.isIntersecting) pick(e.target); }); }, { threshold: 0.5 });
     secs.forEach(function (s) { io.observe(s); });
-  } else secs.forEach(function (s) { s.classList.add('in'); });
+  } else secs.forEach(function (s) { s.classList.add('here'); });
 
   /* the scene sits in the upper part (upright) or to the right (wide), leaving the words their room */
   function place() {
