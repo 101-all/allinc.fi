@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-12-landing-20">
+<html lang="en" data-build="2026-11-12-landing-21">
 <head>
 <meta charset="utf-8">
 <script>
@@ -2416,7 +2416,7 @@ const M = {
   wall:   new THREE.MeshStandardMaterial({color:0x0c0c0c, roughness:1, side:THREE.BackSide}),
   deck:   new THREE.MeshStandardMaterial({color:0x0b0b0b, roughness:0.55, metalness:0.1}),
   black:  new THREE.MeshStandardMaterial({color:0x0a0a0a, roughness:0.6}),
-  desk:   new THREE.MeshLambertMaterial({color:0x050505}),      // the dj's table: deep charcoal, a little gloss
+  desk:   new THREE.MeshBasicMaterial({color:0x000000, toneMapped:false}),   // one flat near-black, set below: the same value the film's table has, so top, front and fade are all one tone      // the dj's table: deep charcoal, a little gloss
   grey:   new THREE.MeshStandardMaterial({color:0x121212, roughness:0.9}),
   crowd:  new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.95}),
   seat:   new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.95}),
@@ -3662,6 +3662,7 @@ function updateMotion(t){
   MOVERS.forEach(m=>moveOne(m,b)); objs.forEach(o=>{ if(o.mover) moveOne(o.mover,b); });
   SCREENS.forEach((m,i)=>m.color.setScalar(0.88+0.12*Math.sin(t*0.12+i*1.7)));
 }
+M.desk.color.copy(lin(0x0c0c0c));
 const DRIFT={on:false, p:V(0,0,0), t:V(0,0,0), t0:0}, _up=V(0,1,0);
 function updateDerived(t,dt){
   if(window.__closeup && !tween && !REDUCE){                         // resting on the product: a slow sway of about a degree around it
@@ -4251,7 +4252,7 @@ window.__twin = {shot:()=>{ if(composer) composer.render(0); else renderer.rende
       if (tok !== heroTok) return;
       if (!window.__closeup) return heroOff();
       var m = heroFit(); if (!m) { hero.classList.remove('on'); return; }
-      if (m !== heroMode) { heroMode = m; asked = false; hero.classList.remove('on'); hero.preload = 'auto'; hero.poster = 'hero-' + m + '.jpg'; hero.src = 'hero-' + m + '.mp4?v=2'; hero.load(); }
+      if (m !== heroMode) { heroMode = m; asked = false; hero.classList.remove('on'); hero.preload = 'auto'; hero.poster = 'hero-' + m + '.jpg'; hero.src = 'hero-' + m + '.mp4?v=3'; hero.load(); }
       heroStill = tw.settled() ? heroStill + 1 : 0;
       if (asked || heroStill < 4 || hero.readyState < 3) return;                           /* the camera at rest for half a second, the film buffered */
       asked = true; heroShow(tok);
