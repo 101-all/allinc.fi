@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-12-landing-11">
+<html lang="en" data-build="2026-11-12-landing-12">
 <head>
 <meta charset="utf-8">
 <script>
@@ -3105,7 +3105,7 @@ box(3.4, 0.4, 2.4, M.black, 0, DECK+0.2, -21.4);
   })();
   (function(){
     const geo=new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(12),3)); geo.setAttribute('uv', new THREE.BufferAttribute(new Float32Array([0,0, 1,0, 1,1, 0,1]),2)); geo.setIndex([0,1,2, 0,2,3]);
-    const m=new THREE.Mesh(geo, new THREE.MeshBasicMaterial({map:ACT_SCREEN.mat.map, transparent:true, opacity:0.085, depthWrite:false, toneMapped:false, side:THREE.DoubleSide}));
+    const m=new THREE.Mesh(geo, new THREE.MeshBasicMaterial({map:ACT_SCREEN.mat.map, transparent:true, opacity:0.018, depthWrite:false, toneMapped:false, side:THREE.DoubleSide}));
     m.frustumCulled=false; m.raycast=noop; m.renderOrder=2; scene.add(m);
     g.updateMatrixWorld(true); const e0=g.localToWorld(V(-1.2,0,-0.4)), e1=g.localToWorld(V(1.2,0,0.4));   // the reflection ends where the table does
     m.material.clippingPlanes=[new THREE.Plane(V(0,0,1),-e0.z), new THREE.Plane(V(0,0,-1),e1.z), new THREE.Plane(V(1,0,0),-e0.x), new THREE.Plane(V(-1,0,0),e1.x)]; renderer.localClippingEnabled=true;
@@ -3146,13 +3146,15 @@ const CLOTH=['#1a1a1a','#202020','#262626','#2c2c2c','#323232','#383838','#3e3e3
 const SKIN=['#4a4a4a','#545454','#5e5e5e','#686868','#424242'].map(lin);
 const pickOf=a=>a[(Math.random()*a.length)|0];
 // the crowd moves on the gpu: each person sways with the bar and lifts a little on the beat, pivoting at the feet
-const SWAY={value:0};
+const SWAY={value:0}, WAVE={value:0}, WAVEK={value:0};          // antiphon: one device at foh, its reading of the room as a pulse through the audience
 function swayMat(mat){
   mat.onBeforeCompile=sh=>{
-    sh.uniforms.uT=SWAY;
-    sh.vertexShader='uniform float uT;\nattribute float aPh;\n'+sh.vertexShader.replace('#include <project_vertex>',
+    sh.uniforms.uT=SWAY; sh.uniforms.uWt=WAVE; sh.uniforms.uWk=WAVEK;
+    sh.fragmentShader='varying float vWave;\n'+sh.fragmentShader.replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\ntotalEmissiveRadiance+=vec3(0.16,0.4,1.0)*vWave;');
+    sh.vertexShader='uniform float uT;\nuniform float uWt;\nuniform float uWk;\nvarying float vWave;\nattribute float aPh;\n'+sh.vertexShader.replace('#include <project_vertex>',
       'vec4 ip=vec4(transformed,1.0);\n#ifdef USE_INSTANCING\nip=instanceMatrix*ip;\n#endif\n'+
       'float hh=max(ip.y,0.0), amp=0.5+fract(aPh*7.31);\n'+
+      'float wd=length(ip.xz-vec2(0.0,33.0)); vWave=uWk*pow(max(0.0,sin(wd*0.2-uWt*1.25)),5.0)*exp(-wd/60.0)*0.5;\n'+
       'ip.x+=sin(uT*0.25+aPh)*0.028*amp*hh;\n'+
       'ip.y+=(0.5+0.5*sin(uT*0.5+aPh))*0.03*amp*smoothstep(0.4,1.3,hh);\n'+
       'vec4 mvPosition=modelViewMatrix*ip;\ngl_Position=projectionMatrix*mvPosition;');
@@ -3603,7 +3605,8 @@ function updateMotion(t){
   MOVERS.forEach(m=>moveOne(m,b)); objs.forEach(o=>{ if(o.mover) moveOne(o.mover,b); });
   SCREENS.forEach((m,i)=>m.color.setScalar(0.88+0.12*Math.sin(t*0.12+i*1.7)));
 }
-function updateDerived(t,dt){ if(ACT_SCREEN.mirror) ACT_SCREEN.mirror();
+function updateDerived(t,dt){ WAVE.value=REDUCE?6:t; WAVEK.value+=((lineH.antiphon>0.5?1:0)-WAVEK.value)*(REDUCE?1:0.05);
+  if(ACT_SCREEN.mirror) ACT_SCREEN.mirror();
   if(ACT_SCREEN.mesh && t-ACT_SCREEN.last>0.06 && camera.position.distanceTo(ACT_DEV)<26){ ACT_SCREEN.last=t; ACT_SCREEN.draw(REDUCE?1:t); } updateLink(REDUCE?0.31:t); return updateDerivedRest(t,dt); }
 const REDUCE=window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; let movedOnce=false;
 function updateDerivedRest(t,dt){ holo.visible=false; clocks.forEach(c=>{ c.g.visible=false; }); if(!REDUCE || !movedOnce){ movedOnce=true; updateMotion(t); } }   // landing: no antiphon console, no dials
@@ -4084,7 +4087,7 @@ flyTo(tv, 4200); booted=true;
 host.addEventListener('pointerdown', ()=>{ tween=null; }, true);
 host.addEventListener('wheel', ()=>{ tween=null; }, {passive:true, capture:true});
 requestAnimationFrame(t=>{ lastT=t; document.body.classList.add('ready'); frame(t); });
-window.__twin = {flyTo, flyPath, povView, V, screen:()=>ACT_SCREEN.mesh, tier:()=>tier, lk:()=>lkMesh, setBloom:b=>{ composer = b ? (composer||makeComposer()) : null; if(composer) resize(); }, S:()=>S, state, select, setMode, camera, controls, objs, getItem, handles:{rotKnob,sclKnob}, renderer, bloom:()=>!!composer, clocks};
+window.__twin = {flyTo, flyPath, topView, povView, V, screen:()=>ACT_SCREEN.mesh, tier:()=>tier, lk:()=>lkMesh, setBloom:b=>{ composer = b ? (composer||makeComposer()) : null; if(composer) resize(); }, S:()=>S, state, select, setMode, camera, controls, objs, getItem, handles:{rotKnob,sclKnob}, renderer, bloom:()=>!!composer, clocks};
 })();
 </script>
 <script>
@@ -4097,9 +4100,9 @@ window.__twin = {flyTo, flyPath, povView, V, screen:()=>ACT_SCREEN.mesh, tier:()
     var m = tw.screen(); m.updateWorldMatrix(true, false);
     var e = m.matrixWorld.elements, P = tw.V(e[12], e[13], e[14]), N = tw.V(e[8], e[9], e[10]).normalize(), U = tw.V(e[4], e[5], e[6]).normalize(), R = tw.V(e[0], e[1], e[2]).normalize();
     var upright = innerWidth / innerHeight <= 1 || innerWidth < 700;
-    var pos = P.clone().addScaledVector(N, upright ? 0.6 : 0.5).addScaledVector(U, -0.1).addScaledVector(R, upright ? -0.12 : -0.2);
-    var dir = P.clone().addScaledVector(R, upright ? 0 : 0.02).addScaledVector(U, upright ? 0.0 : -0.005).sub(pos).normalize();
-    return { pos: pos, target: pos.clone().addScaledVector(dir, 3.2), fov: upright ? 46 : 34 };
+    var pos = P.clone().addScaledVector(N, upright ? 0.63 : 0.53).addScaledVector(U, -0.055).addScaledVector(R, upright ? -0.12 : -0.2);
+    var dir = P.clone().addScaledVector(R, upright ? 0 : 0.02).addScaledVector(U, upright ? 0.012 : 0.01).sub(pos).normalize();
+    return { pos: pos, target: pos.clone().addScaledVector(dir, 3.2), fov: upright ? 49 : 37 };
   }
   var wasClose = false;
   function pick(sec) {
@@ -4114,6 +4117,7 @@ window.__twin = {flyTo, flyPath, povView, V, screen:()=>ACT_SCREEN.mesh, tier:()
       if (reduce) tw.flyTo(v, 1);
       else tw.flyPath([tw.V(0.6, 8.2, 5), tw.V(0.9, 4.8, -9), v.pos], [tw.V(0, 1.5, 22), tw.V(0.2, 1.9, 7), v.target], v.fov, 3800);
     }
+    else if (tw && line === 'antiphon') tw.flyTo(tw.topView(), reduce ? 1 : 2800);   /* antiphon is seen from above: the pulse through the audience */
     wasClose = close;
     marks.forEach(function (a) { if (a.getAttribute('href') === '#' + mark) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
   }
