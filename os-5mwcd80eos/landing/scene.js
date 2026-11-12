@@ -154,7 +154,7 @@
     var m = new T.Mesh(new T.CylinderGeometry(0.14, len * Math.tan(sp.angle) * 0.72, len, 28, 1, true).translate(0, -len / 2, 0), shaftMat);
     m.position.copy(a); m.quaternion.setFromUnitVectors(new T.Vector3(0, -1, 0), b.clone().sub(a).normalize()); m.renderOrder = 2; scene.add(m);
   });
-  var lights = SHOW.concat([follow, spill]), showK = 0;
+  var lights = SHOW.concat([follow, spill]), showK = 0.8;
 
   /* ---------- people, as model-makers' pins ---------- */
   var pinPts = [[0.001, 0], [0.21, 0], [0.17, 1.16], [0.06, 1.25], [0.13, 1.32], [0.175, 1.47], [0.13, 1.62], [0.001, 1.69]];
@@ -587,13 +587,12 @@
       var s = Math.max(0.5, Math.min(5.2, dist * 0.0125 * (upright ? 1.25 : 1))); mk.sprite.scale.set(s, s, 1);
     }
     /* house lights down for the show, up again at the end */
-    var kd = Math.min(1, Math.max(0, (f - 0.22) / 0.5)) * (1 - Math.min(1, Math.max(0, (f - 3.3) / 0.5))); kd = kd * kd * (3 - 2 * kd);
+    var kd = Math.min(1, Math.max(0, (f - 0.22) / 0.5)) * (1 - Math.min(1, Math.max(0, (f - 3.3) / 0.5))); kd = kd * kd * (3 - 2 * kd); kd = 0.8 + 0.2 * kd;   /* one tone throughout; the stage only comes up a little as you arrive */
     showK += (kd - showK) * (reduce ? 1 : 0.1);
     hemi.intensity = 0.57 + (0.085 - 0.57) * showK; key.intensity = 0.6 + (0.1 - 0.6) * showK;
     for (var li = 0; li < lights.length; li++) lights[li].intensity = lights[li].userData.full * showK;
     shaftMat.uniforms.uK.value = showK; uni.uGlow.value = showK;
-    var dark = kd > 0.5; if (dark !== isDark) { isDark = dark; root.classList.toggle('show', dark); }
-    /* the band keeps time; link runs quiet, and dense in its own section */
+        /* the band keeps time; link runs quiet, and dense in its own section */
     if (!reduce) { var beat = time * BPM / 60 * Math.PI * 2; for (var q = 0; q < MOVERS.length; q++) moveOne(MOVERS[q], beat); }
     linkH += (Math.max(0, Math.min(1, 1.6 - Math.abs(f - 2) * 2)) - linkH) * (reduce ? 1 : 0.08);
     updateLink(reduce ? 0.31 : time);

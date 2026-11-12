@@ -6,18 +6,18 @@
 <title>tools — all inc.</title>
 <meta name="description" content="key &amp; bpm, tuner, metronome and stage timer from all inc.">
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#e2e3e5">
+<meta name="theme-color" content="#070708">
 <link rel="canonical" href="https://allinc.fi/tools/">
 <link rel="icon" href="/logo.svg" type="image/svg+xml">
 <link rel="preload" href="/inter.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 @font-face { font-family: Inter; font-style: normal; font-weight: 100 900; font-display: swap; src: url(/inter.woff2) format('woff2'); }
-:root { --ink: #1d1d1f; --ink2: #505155; --fg: #f5f5f7; --muted: #8e8e8e; --soft: #1c1c1c; --blue: #2f6bff; --m: clamp(20px, 4.4vw, 60px); }
+:root { --ink: #f5f5f7; --ink2: #a4a4aa; --fg: #f5f5f7; --muted: #98989e; --soft: #232326; --surface: #131315; --hair: rgba(255, 255, 255, .12); --blue: #2f6bff; --m: clamp(20px, 4.4vw, 60px); }
 * { box-sizing: border-box; }
-html { background: #d8d9db; -webkit-text-size-adjust: 100%; }
+html { background: #070708; -webkit-text-size-adjust: 100%; }
 body {
   margin: 0; min-height: 100vh; min-height: 100svh; color: var(--ink); text-transform: lowercase;
-  background: linear-gradient(180deg, #e4e5e7 0, #d8d9db 60vh, #cbccd0 100%);
+  background: linear-gradient(180deg, #0b0b0d 0, #070708 60vh, #040405 100%);
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; -webkit-tap-highlight-color: transparent;
   padding: env(safe-area-inset-top) calc(env(safe-area-inset-right) + var(--m)) calc(env(safe-area-inset-bottom) + var(--m)) calc(env(safe-area-inset-left) + var(--m));
@@ -30,14 +30,15 @@ header { display: flex; align-items: center; height: 68px; }
 .wordmark { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; padding: 8px 0; }
 h1 { margin: 0; padding: clamp(28px, 7vw, 96px) 0 clamp(32px, 5vw, 64px); max-width: 15em; font-size: clamp(34px, 5.5vw, 92px); line-height: .98; font-weight: 700; letter-spacing: -0.048em; text-wrap: balance; }
 
-/* four black displays, as on allinc.fi */
+/* four tiles in the page's own tone */
 .tiles { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(8px, 1.2vw, 14px); }
 .tiles button {
   width: 100%; aspect-ratio: 16 / 10; padding: clamp(16px, 2.6vw, 34px); border-radius: clamp(22px, 2.6vw, 28px); text-align: left;
-  background: #000; color: var(--fg); display: flex; flex-direction: column; justify-content: flex-end;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, .55), 0 1px 0 1px rgba(255, 255, 255, .75), 0 30px 60px -40px rgba(0, 0, 0, .6);
-  transition: transform .25s cubic-bezier(.2, .7, .2, 1);
+  background: var(--surface); color: var(--fg); display: flex; flex-direction: column; justify-content: flex-end;
+  box-shadow: inset 0 0 0 1px var(--hair);
+  transition: transform .25s cubic-bezier(.2, .7, .2, 1), background .25s;
 }
+@media (hover: hover) { .tiles button:hover { background: #19191c; } }
 .tiles button:active { transform: scale(.985); }
 .tiles button:focus-visible { outline-offset: 3px; border-radius: 28px; }
 .tiles b { display: block; font-size: clamp(26px, 4.2vw, 64px); line-height: .95; font-weight: 700; letter-spacing: -0.05em; }
@@ -45,15 +46,15 @@ h1 { margin: 0; padding: clamp(28px, 7vw, 96px) 0 clamp(32px, 5vw, 64px); max-wi
 @media (max-width: 599px) { .tiles { grid-template-columns: 1fr; } .tiles button { aspect-ratio: auto; min-height: 132px; } .tiles b { font-size: 34px; } .tiles span { font-size: 15px; } }
 
 /* a tool opens in its own display */
-dialog { color: var(--fg); background: #000; border: 0; padding: 0; width: min(100vw - 16px, 520px); max-width: none; max-height: none; border-radius: 28px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255, 255, 255, .14), 0 40px 90px rgba(0, 0, 0, .5); }
-dialog::backdrop { background: rgba(20, 20, 22, .5); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+dialog { color: var(--fg); background: var(--surface); border: 0; padding: 0; width: min(100vw - 16px, 520px); max-width: none; max-height: none; border-radius: 28px; overflow: hidden; box-shadow: 0 0 0 1px var(--hair), 0 40px 90px rgba(0, 0, 0, .6); }
+dialog::backdrop { background: rgba(4, 4, 5, .6); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
 dialog[open] { animation: up .3s cubic-bezier(.2, .8, .2, 1); }
 @keyframes up { from { transform: translateY(18px) scale(.98); opacity: 0; } }
 .bar { display: flex; justify-content: space-between; align-items: center; height: 60px; padding: 0 10px 0 24px; }
 .bar strong { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
 .bar button { height: 44px; padding: 0 14px; font-size: 15px; font-weight: 500; color: var(--muted); border-radius: 10px; }
 .bar button:hover { color: var(--fg); }
-#stage { background: #000; padding: 8px 24px calc(34px + env(safe-area-inset-bottom)); min-height: 360px; display: grid; place-items: center; }
+#stage { background: var(--surface); padding: 8px 24px calc(34px + env(safe-area-inset-bottom)); min-height: 360px; display: grid; place-items: center; }
 @media (max-width: 599px) { dialog { margin: auto auto 8px; } }
 
 /* the tools' own parts, as in the toolbox */
@@ -65,7 +66,7 @@ dialog[open] { animation: up .3s cubic-bezier(.2, .8, .2, 1); }
 .pair { display: flex; gap: clamp(28px, 8vw, 72px); align-items: flex-end; }
 .keys { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
 .key { display: inline-flex; align-items: center; justify-content: center; height: 44px; min-width: 44px; padding: 0 16px; border-radius: 12px; background: var(--soft); color: #fff; font-weight: 500; font-size: 15px; transition: background .15s, color .15s; cursor: pointer; }
-.key:active { background: #2a2a2c; }
+.key:active { background: #2e2e32; }
 .key.on, .key[aria-pressed="true"] { background: #fff; color: #000; }
 .pick { position: relative; }
 .pick input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
