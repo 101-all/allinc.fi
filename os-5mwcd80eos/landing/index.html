@@ -35,7 +35,7 @@ window.ALLINC = {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:dark;--ink:#ffffff;--mute:#8e8e8e;--hair:rgba(255,255,255,.1);--glass:rgba(10,10,10,.62);--y:#f6cc44;--bg:#000000;--act:#1434b8;--link:#6cc0ff;--antiphon:#2e9be6;
+:root{color-scheme:dark;--ink:#ffffff;--mute:#8e8e8e;--hair:rgba(255,255,255,.1);--glass:rgba(10,10,10,.62);--y:#f6cc44;--bg:#000000;--act:#ffffff;--link:#ffffff;--antiphon:#ffffff;
 --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);--sl:env(safe-area-inset-left,0px);--sr:env(safe-area-inset-right,0px)}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);
@@ -2248,7 +2248,7 @@ const SHORT = {act:LINES.act.name, antiphon:LINES.antiphon.name, link:LINES.link
 
 // brand board: black, white and one yellow; each line adds one blue from its brand sheet
 const Y = 0xf6cc44, BG = 0x000000;
-const COL = {act:0x1434b8, link:0x6cc0ff, antiphon:0x2e9be6};
+const COL = {act:0xb8b8b8, link:0xffffff, antiphon:0xe6e6e6};
 const GAIN = {act:1, link:1.3, antiphon:1.45};     // how far each line's light sits above white, i.e. how much it blooms
 const KEY = 'allinc.venue.v9';
 
@@ -3030,7 +3030,7 @@ const blobMat=new THREE.MeshBasicMaterial({map:blobTex, transparent:true, depthW
   const mat=new THREE.ShaderMaterial({
     uniforms:{uT:TW, uS:{value:2.6*renderer.getPixelRatio()}, map:{value:dotTex}},
     vertexShader:'attribute float aPh; uniform float uT; uniform float uS; varying float vA; void main(){ float s=0.5+0.5*sin(uT*(0.35+fract(aPh*3.7)*0.7)+aPh*6.283); vA=0.2+0.8*smoothstep(0.3,1.0,s); gl_PointSize=uS; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
-    fragmentShader:'uniform sampler2D map; varying float vA; void main(){ float a=texture2D(map,gl_PointCoord).a*vA; gl_FragColor=vec4(vec3(0.8,0.87,1.0)*a*0.85,1.0);\n#include <encodings_fragment>\n}',
+    fragmentShader:'uniform sampler2D map; varying float vA; void main(){ float a=texture2D(map,gl_PointCoord).a*vA; gl_FragColor=vec4(vec3(1.0,0.98,0.95)*a*0.85,1.0);\n#include <encodings_fragment>\n}',
     blending:THREE.AdditiveBlending, transparent:true, depthWrite:false
   });
   const p=new THREE.Points(g, mat); p.raycast=noop; arch.add(p);
@@ -3180,7 +3180,7 @@ const vnoise=x=>{ const i=Math.floor(x), f=x-i, u=f*f*(3-2*f); return hash(i)*(1
 const fbm=(x,s)=>vnoise(x+s*17.3)*0.6+vnoise(x*2.3+s*5.1+3.1)*0.28+vnoise(x*5.7+s*9.7+7.7)*0.12;   // smooth 0..1
 const gss=(x,w)=>Math.exp(-(x*x)/(w*w));
 const HF=(wt,px)=>wt+' '+px+'px Inter, -apple-system, "Helvetica Neue", sans-serif';
-const AC='#5ab4ff', AC2='#2e9be6';
+const AC='#ffffff', AC2='#e6e6e6';
 // three graphite glass panels in a shallow arc, the side ones turned in toward the viewer
 const PANELS=[{key:'lu', w:1.9, h:1.6, x:-3.2, y:3.85, ry:0.26, cw:620}, {key:'eq', w:4.2, h:1.6, x:0, y:3.85, ry:0, cw:1300}, {key:'st', w:1.6, h:1.6, x:3.06, y:3.85, ry:-0.26, cw:540}];
 PANELS.forEach(p=>{
@@ -3195,11 +3195,11 @@ function rr(g,x,y,w,h,r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,
 function chrome(p, title, right){
   const g=p.g, W=p.c.width, H=p.c.height, s=W/620;
   g.clearRect(0,0,W,H);
-  rr(g,1.5,1.5,W-3,H-3,22); const bg=g.createLinearGradient(0,0,0,H); bg.addColorStop(0,'rgba(28,30,34,0.94)'); bg.addColorStop(1,'rgba(12,13,15,0.94)');
+  rr(g,1.5,1.5,W-3,H-3,22); const bg=g.createLinearGradient(0,0,0,H); bg.addColorStop(0,'rgba(30,30,30,0.94)'); bg.addColorStop(1,'rgba(13,13,13,0.94)');
   g.fillStyle=bg; g.fill(); g.lineWidth=1.5; g.strokeStyle='rgba(255,255,255,0.14)'; g.stroke();
   g.fillStyle='rgba(255,255,255,0.05)'; g.fillRect(24,58,W-48,1);
   if(p.ls) g.letterSpacing='2px';
-  g.font=HF(600,20); g.textBaseline='middle'; g.textAlign='left'; g.fillStyle='rgba(235,240,247,0.78)'; g.fillText(title,26,32);
+  g.font=HF(600,20); g.textBaseline='middle'; g.textAlign='left'; g.fillStyle='rgba(247,247,247,0.78)'; g.fillText(title,26,32);
   if(right){ g.textAlign='right'; g.fillStyle=AC; g.fillText(right,W-26,32); }
   if(p.ls) g.letterSpacing='0px';
 }
@@ -3225,7 +3225,7 @@ function audio(t,dt){
   if(t-AU.lastH>0.19){ AU.lastH=t; AU.hist[AU.hk++%AU.hist.length]=AU.s; }
 }
 // eq bands, drifting a little as if the system keeps adjusting
-const BANDS=[{f:120,g:1.6,q:0.9,c:'#9fd3ff'},{f:340,g:-2.4,q:1.3,c:AC2},{f:1200,g:-0.8,q:1.6,c:'#cfe6ff'},{f:2800,g:1.7,q:1.0,c:AC},{f:7200,g:-1.3,q:1.4,c:'#7fa8ff'}];
+const BANDS=[{f:120,g:1.6,q:0.9,c:'#ffffff'},{f:340,g:-2.4,q:1.3,c:AC2},{f:1200,g:-0.8,q:1.6,c:'#ffffff'},{f:2800,g:1.7,q:1.0,c:AC},{f:7200,g:-1.3,q:1.4,c:'#ffffff'}];
 function eqDb(f,t){
   let d=-10*Math.log10(1+Math.pow(36/f,4));                      // high pass
   BANDS.forEach((bd,k)=>{ const g=bd.g+(fbm(t*0.06,k+2)-0.5)*1.6, fc=bd.f*Math.pow(2,(fbm(t*0.045,k+11)-0.5)*0.35); bd.cg=g; bd.cf=fc; d+=g*gss(Math.log2(f/fc)*bd.q,0.9); });
@@ -3238,23 +3238,23 @@ function drawEq(p,t){
   g.lineWidth=1;
   [20,30,40,50,60,80,100,200,300,400,500,600,800,1000,2000,3000,4000,5000,6000,8000,10000,20000].forEach(f=>{ const x=Math.round(X(f))+0.5; g.strokeStyle=[30,100,300,1000,3000,10000].includes(f)?'rgba(255,255,255,0.1)':'rgba(255,255,255,0.04)'; g.beginPath(); g.moveTo(x,y0); g.lineTo(x,y1); g.stroke(); });
   [-12,-6,0,6,12].forEach(db=>{ const y=Math.round(YE(db))+0.5; g.strokeStyle=db?'rgba(255,255,255,0.05)':'rgba(255,255,255,0.13)'; g.beginPath(); g.moveTo(x0,y); g.lineTo(x1,y); g.stroke(); });
-  g.font=HF(500,19); g.fillStyle='rgba(220,228,238,0.5)'; g.textAlign='center'; g.textBaseline='top';
+  g.font=HF(500,19); g.fillStyle='rgba(238,238,238,0.5)'; g.textAlign='center'; g.textBaseline='top';
   [[30,'30'],[100,'100'],[300,'300'],[1000,'1k'],[3000,'3k'],[10000,'10k']].forEach(([f,l])=>g.fillText(l,X(f),y1+12));
   g.textAlign='right'; g.textBaseline='middle'; [12,6,0,-6,-12].forEach(db=>g.fillText((db>0?'+':'')+db,x0-14,YE(db)));
   // spectrum: soft filled gradient, crisp top line, faint peak hold
-  const grad=g.createLinearGradient(0,y0,0,y1); grad.addColorStop(0,'rgba(150,205,255,0.55)'); grad.addColorStop(0.6,'rgba(46,155,230,0.16)'); grad.addColorStop(1,'rgba(46,155,230,0.02)');
+  const grad=g.createLinearGradient(0,y0,0,y1); grad.addColorStop(0,'rgba(255,255,255,0.55)'); grad.addColorStop(0.6,'rgba(230,230,230,0.16)'); grad.addColorStop(1,'rgba(230,230,230,0.02)');
   g.beginPath(); g.moveTo(x0,y1);
   for(let i=0;i<NB;i++) g.lineTo(X(FB[i]), Math.min(y1,YA(AU.spec[i])));
   g.lineTo(x1,y1); g.closePath(); g.fillStyle=grad; g.fill();
   g.beginPath(); for(let i=0;i<NB;i++){ const x=X(FB[i]), y=Math.min(y1,YA(AU.spec[i])); i?g.lineTo(x,y):g.moveTo(x,y); }
-  g.strokeStyle='rgba(225,238,255,0.9)'; g.lineWidth=2; g.stroke();
+  g.strokeStyle='rgba(255,255,255,0.9)'; g.lineWidth=2; g.stroke();
   g.beginPath(); for(let i=0;i<NB;i++){ const x=X(FB[i]), y=Math.min(y1,YA(AU.peak[i])); i?g.lineTo(x,y):g.moveTo(x,y); }
-  g.strokeStyle='rgba(225,238,255,0.18)'; g.lineWidth=1; g.stroke();
+  g.strokeStyle='rgba(255,255,255,0.18)'; g.lineWidth=1; g.stroke();
   // the eq curve it is applying, with its band nodes
   const pts=[]; for(let k=0;k<=160;k++){ const f=20*Math.pow(1000,k/160); pts.push([X(f),YE(eqDb(f,t))]); }
-  g.beginPath(); g.moveTo(pts[0][0],YE(0)); pts.forEach(q=>g.lineTo(q[0],q[1])); g.lineTo(x1,YE(0)); g.closePath(); g.fillStyle='rgba(46,155,230,0.13)'; g.fill();
-  g.beginPath(); pts.forEach((q,k)=>k?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1])); g.strokeStyle=AC; g.lineWidth=3; g.shadowColor='rgba(90,180,255,0.6)'; g.shadowBlur=8; g.stroke(); g.shadowBlur=0;
-  BANDS.forEach(bd=>{ const x=X(bd.cf), y=YE(eqDb(bd.cf,t)); g.beginPath(); g.arc(x,y,8,0,Math.PI*2); g.fillStyle=bd.c; g.fill(); g.lineWidth=2; g.strokeStyle='rgba(10,12,14,0.9)'; g.stroke(); });
+  g.beginPath(); g.moveTo(pts[0][0],YE(0)); pts.forEach(q=>g.lineTo(q[0],q[1])); g.lineTo(x1,YE(0)); g.closePath(); g.fillStyle='rgba(230,230,230,0.13)'; g.fill();
+  g.beginPath(); pts.forEach((q,k)=>k?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1])); g.strokeStyle=AC; g.lineWidth=3; g.shadowColor='rgba(255,255,255,0.6)'; g.shadowBlur=8; g.stroke(); g.shadowBlur=0;
+  BANDS.forEach(bd=>{ const x=X(bd.cf), y=YE(eqDb(bd.cf,t)); g.beginPath(); g.arc(x,y,8,0,Math.PI*2); g.fillStyle=bd.c; g.fill(); g.lineWidth=2; g.strokeStyle='rgba(12,12,12,0.9)'; g.stroke(); });
 }
 function drawLu(p,t){
   chrome(p,'LOUDNESS','LUFS');
@@ -3262,24 +3262,24 @@ function drawLu(p,t){
   [['M',AU.m],['S',AU.s],['I',AU.i]].forEach(([l,v],k)=>{
     const x=34+k*58, w=34;
     rr(g,x,top,w,bot-top,6); g.fillStyle='rgba(255,255,255,0.05)'; g.fill();
-    const gr=g.createLinearGradient(0,bot,0,top); gr.addColorStop(0,'rgba(46,155,230,0.35)'); gr.addColorStop(1,'rgba(200,228,255,0.95)');
+    const gr=g.createLinearGradient(0,bot,0,top); gr.addColorStop(0,'rgba(230,230,230,0.35)'); gr.addColorStop(1,'rgba(255,255,255,0.95)');
     rr(g,x,Y(v),w,bot-Y(v),6); g.fillStyle=gr; g.fill();
-    g.font=HF(600,19); g.fillStyle='rgba(220,228,238,0.55)'; g.textAlign='center'; g.textBaseline='top'; g.fillText(l,x+w/2,bot+12);
+    g.font=HF(600,19); g.fillStyle='rgba(238,238,238,0.55)'; g.textAlign='center'; g.textBaseline='top'; g.fillText(l,x+w/2,bot+12);
   });
-  g.strokeStyle='rgba(90,180,255,0.7)'; g.lineWidth=1.5; g.setLineDash([6,5]); g.beginPath(); g.moveTo(26,Y(-14)); g.lineTo(200,Y(-14)); g.stroke(); g.setLineDash([]);
+  g.strokeStyle='rgba(255,255,255,0.7)'; g.lineWidth=1.5; g.setLineDash([6,5]); g.beginPath(); g.moveTo(26,Y(-14)); g.lineTo(200,Y(-14)); g.stroke(); g.setLineDash([]);
   // readouts
   g.textAlign='left'; g.textBaseline='alphabetic';
-  g.font=HF(500,76); g.fillStyle='rgba(240,245,252,0.95)'; g.fillText(AU.i.toFixed(1).replace('-','−'),232,170);
+  g.font=HF(500,76); g.fillStyle='rgba(252,252,252,0.95)'; g.fillText(AU.i.toFixed(1).replace('-','−'),232,170);
   g.font=HF(600,20); g.fillStyle=AC; g.fillText('LUFS-I',238,202);
-  g.font=HF(500,22); g.fillStyle='rgba(220,228,238,0.62)';
+  g.font=HF(500,22); g.fillStyle='rgba(238,238,238,0.62)';
   g.fillText('M  '+AU.m.toFixed(1).replace('-','−'),238,250); g.fillText('S  '+AU.s.toFixed(1).replace('-','−'),238,284);
   g.fillText('LRA  6.'+Math.floor(fbm(t*0.05,4)*9)+' LU',238,318); g.fillText('TP  −1.'+(2+Math.floor(fbm(t*0.3,6)*6))+' dB',238,352);
   // short-term history, the last thirty seconds
   const hx0=26, hx1=W-26, hy0=H-118, hy1=H-28, n=AU.hist.length, HY=v=>hy0+(Math.max(-24,Math.min(-6,v))+6)/-18*(hy1-hy0);
   rr(g,hx0,hy0,hx1-hx0,hy1-hy0,8); g.fillStyle='rgba(255,255,255,0.035)'; g.fill();
-  g.strokeStyle='rgba(90,180,255,0.4)'; g.setLineDash([4,5]); g.beginPath(); g.moveTo(hx0,HY(-14)); g.lineTo(hx1,HY(-14)); g.stroke(); g.setLineDash([]);
+  g.strokeStyle='rgba(255,255,255,0.4)'; g.setLineDash([4,5]); g.beginPath(); g.moveTo(hx0,HY(-14)); g.lineTo(hx1,HY(-14)); g.stroke(); g.setLineDash([]);
   g.beginPath(); for(let k=0;k<n;k++){ const v=AU.hist[(AU.hk+k)%n], x=hx0+k/(n-1)*(hx1-hx0); k?g.lineTo(x,HY(v)):g.moveTo(x,HY(v)); }
-  g.strokeStyle='rgba(225,238,255,0.85)'; g.lineWidth=2; g.stroke();
+  g.strokeStyle='rgba(255,255,255,0.85)'; g.lineWidth=2; g.stroke();
 }
 function drawSt(p,t){
   chrome(p,'STEREO','PHASE');
@@ -3287,11 +3287,11 @@ function drawSt(p,t){
   g.strokeStyle='rgba(255,255,255,0.08)'; g.lineWidth=1;
   g.beginPath(); g.moveTo(cx,cy-R); g.lineTo(cx+R,cy); g.lineTo(cx,cy+R); g.lineTo(cx-R,cy); g.closePath(); g.stroke();
   g.beginPath(); g.moveTo(cx,cy-R); g.lineTo(cx,cy+R); g.moveTo(cx-R,cy); g.lineTo(cx+R,cy); g.moveTo(cx-R/2,cy-R/2); g.lineTo(cx+R/2,cy+R/2); g.moveTo(cx+R/2,cy-R/2); g.lineTo(cx-R/2,cy+R/2); g.stroke();
-  g.font=HF(600,17); g.fillStyle='rgba(220,228,238,0.45)'; g.textAlign='center'; g.textBaseline='middle';
+  g.font=HF(600,17); g.fillStyle='rgba(238,238,238,0.45)'; g.textAlign='center'; g.textBaseline='middle';
   g.fillText('M',cx,cy-R-14); g.fillText('L',cx-R/2-14,cy-R/2-12); g.fillText('R',cx+R/2+14,cy-R/2-12);
   // the image: mostly mono low end, wider top
   const A=Math.pow(10,(AU.m+14)/20)*0.62; let sl=0, sr=0, lr=0;
-  g.fillStyle='rgba(170,215,255,0.5)';
+  g.fillStyle='rgba(255,255,255,0.5)';
   for(let j=0;j<900;j++){
     const u=t+j/9000, n1=hash(j+Math.floor(t*60)*701)-0.5, n2=hash(j*3+Math.floor(t*60)*977)-0.5;
     const L=A*(0.55*Math.sin(2*Math.PI*61*u)+0.3*Math.sin(2*Math.PI*233*u+1.3)+0.22*Math.sin(2*Math.PI*587*u+fbm(t,2)*6)+0.42*n1);
@@ -3305,7 +3305,7 @@ function drawSt(p,t){
   const bx0=34, bx1=W-34, by=H-58;
   rr(g,bx0,by-6,bx1-bx0,12,6); g.fillStyle='rgba(255,255,255,0.07)'; g.fill();
   const mx=bx0+(AU.corr+1)/2*(bx1-bx0); g.fillStyle=AC; rr(g,mx-5,by-11,10,22,5); g.fill();
-  g.font=HF(500,17); g.fillStyle='rgba(220,228,238,0.5)'; g.textBaseline='top';
+  g.font=HF(500,17); g.fillStyle='rgba(238,238,238,0.5)'; g.textBaseline='top';
   g.textAlign='left'; g.fillText('−1',bx0,by+16); g.textAlign='center'; g.fillText('0',(bx0+bx1)/2,by+16); g.textAlign='right'; g.fillText('+1',bx1,by+16);
 }
 const DRAW={eq:drawEq, lu:drawLu, st:drawSt};
