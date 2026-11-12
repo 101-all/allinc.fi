@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-12-landing-19">
+<html lang="en" data-build="2026-11-12-landing-20">
 <head>
 <meta charset="utf-8">
 <script>
@@ -54,9 +54,8 @@ body.ready .chrome{opacity:1}
 .lbl.dim{opacity:.22}
 #brand,#labels,#bBuild{transition:opacity .7s ease,color .2s,background .2s}
 body.quiet #brand,body.quiet #bBuild,body.quiet #labels{opacity:0;pointer-events:none}
-#hero{position:fixed;left:0;top:0;pointer-events:none;opacity:0;transition:opacity .9s ease;background:#000;object-fit:fill}
+#hero{position:fixed;left:0;top:0;pointer-events:none;opacity:0;transition:opacity .3s linear;background:#000;object-fit:fill}
 #hero.on{opacity:1}
-#hero.off{transition-duration:.22s}
 #vig{display:none;position:fixed;inset:0;pointer-events:none;background:radial-gradient(125% 100% at 50% 42%,rgba(0,0,0,0) 58%,rgba(0,0,0,.38) 100%)}
 #legend{position:fixed;left:50%;bottom:calc(var(--sb) + 16px);transform:translateX(-50%);display:flex;gap:2px;padding:4px;border-radius:14px;z-index:5}
 #foot{position:fixed;left:calc(var(--sl) + 22px);bottom:calc(var(--sb) + 18px);font-size:11px;line-height:16px;color:var(--mute);z-index:4;pointer-events:none;white-space:nowrap}
@@ -2365,7 +2364,7 @@ const FinishShader = {
       vec4 c=texture2D(tDiffuse,vUv);
       float r=uAmt*smoothstep(0.26,0.66,abs(vUv.y-uFocus));
       if(r>0.15){ vec3 s=c.rgb; for(int i=0;i<8;i++){ float a=float(i)*2.39996+0.4; float d=sqrt((float(i)+0.5)/8.0); s+=texture2D(tDiffuse,vUv+vec2(cos(a),sin(a))*d*r/uRes).rgb; } c.rgb=s/9.0; }
-      c.rgb+=(fract(52.9829189*fract(dot(gl_FragCoord.xy,vec2(0.06711056,0.00583715))))-0.5)/255.0;
+      
       gl_FragColor=c;
     }`
 };
@@ -2417,7 +2416,7 @@ const M = {
   wall:   new THREE.MeshStandardMaterial({color:0x0c0c0c, roughness:1, side:THREE.BackSide}),
   deck:   new THREE.MeshStandardMaterial({color:0x0b0b0b, roughness:0.55, metalness:0.1}),
   black:  new THREE.MeshStandardMaterial({color:0x0a0a0a, roughness:0.6}),
-  desk:   new THREE.MeshStandardMaterial({color:0x040404, roughness:0.42}),      // the dj's table: deep charcoal, a little gloss
+  desk:   new THREE.MeshLambertMaterial({color:0x050505}),      // the dj's table: deep charcoal, a little gloss
   grey:   new THREE.MeshStandardMaterial({color:0x121212, roughness:0.9}),
   crowd:  new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.95}),
   seat:   new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.95}),
@@ -3120,8 +3119,8 @@ box(3.4, 0.4, 2.4, M.black, 0, DECK+0.2, -21.4);
 (function(){
   const g=at(0, DECK+0.4, -21.4, 0);
   ACT_SCREEN.dj=collar(dance(person(g, {top:W.coal, bottom:W.ink, shoe:W.white, skin:W.skin2, hat:W.ink, inner:W.bone, gear:M.inst}, {z:-0.45, top:'bomber', phones:'half', lean:0.16, look:-0.28, tilt:0.1, girth:1.05, arms:[[2.1,2.4,0.6],[0.45,0.95,0.12]]}),0.9), 1.4);
-  mk(bx(2.3,0.9,0.7), M.desk, g, 0,0.45,0, 0,0,0, true).receiveShadow=false;
-  mk(bx(2.4,0.04,0.8), M.desk, g, 0,0.92,0, 0,0,0, true).receiveShadow=false;   // lit by the product light only: the arena's one shadow map is far too coarse for a table seen this close
+  mk(bx(2.3,0.9,0.7), M.desk, g, 0,0.45,0).receiveShadow=false;
+  mk(bx(2.4,0.04,0.8), M.desk, g, 0,0.92,0).receiveShadow=false;   // lit by the product light only: the arena's one shadow map is far too coarse for a table seen this close
   // the all act show device: an 11-inch tablet at its real size (249.7 x 177.5 x 5.3 mm) standing at a steep tilt at the end of the table, turned to the dj; nothing under it
   (function(){
     const BW=0.1775, BH=0.2497, BD=0.0053, SW=0.1605, SH=0.2328, A=1.2;
@@ -3151,7 +3150,7 @@ box(3.4, 0.4, 2.4, M.black, 0, DECK+0.2, -21.4);
     mk(body, alu, tilt, 0,0,0);
     mk(new THREE.ShapeGeometry(round(BW-0.0012,BH-0.0012,0.0174),16), glass, tilt, 0,0,0.00012).castShadow=false;
     ACT_SCREEN.mesh=mk(new THREE.PlaneGeometry(SW,SH), ACT_SCREEN.mat, tilt, 0,0,0.00024); ACT_SCREEN.mesh.castShadow=false; ACT_SCREEN.mesh.receiveShadow=false;
-    mk(new THREE.PlaneGeometry(SW,SH), sheen, tilt, 0,0,0.0004).castShadow=false; spill(0.62,0.46,0,Z0+0.004,0,0.06); shadow(pad,0.3,0.1,0,Z0-0.012,0.92);
+    mk(new THREE.PlaneGeometry(SW,SH), sheen, tilt, 0,0,0.0004).castShadow=false; shadow(pad,0.3,0.1,0,Z0-0.012,0.92);
     const lens=new THREE.MeshBasicMaterial({color:0x15161a}); mk(new THREE.CircleGeometry(0.0017,20), lens, tilt, -BW/2+0.0043,0,0.0003).castShadow=false;   // front camera, on the long edge: at the side when upright
     // light for the product: a soft key from the dj's side, and a small rim from behind that catches the aluminium edge
     const keyL=new THREE.SpotLight(0xfff4ea, 0.4, 5, 0.42, 1, 1.4); keyL.position.set(-0.55,0.95,1.0); keyL.target.position.set(0.06,0.1,0); pad.add(keyL); pad.add(keyL.target);
@@ -3164,7 +3163,7 @@ box(3.4, 0.4, 2.4, M.black, 0, DECK+0.2, -21.4);
       mk(new THREE.ShapeGeometry(round(pw-0.0016,ph-0.0016,0.0108),16), glass, tl, 0,0,0.00012).castShadow=false;
       const sc=mk(new THREE.PlaneGeometry(0.0666,0.1448), ACT_SCREEN.pmat, tl, 0,0,0.00024); sc.castShadow=false; sc.receiveShadow=false;
       const sheen2=sheen.clone(); sheen2.envMapIntensity=0.12; mk(new THREE.PlaneGeometry(0.0666,0.1448), sheen2, tl, 0,0,0.0004).castShadow=false;   // lying back it faces the lamp overhead: only a trace of it
-      const sp=new THREE.Mesh(new THREE.PlaneGeometry(0.22,0.18).rotateX(-Math.PI/2).translate(0,0,0.09), new THREE.MeshBasicMaterial({map:glowTex, transparent:true, opacity:0.08, blending:THREE.AdditiveBlending, depthWrite:false, toneMapped:false, color:new THREE.Color(0.86,0.92,1)})); sp.position.set(0,0.0012,0.003); sp.raycast=noop; sp.renderOrder=2; ph0.add(sp); shadow(ph0,0.15,0.23,0,-0.062,0.9);
+      const sp=new THREE.Mesh(new THREE.PlaneGeometry(0.22,0.18).rotateX(-Math.PI/2).translate(0,0,0.09), new THREE.MeshBasicMaterial({map:glowTex, transparent:true, opacity:0.08, blending:THREE.AdditiveBlending, depthWrite:false, toneMapped:false, color:new THREE.Color(0.86,0.92,1)})); shadow(ph0,0.15,0.23,0,-0.062,0.9);
     })();
   })();
   (function(){
@@ -3176,7 +3175,7 @@ box(3.4, 0.4, 2.4, M.black, 0, DECK+0.2, -21.4);
     const c=[[-0.08025,-0.1164],[0.08025,-0.1164],[0.08025,0.1164],[-0.08025,0.1164]], v=V(0,0,0);
     ACT_SCREEN.mirror=function(){
       const sc=ACT_SCREEN.mesh, yt=ACT_SCREEN.tableY, cam=camera.position;
-      m.visible = cam.y>yt+0.03 && cam.distanceTo(ACT_DEV)<3; if(!m.visible) return;
+      m.visible = false; return;                                  // no reflection in the table: nothing faint or doubled under the film
       const pa=geo.attributes.position;
       for(let i=0;i<4;i++){ v.set(c[i][0],c[i][1],0); sc.localToWorld(v); const my=2*yt-v.y, k=(yt-cam.y)/(my-cam.y); pa.setXYZ(i, cam.x+(v.x-cam.x)*k, yt+0.0006, cam.z+(v.z-cam.z)*k); }
       pa.needsUpdate=true;
@@ -4235,20 +4234,28 @@ window.__twin = {shot:()=>{ if(composer) composer.render(0); else renderer.rende
     hero.style.left = left + 'px'; hero.style.top = top + 'px'; hero.style.width = w + 'px'; hero.style.height = h + 'px';
     return m;
   }
-  function heroOff() { clearInterval(heroT); hero.classList.add('off'); hero.classList.remove('on'); try { hero.pause(); } catch (e) {} }
+  var heroTok = 0, heroStill = 0;
+  function heroOff() { heroTok++; clearInterval(heroT); hero.classList.remove('on'); try { hero.pause(); } catch (e) {} }
+  function heroShow(tok) {
+    var go = function () { if (tok === heroTok && window.__closeup) hero.classList.add('on'); };
+    var started = function () { if (hero.requestVideoFrameCallback) hero.requestVideoFrameCallback(function () { requestAnimationFrame(go); }); else setTimeout(go, 120); };
+    var play = function () { if (tok !== heroTok) return; var pr = hero.play(); if (pr && pr.then) pr.then(started).catch(function () {}); else hero.addEventListener('playing', started, { once: true }); };
+    var t = (performance.now() / 1000 + 0.12) % 24;                                       /* the moment of the loop the realtime screens will be showing */
+    if (Math.abs(hero.currentTime - t) < 0.05) play();
+    else { hero.addEventListener('seeked', play, { once: true }); try { hero.currentTime = t; } catch (e) { play(); } }
+  }
   function heroOn() {
     clearInterval(heroT); if (reduce || !hero.canPlayType || !hero.canPlayType('video/mp4; codecs="avc1.640033"')) return;
+    var tok = ++heroTok, asked = false; heroStill = 0;
     heroT = setInterval(function () {
+      if (tok !== heroTok) return;
       if (!window.__closeup) return heroOff();
-      var m = heroFit(); if (!m) return heroOff();
-      if (m !== heroMode) { heroMode = m; hero.classList.remove('on'); hero.poster = 'hero-' + m + '.jpg'; hero.src = 'hero-' + m + '.mp4'; hero.load(); }
-      if (!tw.settled() || hero.readyState < 3) { if (hero.readyState < 3 && hero.preload !== 'auto') { hero.preload = 'auto'; hero.load(); } return; }
-      if (!hero.classList.contains('on')) {
-        try { hero.currentTime = (performance.now() / 1000) % 24; } catch (e) {}       /* the same moment of the loop the realtime screens are showing */
-        var pr = hero.play(); if (pr && pr.catch) pr.catch(function () {});
-        hero.classList.remove('off'); hero.classList.add('on');
-      }
-    }, 160);
+      var m = heroFit(); if (!m) { hero.classList.remove('on'); return; }
+      if (m !== heroMode) { heroMode = m; asked = false; hero.classList.remove('on'); hero.preload = 'auto'; hero.poster = 'hero-' + m + '.jpg'; hero.src = 'hero-' + m + '.mp4?v=2'; hero.load(); }
+      heroStill = tw.settled() ? heroStill + 1 : 0;
+      if (asked || heroStill < 4 || hero.readyState < 3) return;                           /* the camera at rest for half a second, the film buffered */
+      asked = true; heroShow(tok);
+    }, 130);
   }
   function refit() { if (window.__closeup) tw.flyTo(ipadView(), 600); else if (curLine === 'antiphon') tw.flyTo(tw.topView(), 600); }   /* the twin refits to its own views on a resize; these two are the landing's */
   place(); addEventListener('resize', function () { place(); setTimeout(refit, 40); });
