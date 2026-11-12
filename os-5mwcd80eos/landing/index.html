@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-12-landing-13">
+<html lang="en" data-build="2026-11-12-landing-14">
 <head>
 <meta charset="utf-8">
 <script>
@@ -2350,7 +2350,7 @@ const FinishShader = {
   fragmentShader:`uniform sampler2D tDiffuse; uniform vec2 uRes; uniform float uFocus; uniform float uAmt; varying vec2 vUv;
     void main(){
       vec4 c=texture2D(tDiffuse,vUv);
-      float r=uAmt*smoothstep(0.14,0.6,abs(vUv.y-uFocus));
+      float r=uAmt*smoothstep(0.26,0.66,abs(vUv.y-uFocus));
       if(r>0.15){ vec3 s=c.rgb; for(int i=0;i<8;i++){ float a=float(i)*2.39996+0.4; float d=sqrt((float(i)+0.5)/8.0); s+=texture2D(tDiffuse,vUv+vec2(cos(a),sin(a))*d*r/uRes).rgb; } c.rgb=s/9.0; }
       c.rgb+=(fract(sin(dot(gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453)-0.5)/255.0;
       gl_FragColor=c;
@@ -2404,7 +2404,7 @@ const M = {
   wall:   new THREE.MeshStandardMaterial({color:0x0c0c0c, roughness:1, side:THREE.BackSide}),
   deck:   new THREE.MeshStandardMaterial({color:0x0b0b0b, roughness:0.55, metalness:0.1}),
   black:  new THREE.MeshStandardMaterial({color:0x0a0a0a, roughness:0.6}),
-  desk:   new THREE.MeshStandardMaterial({color:0x040404, roughness:0.24}),      // the dj's table: deep charcoal, a little gloss
+  desk:   new THREE.MeshStandardMaterial({color:0x040404, roughness:0.42}),      // the dj's table: deep charcoal, a little gloss
   grey:   new THREE.MeshStandardMaterial({color:0x3a3a3a, roughness:0.8}),
   crowd:  new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.95}),
   seat:   new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.95}),
@@ -2806,7 +2806,7 @@ const W={hair:wear(0x070707,0.96), ink:wear(0x1f1f1f), coal:wear(0x2f2f2f), slat
 const ACT_DEV=V(0,0,0);
 /* ------------------------------------------------------------------ act on the iPad: the app's own screen (song, transport, pads, mixer), in white on black */
 const ACT_SCREEN=(function(){
-  const PW=LOW?1210:2420, PH=LOW?834:1668, CH=900, K=PH/CH, CW=PW/K, c=document.createElement('canvas'); c.width=PW; c.height=PH; const g=c.getContext('2d');   // the 11-inch panel's own pixels
+  const PW=LOW?834:1668, PH=LOW?1210:2420, CW=900, K=PW/CW, CH=PH/K, c=document.createElement('canvas'); c.width=PW; c.height=PH; const g=c.getContext('2d');   // the 11-inch panel's own pixels
   const tex=new THREE.CanvasTexture(c); tex.encoding=THREE.sRGBEncoding; tex.anisotropy=renderer.capabilities.getMaxAnisotropy(); tex.generateMipmaps=true; tex.minFilter=THREE.LinearMipmapLinearFilter;
   const mat=new THREE.MeshBasicMaterial({map:tex, toneMapped:false, color:new THREE.Color(0.82,0.82,0.82)});
   const F=(w,px)=>w+' '+px+'px -apple-system, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Inter, sans-serif';
@@ -2819,61 +2819,48 @@ const ACT_SCREEN=(function(){
   const tri=(x,y,s,dir)=>{ g.beginPath(); g.moveTo(x-dir*s*0.5,y-s*0.6); g.lineTo(x+dir*s*0.55,y); g.lineTo(x-dir*s*0.5,y+s*0.6); g.closePath(); g.fill(); };
   const bars=(x,y,s)=>{ g.fillRect(x-s*0.42,y-s*0.6,s*0.3,s*1.2); g.fillRect(x+s*0.12,y-s*0.6,s*0.3,s*1.2); };
   const lv=new Float32Array(8);
-  // Playback: the song plays; Next; pause and play
+  const AC0='#0a84ff', W0=a=>'rgba(255,255,255,'+a+')';
+  // Playback, upright: Now Playing and the transport, the timer and what is next, the pads, then the setlist
   function show(u,t){
     const nexted=u>=9.3, si=nexted?1:0, song=SONGS[si];
     const paused=u>=13.2 && u<14.8;
-    let pos = nexted ? Math.min(u,13.2)-9.3 + Math.max(0,u-14.8) : 6+u;
-    const fd=-4.5*sm(3.2,5.4,u)*(nexted?0:1);                      // stem 4 comes down 4.5 dB, by hand
-    const touch = u>2.9&&u<5.7 ? {k:'fader'} : u>9.0&&u<9.55 ? {k:'next'} : (u>12.95&&u<13.45)||(u>14.55&&u<15.05) ? {k:'play'} : null;
-    // top: Edit, the tab's name, settings
-    g.fillStyle='rgba(255,255,255,0.1)'; rr(22,22,78,46,23); g.fill(); g.beginPath(); g.arc(CW-45,45,23,0,6.2832); g.fill();
-    g.fillStyle='#fff'; g.font=F(500,21); g.textAlign='center'; g.textBaseline='middle'; g.fillText('Edit',61,46);
-    g.strokeStyle='rgba(255,255,255,0.75)'; g.lineWidth=2.4; g.beginPath(); g.arc(CW-45,45,8,0,6.2832); g.stroke(); g.beginPath(); g.arc(CW-45,45,2.4,0,6.2832); g.fillStyle='rgba(255,255,255,0.75)'; g.fill();
-    // the song
-    g.textAlign='left'; g.fillStyle='#fff'; g.font=F(700,58); g.textBaseline='alphabetic'; g.fillText(song.name,26,158);
-    const bx0=26, bw=560, by=188; g.fillStyle='rgba(255,255,255,0.14)'; rr(bx0,by,bw,5,2.5); g.fill(); g.fillStyle='#fff'; rr(bx0,by,Math.max(5,bw*pos/song.len),5,2.5); g.fill();
-    g.fillStyle='rgba(255,255,255,0.5)'; g.font=F(400,17); g.fillText(clock(pos),bx0,by+30); g.textAlign='right'; g.fillText(clock(song.len),bx0+bw,by+30);
-    // the setlist beside the transport, the playing song in white
-    g.textAlign='left'; g.font=F(500,19); SET.forEach((nm,i)=>{ g.fillStyle=i===si?'#fff':'rgba(255,255,255,0.42)'; g.fillText('0'+(i+1)+'  '+nm,330,258+i*24); });
-    // transport
-    const ty=288, tx=[58,144,230], tr=[30,40,30];
-    for(let i=0;i<3;i++){ g.fillStyle = i===1&&touch&&touch.k==='play' ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.11)'; g.beginPath(); g.arc(tx[i],ty,tr[i],0,6.2832); g.fill(); }
-    g.fillStyle='#fff'; tri(tx[0]-7,ty,13,-1); tri(tx[0]+7,ty,13,-1); tri(tx[2]-7,ty,13,1); tri(tx[2]+7,ty,13,1);
-    if(paused) tri(tx[1]+2,ty,20,1); else bars(tx[1],ty,17);
+    const pos = nexted ? Math.min(u,13.2)-9.3 + Math.max(0,u-14.8) : 6+u;
+    const touch = u>9.0&&u<9.55 ? 'next' : (u>12.95&&u<13.45)||(u>14.55&&u<15.05) ? 'play' : null;
+    const X=26, Wd=CW-52;
+    // now playing
+    g.textAlign='left'; g.fillStyle='#fff'; g.font=F(700,54); g.fillText(song.name,X,158);
+    const ty=140, tx=[CW-198,CW-118,CW-48], tr=[26,36,26];
+    for(let i=0;i<3;i++){ g.fillStyle = i===1&&touch==='play' ? W0(0.3) : W0(0.11); g.beginPath(); g.arc(tx[i],ty,tr[i],0,6.2832); g.fill(); }
+    g.fillStyle='#fff'; tri(tx[0]-6,ty,11,-1); tri(tx[0]+6,ty,11,-1); tri(tx[2]-6,ty,11,1); tri(tx[2]+6,ty,11,1);
+    if(paused) tri(tx[1]+2,ty,18,1); else bars(tx[1],ty,15);
+    g.fillStyle=W0(0.14); rr(X,196,Wd,5,2.5); g.fill(); g.fillStyle='#fff'; rr(X,196,Math.max(5,Wd*pos/song.len),5,2.5); g.fill();
+    g.fillStyle=W0(0.5); g.font=F(400,16); g.fillText(clock(pos),X,226); g.textAlign='right'; g.fillText(clock(song.len),X+Wd,226);
+    // the timer, and what is next
+    const ry=252, rh=150, uw=320, tw2=Wd-uw-16;
+    g.fillStyle='#161616'; rr(X,ry,tw2,rh,18); g.fill(); rr(X+tw2+16,ry,uw,rh,18); g.fill();
+    g.textAlign='left'; g.fillStyle=W0(0.55); g.font=F(500,15); g.fillText('Remaining',X+18,ry+32); g.fillText('Up Next',X+tw2+34,ry+32);
+    g.fillStyle='#fff'; g.font=F(700,74); g.fillText('−'+clock(song.len-pos),X+16,ry+112);
+    g.font=F(600,26); g.fillText(SET[si+1],X+tw2+34,ry+78); g.fillStyle=W0(0.5); g.font=F(400,15); g.fillText('0:40  ·  '+(si?4:8)+' stems',X+tw2+34,ry+106);
     // pads: Previous, Play/Pause, Next
-    const px=CW-26-588, pw=188, ph=236, pg=12, py=96, names=['Previous','Play/Pause','Next'];
+    const py=420, ph=136, pg=12, pw=(Wd-2*pg)/3, names=['Previous','Play/Pause','Next'];
     for(let i=0;i<3;i++){
-      const x=px+i*(pw+pg), hit=touch && ((touch.k==='next'&&i===2));
-      g.fillStyle=hit?'rgba(255,255,255,0.3)':'rgba(255,255,255,0.075)'; rr(x,py,pw,ph,26); g.fill();
-      g.strokeStyle='rgba(255,255,255,0.06)'; g.lineWidth=1.5; rr(x,py,pw,ph,26); g.stroke();
-      g.fillStyle='#fff'; const cx=x+pw/2, cy=py+ph/2-14;
-      if(i===0){ g.fillRect(cx-19,cy-17,6,34); tri(cx+3,cy,28,-1); }
-      if(i===1){ tri(cx-14,cy,26,1); g.fillRect(cx+6,cy-16,7,32); g.fillRect(cx+19,cy-16,7,32); }
-      if(i===2){ tri(cx-3,cy,28,1); g.fillRect(cx+13,cy-17,6,34); }
-      g.fillStyle='rgba(255,255,255,0.62)'; g.font=F(400,17); g.textAlign='center'; g.fillText(names[i],cx,cy+52);
+      const x=X+i*(pw+pg), hit=touch==='next'&&i===2;
+      g.fillStyle=hit?W0(0.3):W0(0.075); rr(x,py,pw,ph,22); g.fill();
+      g.fillStyle='#fff'; const cx=x+pw/2, cy=py+ph/2-12;
+      if(i===0){ g.fillRect(cx-17,cy-15,5,30); tri(cx+3,cy,24,-1); }
+      if(i===1){ tri(cx-13,cy,22,1); g.fillRect(cx+5,cy-14,6,28); g.fillRect(cx+17,cy-14,6,28); }
+      if(i===2){ tri(cx-3,cy,24,1); g.fillRect(cx+12,cy-15,5,30); }
+      g.fillStyle=W0(0.62); g.font=F(400,16); g.textAlign='center'; g.fillText(names[i],cx,cy+46);
+      if(hit){ g.fillStyle=W0(0.22); g.beginPath(); g.arc(cx,cy,26,0,6.2832); g.fill(); }
     }
-    // mixer: a strip per stem; the meter is the fader, a white line at its level
-    g.textAlign='left'; g.fillStyle='rgba(255,255,255,0.6)'; g.font=F(500,19); g.fillText('Mixer',26,392);
-    g.textAlign='right'; g.fillStyle='rgba(255,255,255,0.4)'; g.font=F(400,17); g.fillText(song.stems.length+' stems',CW-26,392);
-    const n=8, mx=22, mg=10, mw=(CW-2*mx-(n-1)*mg)/n, my=410, mh=CH-my-58;
-    for(let i=0;i<n;i++){
-      const x=mx+i*(mw+mg), has=i<song.stems.length, db=has&&i===3?fd:0;
-      g.fillStyle='rgba(255,255,255,'+(has?0.075:0.03)+')'; rr(x,my,mw,44,9); g.fill();
-      if(has){ g.fillStyle='#fff'; g.font=F(600,17); g.textAlign='center'; g.fillText(song.stems[i],x+mw/2,my+21); g.fillStyle='rgba(255,255,255,0.45)'; g.font=F(400,13); g.fillText((2*i+1)+'–'+(2*i+2),x+mw/2,my+38); }
-      const fy=my+54, fh=mh-54; g.fillStyle='rgba(255,255,255,'+(has?0.045:0.02)+')'; rr(x,fy,mw,fh,10); g.fill();
-      if(!has) continue;
-      // level: each stem moves in its own way, and falls when paused
-      const beat=(t*88/60)%1, want=paused?0:[0.5+0.42*Math.pow(1-beat,3), 0.56+0.18*Math.sin(t*5.5), 0.42+0.2*Math.sin(t*2.3+1), 0.5+0.3*Math.abs(Math.sin(t*1.7)), 0.4+0.4*Math.pow(1-((beat+0.5)%1),3), 0.5+0.16*Math.sin(t*4.1+2), 0.38+0.2*Math.sin(t*3.1), 0.44+0.26*Math.abs(Math.sin(t*1.3+1))][i]*Math.pow(10,db/40);
-      lv[i]+=(want-lv[i])*(want>lv[i]?0.6:0.12);
-      const inx=x+12, inw=mw-24, top=fy+10, bot=fy+fh-10, lh=(bot-top)*lv[i];
-      g.fillStyle='rgba(255,255,255,0.2)'; g.fillRect(inx,bot-lh,inw,lh);
-      const z=top+(bot-top)*0.14, ly=z+(-db/66)*(bot-z);                       // 0 dB sits a little below the top
-      g.fillStyle='rgba(255,255,255,0.28)'; g.fillRect(inx-4,z-0.5,4,1.5); g.fillRect(inx+inw,z-0.5,4,1.5);
-      g.fillStyle='#fff'; g.fillRect(inx-6,ly-1.5,inw+12,3);
-      if(touch&&touch.k==='fader'&&i===3){ g.fillStyle='rgba(255,255,255,0.22)'; g.beginPath(); g.arc(x+mw/2,ly+34,26,0,6.2832); g.fill(); }
-      g.fillStyle=db===0?'#fff':'rgba(255,255,255,0.7)'; g.font=F(500,16); g.textAlign='center'; g.fillText(db===0?'0.0':db.toFixed(1).replace('-','−'),x+mw/2,my+mh+26);
-    }
+    // the setlist
+    const sy=576, sh=CH-sy-26; g.fillStyle='#161616'; rr(X,sy,Wd,sh,18); g.fill();
+    g.textAlign='left'; g.fillStyle='#fff'; g.font=F(600,20); g.fillText('Setlist',X+20,sy+40); g.textAlign='right'; g.fillStyle=W0(0.5); g.font=F(400,15); g.fillText('4 songs',X+Wd-20,sy+40);
+    SET.forEach((nm,i)=>{ const y=sy+64+i*74;
+      if(i===si){ g.fillStyle=W0(0.09); rr(X+10,y,Wd-20,64,12); g.fill(); g.fillStyle=AC0; [9,17,12].forEach((bh,k)=>g.fillRect(X+Wd-52+k*6,y+32-bh/2,3,bh)); }
+      else { g.fillStyle=W0(0.08); g.fillRect(X+24,y+69,Wd-48,1); }
+      g.textAlign='left'; g.fillStyle=W0(0.45); g.font=F(500,17); g.fillText('0'+(i+1),X+26,y+39); g.fillStyle=i===si?'#fff':W0(0.85); g.font=F(i===si?600:500,21); g.fillText(nm,X+70,y+40);
+      if(i!==si){ g.textAlign='right'; g.fillStyle=W0(0.4); g.font=F(400,15); g.fillText('0:40',X+Wd-24,y+39); } });
   }
   const AC='#0a84ff', ACa=a=>'rgba(10,132,255,'+a+')', Wt=a=>'rgba(255,255,255,'+a+')', PANEL='#161616';
   const tap=(x,y)=>{ g.fillStyle=Wt(0.26); g.beginPath(); g.arc(x,y,24,0,6.2832); g.fill(); };
@@ -2955,18 +2942,19 @@ const ACT_SCREEN=(function(){
     [0,1].forEach(k=>{ const lv=0.35+0.3*Math.abs(Math.sin(t*(2.1+k*0.6)+k)); g.fillStyle=Wt(0.1); rr(180,cy+25+k*7,220,4,2); g.fill(); g.fillStyle='#fff'; rr(180,cy+25+k*7,220*lv,4,2); g.fill(); });
     g.strokeStyle=Wt(0.3); g.lineWidth=2; g.beginPath(); g.moveTo(CW-52,cy+25); g.lineTo(CW-46,cy+31); g.lineTo(CW-52,cy+37); g.stroke();
     const open=r>1.3, names=['pitch','level','ess','smooth','tone'], ms=['2.7 ms','','1.0 ms','',''];
-    names.forEach((nm,i)=>{ const x=40+i*158, y=cy+56, w=150, h=84;
+    const tw5=(CW-80-64-5*8)/5;
+    names.forEach((nm,i)=>{ const x=40+i*(tw5+8), y=cy+56, w=tw5, h=84;
       g.fillStyle=Wt(0.09); rr(x,y,w,h,12); g.fill(); if(open&&i===0){ g.strokeStyle=AC; g.lineWidth=2; rr(x+1,y+1,w-2,h-2,11); g.stroke(); }
       g.fillStyle='#fff'; g.font=F(600,15); g.textAlign='left'; g.fillText(nm,x+10,y+25);
       g.fillStyle=AC; [5,10,7].forEach((bh,k)=>g.fillRect(x+10+k*4,y+41-bh/2,2,bh)); g.fillStyle=Wt(0.35); g.font=F(400,11); g.fillText(ms[i],x+27,y+45);
       g.fillStyle=AC; g.beginPath(); g.arc(x+w-21,y+h-20,15,0,6.2832); g.fill(); g.strokeStyle='#fff'; g.lineWidth=2.2; g.lineCap='round'; g.beginPath(); g.arc(x+w-21,y+h-19.5,6.5,-Math.PI*0.3,Math.PI*1.3); g.moveTo(x+w-21,y+h-28.5); g.lineTo(x+w-21,y+h-21); g.stroke(); g.lineCap='butt'; });
-    g.fillStyle=Wt(0.05); rr(40+5*158,cy+56,64,84,12); g.fill(); g.strokeStyle='#fff'; g.lineWidth=2.2; plus(40+5*158+32,cy+98,8);
+    g.fillStyle=Wt(0.05); rr(40+5*(tw5+8),cy+56,64,84,12); g.fill(); g.strokeStyle='#fff'; g.lineWidth=2.2; plus(40+5*(tw5+8)+32,cy+98,8);
     if(r>1.0&&r<1.5) tap(115,cy+98);
     // the open effect: pitch's own panel
     const a=sm(1.3,1.75,r); if(a<=0) return;
     g.globalAlpha=a;
-    const dy=516, HX=40, HY=dy+40, HW=CW-80, HH=CH-HY-26, MUT='#8e8e93', KEY='#38373d', PB='#2f6bff';
-    g.fillStyle=PANEL; rr(26,dy,CW-52,CH-dy-14,18); g.fill();
+    const dy=516, HX=40, HY=dy+40, HW=CW-80, HH=410, MUT='#8e8e93', KEY='#38373d', PB='#2f6bff';
+    g.fillStyle=PANEL; rr(26,dy,CW-52,HH+54,18); g.fill();
     g.fillStyle='#fff'; g.font=F(600,15); g.textAlign='left'; g.fillText('Vocal 1 · pitch',40,dy+26);
     g.strokeStyle=Wt(0.5); g.lineWidth=2; g.beginPath(); g.moveTo(CW-56,dy+15); g.lineTo(CW-46,dy+25); g.moveTo(CW-46,dy+15); g.lineTo(CW-56,dy+25); g.stroke();
     g.fillStyle='#252528'; rr(HX,HY,HW,HH,12); g.fill();
@@ -2976,14 +2964,14 @@ const ACT_SCREEN=(function(){
     const keys=(lab,list,sel,x,y,w,strong)=>{ g.textAlign='left'; g.fillStyle=MUT; g.font=F(500,12); g.fillText(lab,x,y+11); const kw=(w-(list.length-1)*6)/list.length;
       list.forEach((k,i)=>{ const kx=x+i*(kw+6); g.fillStyle=i===sel?'#fff':KEY; rr(kx,y+19,kw,38,10); g.fill(); g.fillStyle=i===sel?'#000':'#fff'; g.font=F(strong?600:500,12.5); g.textAlign='center'; g.fillText(k,kx+kw/2,y+43); }); };
     keys('key',['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'],9,L,y1,LW,true);
-    keys('scale',['major','minor','chromatic'],1,L,y1+72,300,false);
-    const spd=20+100*sm(3.0,5.0,r), bw=(LW-20)/2, by=y1+144;
+    keys('scale',['major','minor','chromatic'],1,L,y1+86,300,false);
+    const spd=20+100*sm(3.0,5.0,r), bw=(LW-20)/2, by=y1+190;
     const bar=(lab,val,f,x)=>{ g.textAlign='left'; g.fillStyle=MUT; g.font=F(500,12); g.fillText(lab,x,by+11); g.textAlign='right'; g.fillStyle='#fff'; g.fillText(val,x+bw,by+11);
       const gx=x+2.5+f*(bw-5); g.fillStyle=KEY; rr(x,by+27,bw,3,1.5); g.fill(); g.fillStyle='#fff'; rr(x,by+27,Math.max(3,gx-x),3,1.5); g.fill(); rr(gx-2.5,by+19,5,19,2.5); g.fill(); return gx; };
     const gx=bar('retune speed',Math.round(spd)+' ms',Math.sqrt(spd/400),L); bar('humanize','0 %',0,L+bw+20);
     if(r>2.75&&r<5.3) tap(gx,by+28);
-    const VX=Rr-RW; g.textAlign='left'; g.fillStyle='#fff'; g.font=F(600,66); g.fillText('A',VX,y1+92); g.fillStyle=MUT; g.font=F(500,13); g.fillText('minor',VX+52,y1+92);
-    const dx=VX+RW/2+Math.sin(t*2.3)*Math.sin(t*0.71+1)*(RW/2-12)*0.55, dyv=y1+132;
+    const VX=Rr-RW; g.textAlign='left'; g.fillStyle='#fff'; g.font=F(600,66); g.fillText('A',VX,y1+120); g.fillStyle=MUT; g.font=F(500,13); g.fillText('minor',VX+52,y1+120);
+    const dx=VX+RW/2+Math.sin(t*2.3)*Math.sin(t*0.71+1)*(RW/2-12)*0.55, dyv=y1+178;
     g.fillStyle='#fff'; g.fillRect(VX,dyv-1.5,RW,3);
     const hg=g.createRadialGradient(dx,dyv,11,dx,dyv,30); hg.addColorStop(0,'rgba(47,107,255,0.3)'); hg.addColorStop(1,'rgba(47,107,255,0)'); g.fillStyle=hg; g.beginPath(); g.arc(dx,dyv,30,0,6.2832); g.fill();
     g.fillStyle=PB; g.beginPath(); g.arc(dx,dyv,11.5,0,6.2832); g.fill();
@@ -2998,11 +2986,47 @@ const ACT_SCREEN=(function(){
     g.save(); rr(0,0,CW,CH,52); g.clip();                        // the display's rounded corners
     if(i===0) show(6.3+r,t); else if(i===1) routing(r); else vocals(r,t);
     tabs(SCENES[i][1]);
-    const k=Math.min(sm(0,0.35,r), 1-sm(d-0.35,d,r)); if(k<1){ g.fillStyle='rgba(0,0,0,'+(1-k)+')'; g.fillRect(0,0,CW,CH); }
+    const k=Math.min(sm(0,0.5,r), 1-sm(d-0.5,d,r)); if(k<1){ g.fillStyle='rgba(0,0,0,'+(1-k)+')'; g.fillRect(0,0,CW,CH); }
     g.restore(); tex.needsUpdate=true;
   }
   draw(1);
-  return {mat, draw, mesh:null, last:0};
+  // the phone: the same app, its Mix tab on one in-ear mix. A musician's own faders
+  const pc=document.createElement('canvas'); pc.width=LOW?603:1206; pc.height=LOW?1311:2622; const h=pc.getContext('2d'), PK=pc.width/402;
+  const ptex=new THREE.CanvasTexture(pc); ptex.encoding=THREE.sRGBEncoding; ptex.anisotropy=renderer.capabilities.getMaxAnisotropy(); ptex.generateMipmaps=true; ptex.minFilter=THREE.LinearMipmapLinearFilter;
+  const pmat=new THREE.MeshBasicMaterial({map:ptex, toneMapped:false, color:new THREE.Color(0.82,0.82,0.82)});
+  const hr=(x,y,w,hh,r)=>{ h.beginPath(); h.moveTo(x+r,y); h.arcTo(x+w,y,x+w,y+hh,r); h.arcTo(x+w,y+hh,x,y+hh,r); h.arcTo(x,y+hh,x,y,r); h.arcTo(x,y,x+w,y,r); h.closePath(); };
+  const plv=new Float32Array(6);
+  function phone(t){
+    const u=t%12, own=-6+6*sm(3,5.2,u)-6*sm(9.5,11.2,u);                // the musician brings the vocals up in the ears, and later back
+    h.setTransform(1,0,0,1,0,0); h.fillStyle='#000'; h.fillRect(0,0,pc.width,pc.height); h.setTransform(PK,0,0,PK,0,0);
+    h.save(); hr(0,0,402,874,56); h.clip();
+    h.fillStyle='#fff'; h.textAlign='left'; h.font=F(600,16); h.fillText('9:41',34,30); hr(336,18,26,12,3.5); h.fill();
+    h.fillStyle='#0b0b0b'; hr(140,13,122,34,17); h.fill();              // the island
+    h.fillStyle=W0(0.1); hr(20,66,118,40,20); h.fill(); h.fillStyle='#fff'; h.font=F(600,16); h.fillText('IEM 1',38,92); h.strokeStyle=W0(0.55); h.lineWidth=1.8; h.beginPath(); h.moveTo(106,82); h.lineTo(111,77); h.lineTo(116,82); h.moveTo(106,90); h.lineTo(111,95); h.lineTo(116,90); h.stroke();
+    h.fillStyle='#fff'; h.font=F(600,20); h.fillText('IEM 1',20,146); h.fillStyle=W0(0.55); h.font=F(400,12); h.fillText('Vocals 5–6',20,164);
+    h.fillStyle=AC0; hr(20,640,84,44,9); h.fill(); h.fillStyle='#fff'; h.font=F(600,14); h.textAlign='center'; h.fillText('Listen',62,667);
+    h.textAlign='left'; h.fillStyle=W0(0.55); h.font=F(400,11); h.fillText('In-Ears',20,702); h.fillText('4 ms',20,718);
+    const names=['drums','bass','other','vocals','Vocal 1','Vocal 2'], dbs=[-4,-7.5,-10,own,0,-3], sx=124, sw=60, sg=9, top=128, bot=716;
+    for(let i=0;i<6;i++){
+      const x=sx+i*(sw+sg), db=dbs[i];
+      if(i===4){ h.fillStyle=W0(0.14); h.fillRect(x-sg/2-0.5,top+40,1,bot-top-80); }
+      h.fillStyle='#fff'; h.font=F(600,13); h.textAlign='center'; h.fillText(names[i],x+sw/2,top+14);
+      const fy=top+26, fh=bot-fy-70; h.fillStyle=W0(i===3&&u>2.8&&u<5.4?0.09:0.04); hr(x,fy,sw,fh,10); h.fill();
+      const beat=(t*88/60)%1, want=[0.5+0.4*Math.pow(1-beat,3),0.55+0.18*Math.sin(t*5.5),0.42+0.2*Math.sin(t*2.3+1),0.5+0.3*Math.abs(Math.sin(t*1.7)),0.46+0.3*Math.abs(Math.sin(t*1.9+2)),0.2+0.1*Math.sin(t*1.1)][i]*Math.pow(10,db/40);
+      plv[i]+=(want-plv[i])*(want>plv[i]?0.6:0.14);
+      const a=fy+8, b=fy+fh-8, lh=(b-a)*plv[i]; h.fillStyle=W0(0.2); h.fillRect(x+9,b-lh,sw-18,lh);
+      const z=a+(b-a)*0.14, ly=z+(-db/66)*(b-z); h.fillStyle='#fff'; h.fillRect(x+5,ly-1.5,sw-10,3);
+      if(i===3&&u>2.8&&u<5.4){ h.fillStyle=W0(0.24); h.beginPath(); h.arc(x+sw/2,ly+26,19,0,6.2832); h.fill(); }
+      h.fillStyle=db===0?'#fff':W0(0.7); h.font=F(500,12); h.fillText(db===0?'0.0':db.toFixed(1).replace('-','−'),x+sw/2,bot-48);
+      h.fillStyle=W0(0.07); hr(x+6,bot-36,sw-12,34,8); h.fill(); h.fillStyle=W0(0.7); h.font=F(600,13); h.fillText('M',x+sw/2,bot-14);
+    }
+    h.fillStyle=W0(0.1); h.fillRect(0,790,402,1); const tabsN=['Playback','Perform','Vocals','Mix','Routing'];
+    tabsN.forEach((n,i)=>{ const cx=40+i*80.5; h.fillStyle=i===3?AC0:W0(0.5); hr(cx-11,804,22,22,6); h.fill(); h.font=F(500,10); h.textAlign='center'; h.fillText(n,cx,842); });
+    h.fillStyle=W0(0.5); hr(134,860,134,5,2.5); h.fill();
+    h.restore(); ptex.needsUpdate=true;
+  }
+  phone(1);
+  return {mat, draw, pmat, phone, plast:0, mesh:null, last:0};
 })();
                                        // the all act show device, beside the dj's decks
 const collars=[];                                             // where the signal lines land on each player
@@ -3084,21 +3108,32 @@ box(3.4, 0.4, 2.4, M.black, 0, DECK+0.2, -21.4);
   mk(bx(2.4,0.04,0.8), M.desk, g, 0,0.92,0, 0,0,0, true);
   // the all act show device: an 11-inch tablet at its real size (249.7 x 177.5 x 5.3 mm) standing at a steep tilt at the end of the table, turned to the dj; nothing under it
   (function(){
-    const BW=0.2497, BH=0.1775, BD=0.0053, SW=0.2328, SH=0.1605, A=1.2;
+    const BW=0.1775, BH=0.2497, BD=0.0053, SW=0.1605, SH=0.2328, A=1.2;
     const round=(w,h,r)=>{ const sh=new THREE.Shape(), x=w/2, y=h/2; sh.moveTo(-x+r,-y); sh.lineTo(x-r,-y); sh.absarc(x-r,-y+r,r,-Math.PI/2,0,false); sh.lineTo(x,y-r); sh.absarc(x-r,y-r,r,0,Math.PI/2,false); sh.lineTo(-x+r,y); sh.absarc(-x+r,y-r,r,Math.PI/2,Math.PI,false); sh.lineTo(-x,-y+r); sh.absarc(-x+r,-y+r,r,Math.PI,Math.PI*1.5,false); return sh; };
     const ec=document.createElement('canvas'); ec.width=256; ec.height=128; const eg=ec.getContext('2d');      // what the metal and glass reflect: a dark room, the rig's light overhead
     const gr=eg.createLinearGradient(0,0,0,128); gr.addColorStop(0,'#8a8782'); gr.addColorStop(0.3,'#4a4846'); gr.addColorStop(0.55,'#2c2b2a'); gr.addColorStop(1,'#1c1b1a'); eg.fillStyle=gr; eg.fillRect(0,0,256,128);
     const env=new THREE.CanvasTexture(ec); env.mapping=THREE.EquirectangularReflectionMapping; env.encoding=THREE.sRGBEncoding;
     const alu=new THREE.MeshStandardMaterial({color:lin(0xc9cacc), metalness:0.72, roughness:0.38, envMap:env, envMapIntensity:1.3});
     const glass=new THREE.MeshStandardMaterial({color:0x020202, metalness:0, roughness:0.12, envMap:env, envMapIntensity:0.35});
-    const pad=new THREE.Group(); pad.position.set(1.02,0.941,-0.12); pad.rotation.set(0,Math.PI+0.22,0); g.add(pad);
+    const pad=new THREE.Group(); pad.position.set(0.86,0.941,-0.12); pad.rotation.set(0,Math.PI+0.22,0); g.add(pad);
     const Z0=0.085, Y0=0.001;                                     // the lower edge, nearest the dj, almost on the table
     const tilt=new THREE.Group(); tilt.position.set(0,Y0+Math.sin(A)*BH/2+Math.cos(A)*BD,Z0-Math.cos(A)*BH/2+Math.sin(A)*BD); tilt.rotation.x=-(Math.PI/2-A); pad.add(tilt);
     const bev=0.0005, body=new THREE.ExtrudeGeometry(round(BW-2*bev,BH-2*bev,0.018-bev), {depth:BD-2*bev, bevelEnabled:true, bevelThickness:bev, bevelSize:bev, bevelSegments:2, curveSegments:16}).translate(0,0,-(BD-bev));
     mk(body, alu, tilt, 0,0,0);
     mk(new THREE.ShapeGeometry(round(BW-0.0012,BH-0.0012,0.0174),16), glass, tilt, 0,0,0.00012).castShadow=false;
     ACT_SCREEN.mesh=mk(new THREE.PlaneGeometry(SW,SH), ACT_SCREEN.mat, tilt, 0,0,0.00024); ACT_SCREEN.mesh.castShadow=false; ACT_SCREEN.mesh.receiveShadow=false;
-    const lens=new THREE.MeshBasicMaterial({color:0x15161a}); mk(new THREE.CircleGeometry(0.0017,20), lens, tilt, 0,BH/2-0.0043,0.0003).castShadow=false;   // front camera, on the long edge
+    const lens=new THREE.MeshBasicMaterial({color:0x15161a}); mk(new THREE.CircleGeometry(0.0017,20), lens, tilt, -BW/2+0.0043,0,0.0003).castShadow=false;   // front camera, on the long edge: at the side when upright
+    // light for the product: a soft key from the dj's side, and a small rim from behind that catches the aluminium edge
+    const keyL=new THREE.SpotLight(0xfff4ea, 0.85, 5, 0.42, 1, 1.4); keyL.position.set(-0.55,0.95,1.0); keyL.target.position.set(0.06,0.1,0); pad.add(keyL); pad.add(keyL.target);
+    const rimL=new THREE.PointLight(0xffffff, 0.22, 1.1, 1.8); rimL.position.set(0.2,0.42,-0.3); pad.add(rimL);
+    // the phone beside it: 71.9 x 150.0 x 8.75 mm, lying back on the table, turned a little to the eye
+    (function(){
+      const pw=0.0719, ph=0.15, pd=0.00875, a=0.42, ph0=new THREE.Group(); ph0.position.set(-0.185,0,0.12); ph0.rotation.y=0.3; pad.add(ph0);
+      const tl=new THREE.Group(); tl.position.set(0,0.001+Math.sin(a)*ph/2+Math.cos(a)*pd,-Math.cos(a)*ph/2+Math.sin(a)*pd); tl.rotation.x=-(Math.PI/2-a); ph0.add(tl);
+      const bv=0.0012; mk(new THREE.ExtrudeGeometry(round(pw-2*bv,ph-2*bv,0.0115-bv), {depth:pd-2*bv, bevelEnabled:true, bevelThickness:bv, bevelSize:bv, bevelSegments:3, curveSegments:16}).translate(0,0,-(pd-bv)), alu, tl, 0,0,0);
+      mk(new THREE.ShapeGeometry(round(pw-0.0016,ph-0.0016,0.0108),16), glass, tl, 0,0,0.00012).castShadow=false;
+      const sc=mk(new THREE.PlaneGeometry(0.0666,0.1448), ACT_SCREEN.pmat, tl, 0,0,0.00024); sc.castShadow=false; sc.receiveShadow=false;
+    })();
   })();
   (function(){
     const geo=new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(12),3)); geo.setAttribute('uv', new THREE.BufferAttribute(new Float32Array([0,0, 1,0, 1,1, 0,1]),2)); geo.setIndex([0,1,2, 0,2,3]);
@@ -3106,7 +3141,7 @@ box(3.4, 0.4, 2.4, M.black, 0, DECK+0.2, -21.4);
     m.frustumCulled=false; m.raycast=noop; m.renderOrder=2; scene.add(m);
     g.updateMatrixWorld(true); const e0=g.localToWorld(V(-1.2,0,-0.4)), e1=g.localToWorld(V(1.2,0,0.4));   // the reflection ends where the table does
     m.material.clippingPlanes=[new THREE.Plane(V(0,0,1),-e0.z), new THREE.Plane(V(0,0,-1),e1.z), new THREE.Plane(V(1,0,0),-e0.x), new THREE.Plane(V(-1,0,0),e1.x)]; renderer.localClippingEnabled=true;
-    const c=[[-0.1164,-0.08025],[0.1164,-0.08025],[0.1164,0.08025],[-0.1164,0.08025]], v=V(0,0,0);
+    const c=[[-0.08025,-0.1164],[0.08025,-0.1164],[0.08025,0.1164],[-0.08025,0.1164]], v=V(0,0,0);
     ACT_SCREEN.mirror=function(){
       const sc=ACT_SCREEN.mesh, yt=ACT_SCREEN.tableY, cam=camera.position;
       m.visible = cam.y>yt+0.03 && cam.distanceTo(ACT_DEV)<3; if(!m.visible) return;
@@ -3115,7 +3150,7 @@ box(3.4, 0.4, 2.4, M.black, 0, DECK+0.2, -21.4);
       pa.needsUpdate=true;
     };
   })();
-  g.updateMatrixWorld(true); ACT_SCREEN.tableY=g.localToWorld(V(0,0.94,0)).y; ACT_DEV.copy(g.localToWorld(V(1.02,1.03,-0.12)));
+  g.updateMatrixWorld(true); ACT_SCREEN.tableY=g.localToWorld(V(0,0.94,0)).y; ACT_DEV.copy(g.localToWorld(V(0.86,1.06,-0.13)));
 })();
 (function(){                                                  // tap anywhere on the band -> all act
   const h=new THREE.Mesh(new THREE.BoxGeometry(20,2.6,9), new THREE.MeshBasicMaterial({visible:false}));
@@ -3367,16 +3402,16 @@ function styleItem(it){
 function refreshSelection(){ S.items.forEach(styleItem); }
 
 /* derived: all link. short streaks of light between each device and its nearest link tower; quiet by default, dense when all link is chosen */
-const LK={speed:170, burst:2, gap:0.04, r:0.011, slots:5};
+const LK={speed:38, burst:1, gap:0, r:0.02, slots:1};
 const lkMat=reg('link', new THREE.MeshBasicMaterial(Object.assign({color:lit('link').multiplyScalar(0.85), opacity:0.7, toneMapped:false}, ADD)));
-const lkGeo=new THREE.CylinderGeometry(1,0.12,1,6,1).rotateX(Math.PI/2).translate(0,0,-0.5);   // head at 0, tail at -1
+const lkGeo=(function(){ const p=[]; for(let i=0;i<=14;i++){ const u=i/14; p.push(new THREE.Vector2(Math.pow(Math.sin(Math.PI*u),1.8)+0.0001,u)); } return new THREE.LatheGeometry(p,6).rotateX(Math.PI/2).translate(0,0,-1); })();   // a spindle: thin at both ends, so a streak fades in and out along its length   // head at 0, tail at -1
 const lkRoutes=[], LK_MAX=((collars.length+sources.length+4)*2+2)*LK.slots*LK.burst;
 const lkMesh=new THREE.InstancedMesh(lkGeo, lkMat, LK_MAX); lkMesh.frustumCulled=false; lkMesh.raycast=noop;
 lkMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); scene.add(lkMesh);
 for(let i=0;i<LK_MAX;i++) lkMesh.setColorAt(i, new THREE.Color().setScalar(1-(i%LK.burst)*0.28));
 const _d=new THREE.Object3D(), _h=V(0,0,0), _t=V(0,0,0), _dir=V(0,0,0), _w=V(0,0,0);
 let lkSeed=0;
-function lkRoute(list,a,b,main){ const r=lkRoutes[list.n] || (lkRoutes[list.n]={a:V(0,0,0), b:V(0,0,0), period:0.95+((lkSeed++*0.618)%1)*0.4, phase:(lkSeed*0.377)%1}); r.a.copy(a); r.b.copy(b); r.main=!!main; list.n++; }
+function lkRoute(list,a,b,main){ const r=lkRoutes[list.n] || (lkRoutes[list.n]={a:V(0,0,0), b:V(0,0,0), period:2.1+((lkSeed++*0.618)%1)*1.7, phase:(lkSeed*0.377)%1}); r.a.copy(a); r.b.copy(b); r.main=!!main; r.back=list.n%2===1; list.n++; }
 function devicePoint(kind, x,y,z){ const it=S.items.find(i=>i.kind===kind); if(!it || isHidden(it.line)) return null; const o=objs.get(it.id); o.group.updateMatrixWorld(true); return o.group.localToWorld(V(x,y,z)); }
 // every path runs through the two link towers at the downstage corners: device -> nearest tower -> device, both ways
 const towers=[V(0,0,0),V(0,0,0)], _e=[];
@@ -3387,30 +3422,24 @@ function updateLink(t){
   const ai=S.items.find(i=>i.kind==='act'), vo=ai&&objs.get(ai.id), foh=devicePoint('antiphon',0,0.97,0), list={n:0};
   const both=(p,main)=>{ if(p.distanceTo(ACT_DEV)<1.5) return; lkRoute(list,ACT_DEV,p,main); lkRoute(list,p,ACT_DEV,main); };   // tablet -> device and back; not the dj's own collar
   if(vo && vo.mic){ vo.mic.getWorldPosition(_w); both(_w,true); }             // the artist's handheld mic
-  if(vo && vo.ear){ vo.ear.getWorldPosition(_w); both(_w,false); }            // and in-ears
   if(foh) both(foh,true);                                                    // foh
   collars.forEach(c=>both(_w.copy(c).setY(c.y+0.22),false));                 // each player
-  // quiet by default: the main paths, one pulse each; with all link chosen every path runs, several pulses each
-  const h=lineH.link, slots=1+Math.round(h*(LK.slots-1));
+  // quiet by default: out to the artist and foh only; with all link chosen every path runs, out and (dimmer) back, each at its own pace
+  const h=lineH.link, col=new THREE.Color();
   let k=0;
   for(let i=0;i<list.n;i++){
-    const r=lkRoutes[i]; if(!r.main && h<0.3) continue;
-    const len=r.a.distanceTo(r.b), travel=Math.max(0.09, len/LK.speed), L=Math.min(0.8, len*0.12);
-    _dir.subVectors(r.b,r.a).normalize();
-    for(let s2=0;s2<slots;s2++){
-      const tc=((t+r.phase*r.period+s2*r.period/slots)%r.period);
-      for(let j=0;j<LK.burst;j++,k++){
-        const tk=tc-j*LK.gap, head=Math.min(len, tk/travel*len), tail=Math.max(0, tk/travel*len-L);
-        if(tk<0 || tail>=len){ _d.scale.set(0,0,0); _d.position.set(0,-99,0); }
-        else {
-          _h.copy(r.a).addScaledVector(_dir, head);
-          _d.position.copy(_h); _d.lookAt(_t.copy(_h).add(_dir)); _d.scale.set(LK.r, LK.r, Math.max(0.001, head-tail));
-        }
-        _d.updateMatrix(); lkMesh.setMatrixAt(k, _d.matrix);
-      }
+    const r=lkRoutes[i]; if(h<0.3 && (!r.main || r.back)) continue;
+    const len=r.a.distanceTo(r.b), L=Math.min(5, Math.max(1.6, len*0.3)), run=Math.max(0.8,(len+L)/LK.speed),   // a short hop to a player takes as long to read as the long run to foh
+          f=((t/r.period+r.phase)%1)*r.period/run;
+    if(f>=1){ _d.scale.set(0,0,0); _d.position.set(0,-99,0); }
+    else {
+      const head=Math.min(len, f*(len+L)), tail=Math.max(0, f*(len+L)-L);
+      _dir.subVectors(r.b,r.a).normalize(); _h.copy(r.a).addScaledVector(_dir, head);
+      _d.position.copy(_h); _d.lookAt(_t.copy(_h).add(_dir)); _d.scale.set(LK.r, LK.r, Math.max(0.001, head-tail));
     }
+    _d.updateMatrix(); lkMesh.setMatrixAt(k, _d.matrix); lkMesh.setColorAt(k, col.setScalar(r.back?0.38:1)); k++;
   }
-  lkMesh.count=k; lkMesh.instanceMatrix.needsUpdate=true;
+  lkMesh.count=k; lkMesh.instanceMatrix.needsUpdate=true; if(lkMesh.instanceColor) lkMesh.instanceColor.needsUpdate=true;
 }
 
 /* derived: antiphon's console over foh: the analyzer with the eq it is applying, loudness, and the stereo image */
@@ -3604,7 +3633,7 @@ function updateMotion(t){
 }
 function updateDerived(t,dt){ WAVE.value=REDUCE?6:t; WAVEK.value+=((lineH.antiphon>0.5?1:0)-WAVEK.value)*(REDUCE?1:0.05);
   if(ACT_SCREEN.mirror) ACT_SCREEN.mirror();
-  if(ACT_SCREEN.mesh && t-ACT_SCREEN.last>0.06 && camera.position.distanceTo(ACT_DEV)<26){ ACT_SCREEN.last=t; ACT_SCREEN.draw(REDUCE?1:t); } updateLink(REDUCE?0.31:t); return updateDerivedRest(t,dt); }
+  if(ACT_SCREEN.mesh && t-ACT_SCREEN.last>0.06 && camera.position.distanceTo(ACT_DEV)<26){ ACT_SCREEN.last=t; ACT_SCREEN.draw(REDUCE?1:t); if(t-ACT_SCREEN.plast>0.1 && camera.position.distanceTo(ACT_DEV)<8){ ACT_SCREEN.plast=t; ACT_SCREEN.phone(REDUCE?1:t); } } updateLink(REDUCE?0.31:t); return updateDerivedRest(t,dt); }
 const REDUCE=window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; let movedOnce=false;
 function updateDerivedRest(t,dt){ holo.visible=false; clocks.forEach(c=>{ c.g.visible=false; }); if(!REDUCE || !movedOnce){ movedOnce=true; updateMotion(t); } }   // landing: no antiphon console, no dials
 
@@ -3730,10 +3759,24 @@ function flyPath(pos,look,fov,dur,final){
   for(let i=1;i<=M;i++){ P.getPointAt(i/M,b); m.copy(a).add(b).multiplyScalar(0.5); W[i]=W[i-1]+b.distanceTo(a)/Math.max(6,m.distanceTo(look[0])); a.copy(b); }
   tween={path:true, P, W, M, L0:controls.target.clone(), L1:look[0], L2:look[1], final, f0:camera.fov, f1:fov||camera.fov, s:performance.now(), d:dur||DUR};
 }
+function flyQuat(v,dur){
+  // position and orientation apart: the orientation is slerped between the two views, so the picture never flips on its way to straight down
+  const m=new THREE.Matrix4().lookAt(v.pos,v.target,V(0,1,0));
+  tween={quat:true, p0:camera.position.clone(), p1:v.pos.clone(), q0:camera.quaternion.clone(), q1:new THREE.Quaternion().setFromRotationMatrix(m), d0:camera.position.distanceTo(controls.target), d1:v.pos.distanceTo(v.target), t1:v.target.clone(), f0:camera.fov, f1:v.fov||camera.fov, s:performance.now(), d:dur||DUR};
+}
 const _sm=(a,b,x)=>{ const t=Math.min(1,Math.max(0,(x-a)/(b-a))); return t*t*t*(t*(t*6-15)+10); };
 const _q=new THREE.Quaternion(), _o=V(0,0,0);
 function stepTween(now){
   const k=Math.min(1,(now-tween.s)/tween.d), e=k*k*k*(k*(k*6-15)+10);
+  if(!tween.quat && camera.up.y<0.99999){ camera.up.lerp(_o.set(0,1,0),0.1).normalize(); if(k>=1) camera.up.set(0,1,0); }   // a move cut short mid-roll levels out, it does not snap
+  if(tween.quat){
+    const g=(Math.exp(3.2*e)-1)/(Math.exp(3.2)-1);                    // slow by the stage, faster as it climbs
+    camera.position.lerpVectors(tween.p0,tween.p1,g); _q.copy(tween.q0).slerp(tween.q1,e);
+    controls.target.copy(camera.position).addScaledVector(_o.set(0,0,-1).applyQuaternion(_q), tween.d0+(tween.d1-tween.d0)*g);
+    camera.up.set(0,1,0).applyQuaternion(_q);
+    const f=tween.f0+(tween.f1-tween.f0)*e; if(Math.abs(f-camera.fov)>1e-4){ camera.fov=f; camera.updateProjectionMatrix(); }
+    if(k>=1){ camera.up.set(0,1,0); controls.target.copy(tween.t1); tween=null; } return;
+  }
   if(tween.path){
     const W=tween.W, M=tween.M, w=e*W[M]; let lo=0, hi=M; while(hi-lo>1){ const mid=(lo+hi)>>1; if(W[mid]<=w) lo=mid; else hi=mid; }
     const u=(lo+(w-W[lo])/Math.max(1e-9,W[hi]-W[lo]))/M;
@@ -4062,10 +4105,10 @@ let dofK=0; const heroP=V(0,0,0);
 function updateFinish(dt){
   if(!composer || !finish) return;
   const it=S.items.find(i=>i.kind==='act'), sel=state.sel && getItem(state.sel);
-  const want=(it && sel && sel.kind==='act' && state.mode==='view' && !tween && !window.__closeup) ? 0 : 0;   // landing: no soft-focus band, it came and went between steps
-  dofK+=(want-dofK)*Math.min(1,dt*3);
-  if(it){ heroP.set(it.x, floorY(it.x,it.z)+1.5, it.z).project(camera); finish.uniforms.uFocus.value=heroP.y*0.5+0.5; }
-  finish.uniforms.uAmt.value=1.6*renderer.getPixelRatio()*dofK;
+  const want=(window.__closeup && !tween) ? 1 : 0;                  // landing: only in the close view, and only once the camera rests
+  dofK+=(want-dofK)*Math.min(1,dt*(want?1.1:6));
+  heroP.copy(ACT_DEV).project(camera); finish.uniforms.uFocus.value=heroP.y*0.5+0.5-0.04;
+  finish.uniforms.uAmt.value=1.25*renderer.getPixelRatio()*dofK;
 }
 // quality tiers: measure after the intro; step down (2x bloom -> 1.5x bloom -> plain) until the frame rate holds
 function applyTier(){
@@ -4092,7 +4135,7 @@ flyTo(tv, 4200); booted=true;
 host.addEventListener('pointerdown', ()=>{ tween=null; }, true);
 host.addEventListener('wheel', ()=>{ tween=null; }, {passive:true, capture:true});
 requestAnimationFrame(t=>{ lastT=t; document.body.classList.add('ready'); frame(t); });
-window.__twin = {flyTo, flyPath, topView, povView, V, screen:()=>ACT_SCREEN.mesh, tier:()=>tier, lk:()=>lkMesh, setBloom:b=>{ composer = b ? (composer||makeComposer()) : null; if(composer) resize(); }, S:()=>S, state, select, setMode, camera, controls, objs, getItem, handles:{rotKnob,sclKnob}, renderer, bloom:()=>!!composer, clocks};
+window.__twin = {flyTo, flyPath, flyQuat, topView, povView, V, screen:()=>ACT_SCREEN.mesh, tier:()=>tier, lk:()=>lkMesh, setBloom:b=>{ composer = b ? (composer||makeComposer()) : null; if(composer) resize(); }, S:()=>S, state, select, setMode, camera, controls, objs, getItem, handles:{rotKnob,sclKnob}, renderer, bloom:()=>!!composer, clocks};
 })();
 </script>
 <script>
@@ -4105,11 +4148,11 @@ window.__twin = {flyTo, flyPath, topView, povView, V, screen:()=>ACT_SCREEN.mesh
     var m = tw.screen(); m.updateWorldMatrix(true, false);
     var e = m.matrixWorld.elements, P = tw.V(e[12], e[13], e[14]), N = tw.V(e[8], e[9], e[10]).normalize(), U = tw.V(e[4], e[5], e[6]).normalize(), R = tw.V(e[0], e[1], e[2]).normalize();
     var upright = innerWidth / innerHeight <= 1 || innerWidth < 700;
-    var pos = P.clone().addScaledVector(N, upright ? 0.63 : 0.53).addScaledVector(U, -0.055).addScaledVector(R, upright ? -0.12 : -0.2);
-    var dir = P.clone().addScaledVector(R, upright ? 0 : 0.02).addScaledVector(U, upright ? 0.012 : 0.01).sub(pos).normalize();
+    var pos = P.clone().addScaledVector(N, upright ? 0.78 : 0.66).addScaledVector(U, -0.07).addScaledVector(R, upright ? -0.1 : -0.17);
+    var dir = P.clone().addScaledVector(R, upright ? -0.04 : -0.03).addScaledVector(U, upright ? 0.0 : 0.012).sub(pos).normalize();
     return { pos: pos, target: pos.clone().addScaledVector(dir, 3.2), fov: upright ? 49 : 37 };
   }
-  var wasClose = false;
+  var wasClose = false, curLine = null;
   function pick(sec) {
     document.body.classList.remove('quiet');
     var line = sec.getAttribute('data-line'), id = null, close = sec.getAttribute('data-view') === 'ipad', mark = sec.getAttribute('data-mark') || sec.id;
@@ -4125,8 +4168,8 @@ window.__twin = {flyTo, flyPath, topView, povView, V, screen:()=>ACT_SCREEN.mesh
         tw.flyPath([tw.V(8, 80, 60), tw.V(22, 26, 32), tw.V(22, 11, 2), tw.V(13.5, 6.2, -16), tw.V(6, 4.6, -22.8), back, v.pos], [tw.V(0, 3, 1.2), v.pos.clone().addScaledVector(d, 24)], v.fov, 4200, v.target);
       }
     }
-    else if (tw && line === 'antiphon') tw.flyTo(tw.topView(), reduce ? 1 : 2800);   /* antiphon is seen from above: the pulse through the audience */
-    wasClose = close;
+    else if (tw && line === 'antiphon') { if (reduce) tw.flyTo(tw.topView(), 1); else tw.flyQuat(tw.topView(), 3400); }   /* antiphon is seen from above: the pulse through the audience */
+    wasClose = close; curLine = line;
     marks.forEach(function (a) { if (a.getAttribute('href') === '#' + mark) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
   }
   if ('IntersectionObserver' in window) {
@@ -4141,8 +4184,9 @@ window.__twin = {flyTo, flyPath, topView, povView, V, screen:()=>ACT_SCREEN.mesh
     if (upright) { var rh = H * 0.56; cx = W / 2; cy = 56 + (rh - 56) / 2 + H * 0.03; } else { cx = W * 0.69; cy = H * 0.5; }
     tw.camera.setViewOffset(W, H, W / 2 - cx, H / 2 - cy, W, H); tw.camera.updateProjectionMatrix();
   }
-  place(); addEventListener('resize', function () { place(); if (window.__closeup) setTimeout(function () { tw.flyTo(ipadView(), 600); }, 40); });
-  addEventListener('orientationchange', function () { setTimeout(function () { place(); if (window.__closeup) tw.flyTo(ipadView(), 600); }, 280); });
+  function refit() { if (window.__closeup) tw.flyTo(ipadView(), 600); else if (curLine === 'antiphon') tw.flyTo(tw.topView(), 600); }   /* the twin refits to its own views on a resize; these two are the landing's */
+  place(); addEventListener('resize', function () { place(); setTimeout(refit, 40); });
+  addEventListener('orientationchange', function () { setTimeout(function () { place(); refit(); }, 280); });
 
   /* stepping through: arrows, space and page keys; a tap on the right goes on, on the left goes back */
   function at() { var y = window.pageYOffset, best = 0, d = 1e9; secs.forEach(function (x, i) { var v = Math.abs(x.offsetTop - y); if (v < d) { d = v; best = i; } }); return best; }
