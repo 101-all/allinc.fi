@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-12-landing-4">
+<html lang="en" data-build="2026-11-12-landing-5">
 <head>
 <meta charset="utf-8">
 <script>
@@ -2819,20 +2819,16 @@ const ACT_SCREEN=(function(){
   const tri=(x,y,s,dir)=>{ g.beginPath(); g.moveTo(x-dir*s*0.5,y-s*0.6); g.lineTo(x+dir*s*0.55,y); g.lineTo(x-dir*s*0.5,y+s*0.6); g.closePath(); g.fill(); };
   const bars=(x,y,s)=>{ g.fillRect(x-s*0.42,y-s*0.6,s*0.3,s*1.2); g.fillRect(x+s*0.12,y-s*0.6,s*0.3,s*1.2); };
   const lv=new Float32Array(8);
-  // one loop, 18 s: the song plays; a fader comes down; Next; pause and play
-  function draw(t){
-    const T=18, cyc=Math.floor(t/T), u=t-cyc*T;
+  // Playback: the song plays; Next; pause and play
+  function show(u,t){
     const nexted=u>=9.3, si=nexted?1:0, song=SONGS[si];
     const paused=u>=13.2 && u<14.8;
     let pos = nexted ? Math.min(u,13.2)-9.3 + Math.max(0,u-14.8) : 6+u;
     const fd=-4.5*sm(3.2,5.4,u)*(nexted?0:1);                      // stem 4 comes down 4.5 dB, by hand
     const touch = u>2.9&&u<5.7 ? {k:'fader'} : u>9.0&&u<9.55 ? {k:'next'} : (u>12.95&&u<13.45)||(u>14.55&&u<15.05) ? {k:'play'} : null;
-    g.setTransform(1,0,0,1,0,0); g.fillStyle='#000'; g.fillRect(0,0,PW,PH); g.setTransform(K,0,0,K,0,0);
-    g.save(); rr(0,0,CW,CH,52); g.clip();                        // the display's rounded corners
     // top: Edit, the tab's name, settings
     g.fillStyle='rgba(255,255,255,0.1)'; rr(22,22,78,46,23); g.fill(); g.beginPath(); g.arc(CW-45,45,23,0,6.2832); g.fill();
     g.fillStyle='#fff'; g.font=F(500,21); g.textAlign='center'; g.textBaseline='middle'; g.fillText('Edit',61,46);
-    g.font=F(600,22); g.fillText('Show',CW/2,46);
     g.strokeStyle='rgba(255,255,255,0.75)'; g.lineWidth=2.4; g.beginPath(); g.arc(CW-45,45,8,0,6.2832); g.stroke(); g.beginPath(); g.arc(CW-45,45,2.4,0,6.2832); g.fillStyle='rgba(255,255,255,0.75)'; g.fill();
     // the song
     g.textAlign='left'; g.fillStyle='#fff'; g.font=F(700,58); g.textBaseline='alphabetic'; g.fillText(song.name,26,158);
@@ -2878,9 +2874,134 @@ const ACT_SCREEN=(function(){
       if(touch&&touch.k==='fader'&&i===3){ g.fillStyle='rgba(255,255,255,0.22)'; g.beginPath(); g.arc(x+mw/2,ly+34,26,0,6.2832); g.fill(); }
       g.fillStyle=db===0?'#fff':'rgba(255,255,255,0.7)'; g.font=F(500,16); g.textAlign='center'; g.fillText(db===0?'0.0':db.toFixed(1).replace('-','−'),x+mw/2,my+mh+26);
     }
+  }
+  const AC='#0a84ff', ACa=a=>'rgba(10,132,255,'+a+')', Wt=a=>'rgba(255,255,255,'+a+')', PANEL='#161616';
+  const tap=(x,y)=>{ g.fillStyle=Wt(0.26); g.beginPath(); g.arc(x,y,24,0,6.2832); g.fill(); };
+  const plus=(x,y,s)=>{ g.beginPath(); g.moveTo(x-s,y); g.lineTo(x+s,y); g.moveTo(x,y-s); g.lineTo(x,y+s); g.stroke(); };
+  // the app's five tabs, the open one lit
+  function tabs(sel){
+    const names=['Playback','Perform','Vocals','Mix','Routing'], w=112, x0=CW/2-w*2.5, y=23, h=44;
+    g.fillStyle=Wt(0.1); rr(x0-4,y,w*5+8,h,22); g.fill(); g.fillStyle=Wt(0.18); rr(x0+sel*w,y+4,w,h-8,18); g.fill();
+    g.font=F(500,17); g.textAlign='center'; g.textBaseline='middle';
+    names.forEach((n,i)=>{ g.fillStyle=i===sel?'#fff':Wt(0.6); g.fillText(n,x0+i*w+w/2,y+h/2+1); });
+    g.textBaseline='alphabetic';
+  }
+  // Routing: transmitters across the top, receivers down the side; a device opens to its channels; a dot where a receive channel takes a transmit channel
+  function routing(r){
+    const sq=(x,y,open)=>{ g.strokeStyle=AC; g.lineWidth=1.8; rr(x-8,y-8,16,16,4); g.stroke(); g.beginPath(); g.moveTo(x-4,y); g.lineTo(x+4,y); if(!open){ g.moveTo(x,y-4); g.lineTo(x,y+4); } g.stroke(); };
+    const segs=['Routing','Device Info','Clock Status','Network Status'], sw=[92,116,124,144]; let sx=26;
+    g.fillStyle=Wt(0.08); rr(26,84,480,36,9); g.fill(); g.font=F(500,15); g.textAlign='center'; g.textBaseline='middle';
+    segs.forEach((n,i)=>{ if(i===0){ g.fillStyle=Wt(0.2); rr(sx+2,86,sw[i],32,7); g.fill(); } g.fillStyle='#fff'; g.fillText(n,sx+2+sw[i]/2,103); sx+=sw[i]; });
+    g.textBaseline='alphabetic';
+    const side=(x,title,word,w)=>{ g.textAlign='left'; g.fillStyle='#fff'; g.font=F(600,16); g.fillText(title,x,153); const tw=g.measureText(title).width; sq(x+tw+20,148,false); sq(x+tw+46,148,true);
+      g.fillStyle=Wt(0.1); rr(x,166,w,30,8); g.fill(); g.fillStyle=Wt(0.4); g.font=F(400,15); g.fillText('Filter '+word,x+30,186);
+      g.strokeStyle=Wt(0.45); g.lineWidth=1.6; g.beginPath(); g.arc(x+14,180,5,0,6.2832); g.moveTo(x+18,184); g.lineTo(x+22,188); g.stroke(); };
+    side(26,'Receivers (3)','Receivers',226); side(276,'Transmitters (3)','Transmitters',300);
+    const RH=250, X0=26+RH, C=40, top=210, NH=130, Y0=top+24+NH+28;
+    const txOpen=r>1.05, rxOpen=r>2.15, when=[-9,-9,3.1,3.8,4.5,5.2], on=k=>k<6 && r>=when[k], n=when.filter(w=>r>=w).length;
+    let last=-1; when.forEach((w,k)=>{ if(w>0 && r>=w) last=k; });
+    const TX=['act','Stage Box','FOH'], RX=['Stage Box','FOH','In-Ears'], cols=[], rows=[];
+    if(txOpen) for(let c=0;c<8;c++) cols.push({d:0,c,first:c===0}); else cols.push({d:0,c:-1,first:true});
+    cols.push({d:1,c:-1,first:true},{d:2,c:-1,first:true});
+    rows.push({d:0,c:-1}); if(rxOpen) for(let c=0;c<6;c++) rows.push({d:0,c}); rows.push({d:1,c:-1},{d:2,c:-1});
+    const GW=cols.length*C, GH=rows.length*C;
+    g.fillStyle=Wt(0.12); g.fillRect(0,top-4,CW,1); g.fillRect(X0-1,top-3,1,CH-top-44); g.fillRect(0,Y0-1,CW,1);
+    cols.forEach((c,i)=>{ const x=X0+i*C;
+      if(c.d%2===1){ g.fillStyle=Wt(0.04); g.fillRect(x,top,C,Y0-top+GH); }
+      if(last>=0 && c.d===0 && c.c===last){ g.fillStyle=ACa(0.14); g.fillRect(x,top,C,Y0-top+GH); }
+      if(c.first){ sq(x+C/2,top+14,c.d===0&&txOpen); g.save(); g.translate(x+C/2+6,top+24+NH-6); g.rotate(-Math.PI/2); g.fillStyle='#fff'; g.font=F(600,16); g.textAlign='left'; g.fillText(TX[c.d],0,0); g.restore(); }
+      if(c.c>=0){ g.fillStyle=Wt(0.55); g.font=F(400,14); g.textAlign='center'; g.fillText('0'+(c.c+1),x+C/2,Y0-10); }
+    });
+    rows.forEach((w,j)=>{ const y=Y0+j*C;
+      if(w.d%2===1){ g.fillStyle=Wt(0.04); g.fillRect(0,y,X0+GW,C); }
+      if(last>=0 && w.d===0 && w.c===last){ g.fillStyle=ACa(0.14); g.fillRect(0,y,X0+GW,C); }
+      g.textAlign='left';
+      if(w.c<0){ sq(46,y+C/2,w.d===0&&rxOpen); g.fillStyle='#fff'; g.font=F(600,17); g.fillText(RX[w.d],66,y+C/2+6); }
+      else { g.fillStyle=Wt(0.55); g.font=F(400,15); g.fillText('0'+(w.c+1),70,y+C/2+5);
+        if(on(w.c)){ g.strokeStyle='#30d158'; g.lineWidth=2.2; g.beginPath(); g.moveTo(X0-30,y+C/2); g.lineTo(X0-25,y+C/2+5); g.lineTo(X0-16,y+C/2-6); g.stroke(); } }
+      cols.forEach((c,i)=>{ const x=X0+i*C+C/2, cy=y+C/2; let kind=0, small=true, grow=1;
+        if(w.d===0 && c.d===0){
+          if(w.c>=0 && c.c>=0){ small=false; if(w.c===c.c && on(w.c)){ kind=2; grow=sm(when[w.c],when[w.c]+0.22,r); } }
+          else if(w.c>=0) kind=on(w.c)?2:0; else if(c.c>=0) kind=on(c.c)?2:0; else kind=n>=6?2:1;
+        } else if(w.d===1 && c.d===1) kind=2;
+        else if(w.d===2 && c.d===0) kind = c.c<0 ? 1 : c.c<2 ? 2 : 0;
+        if(kind===0){ g.strokeStyle=Wt(0.2); g.lineWidth=1.3; g.beginPath(); g.arc(x,cy,4.5,0,6.2832); g.stroke(); }
+        else { const R=(small?7:9.5)*grow; g.fillStyle=AC; g.beginPath(); if(kind===2) g.arc(x,cy,R,0,6.2832); else g.arc(x,cy,R,Math.PI/2,Math.PI*1.5); g.fill(); if(kind===1){ g.strokeStyle=AC; g.lineWidth=1.6; g.beginPath(); g.arc(x,cy,R-0.8,0,6.2832); g.stroke(); } }
+      });
+    });
+    if(r>0.7&&r<1.2) tap(X0+C/2,top+14); if(r>1.8&&r<2.3) tap(46,Y0+C/2);
+    when.forEach((w,k)=>{ if(w>0 && r>w-0.28 && r<w+0.2) tap(X0+k*C+C/2,Y0+(k+1)*C+C/2); });
+    g.fillStyle=Wt(0.12); g.fillRect(0,CH-44,CW,1); g.fillStyle=Wt(0.55); g.font=F(400,15); g.textAlign='left'; g.fillText('3 Devices  ·  Clock: act',26,CH-17);
+  }
+  // Vocals: the song's sections as blocks, the vocal's chain as tiles, and the open effect's own panel docked below
+  function vocals(r,t){
+    g.textAlign='left'; g.fillStyle='#fff'; g.font=F(600,24); g.fillText('iClout',26,114);
+    g.fillStyle=Wt(0.1); rr(CW-176,84,150,44,22); g.fill(); g.fillStyle='#fff'; g.font=F(500,16); g.textAlign='center'; g.fillText('Talkback',CW-101,112);
+    const tx=26, ty=142, tw=CW-52-62, th=112, at=0.58+r*0.012;
+    g.fillStyle=Wt(0.04); rr(tx,ty,tw,th,10); g.fill();
+    [['Start',0,0.2],['Verse',0.2,0.5],['Chorus',0.5,0.78],['Outro',0.78,1]].forEach(([nm,a,b],i)=>{ const x=tx+tw*a+1.5, w=tw*(b-a)-3, sel=i===2;
+      g.fillStyle=sel?ACa(0.32):Wt(0.05); rr(x,ty,w,th,8); g.fill(); g.strokeStyle=sel?AC:Wt(0.22); g.lineWidth=sel?2:1; rr(x,ty,w,th,8); g.stroke();
+      g.fillStyle='#fff'; g.font=F(600,14); g.textAlign='left'; g.fillText(nm,x+(i?16:8),ty+24);
+      if(i){ g.fillStyle=Wt(0.55); rr(x-2,ty+39,4,34,2); g.fill(); } });
+    for(let i=0;i<220;i++){ const h=Math.max(2,(0.12+0.88*Math.abs(Math.sin(i*0.37)*Math.sin(i*0.113+1)))*th*0.46); g.fillStyle=Wt(i/220<at?0.5:0.2); g.fillRect(tx+i*tw/220,ty+th-h-6,tw/220-0.8,h); }
+    g.fillStyle='#fff'; g.fillRect(tx+tw*at-1,ty,2,th);
+    g.fillStyle=Wt(0.55); g.font=F(400,13); g.textAlign='left'; g.fillText(clock(40*at),tx,ty+th+18); g.textAlign='right'; g.fillText('0:40',tx+tw,ty+th+18);
+    g.fillStyle=Wt(0.1); g.beginPath(); g.arc(CW-50,ty+56,24,0,6.2832); g.fill(); g.strokeStyle='#fff'; g.lineWidth=2.2; plus(CW-50,ty+56,8);
+    g.fillStyle=PANEL; rr(26,288,CW-52,46,14); g.fill(); g.textAlign='left'; g.fillStyle='#fff'; g.font=F(600,17); g.fillText('Chorus',40,317);
+    g.fillStyle=Wt(0.55); g.font=F(400,15); g.fillText('0:20 – 0:31',118,317); g.textAlign='right'; g.fillStyle=AC; g.font=F(400,16); g.fillText('Minor',CW-44,317); g.fillText('A',CW-118,317);
+    // the chain
+    const cy=348; g.fillStyle=PANEL; rr(26,cy,CW-52,154,18); g.fill();
+    g.textAlign='left'; g.fillStyle='#fff'; g.font=F(600,17); g.fillText('Vocal 1',40,cy+36); g.fillStyle=Wt(0.55); g.font=F(400,13); g.fillText('Input 1',116,cy+35);
+    [0,1].forEach(k=>{ const lv=0.35+0.3*Math.abs(Math.sin(t*(2.1+k*0.6)+k)); g.fillStyle=Wt(0.1); rr(180,cy+25+k*7,220,4,2); g.fill(); g.fillStyle='#fff'; rr(180,cy+25+k*7,220*lv,4,2); g.fill(); });
+    g.strokeStyle=Wt(0.3); g.lineWidth=2; g.beginPath(); g.moveTo(CW-52,cy+25); g.lineTo(CW-46,cy+31); g.lineTo(CW-52,cy+37); g.stroke();
+    const open=r>1.3, names=['pitch','level','ess','smooth','tone'], ms=['2.7 ms','','1.0 ms','',''];
+    names.forEach((nm,i)=>{ const x=40+i*158, y=cy+56, w=150, h=84;
+      g.fillStyle=Wt(0.09); rr(x,y,w,h,12); g.fill(); if(open&&i===0){ g.strokeStyle=AC; g.lineWidth=2; rr(x+1,y+1,w-2,h-2,11); g.stroke(); }
+      g.fillStyle='#fff'; g.font=F(600,15); g.textAlign='left'; g.fillText(nm,x+10,y+25);
+      g.fillStyle=AC; [5,10,7].forEach((bh,k)=>g.fillRect(x+10+k*4,y+41-bh/2,2,bh)); g.fillStyle=Wt(0.35); g.font=F(400,11); g.fillText(ms[i],x+27,y+45);
+      g.fillStyle=AC; g.beginPath(); g.arc(x+w-21,y+h-20,15,0,6.2832); g.fill(); g.strokeStyle='#fff'; g.lineWidth=2.2; g.lineCap='round'; g.beginPath(); g.arc(x+w-21,y+h-19.5,6.5,-Math.PI*0.3,Math.PI*1.3); g.moveTo(x+w-21,y+h-28.5); g.lineTo(x+w-21,y+h-21); g.stroke(); g.lineCap='butt'; });
+    g.fillStyle=Wt(0.05); rr(40+5*158,cy+56,64,84,12); g.fill(); g.strokeStyle='#fff'; g.lineWidth=2.2; plus(40+5*158+32,cy+98,8);
+    if(r>1.0&&r<1.5) tap(115,cy+98);
+    // the open effect: pitch's own panel
+    const a=sm(1.3,1.75,r); if(a<=0) return;
+    g.globalAlpha=a;
+    const dy=516, HX=40, HY=dy+40, HW=CW-80, HH=CH-HY-26, MUT='#8e8e93', KEY='#38373d', PB='#2f6bff';
+    g.fillStyle=PANEL; rr(26,dy,CW-52,CH-dy-14,18); g.fill();
+    g.fillStyle='#fff'; g.font=F(600,15); g.textAlign='left'; g.fillText('Vocal 1 · pitch',40,dy+26);
+    g.strokeStyle=Wt(0.5); g.lineWidth=2; g.beginPath(); g.moveTo(CW-56,dy+15); g.lineTo(CW-46,dy+25); g.moveTo(CW-46,dy+15); g.lineTo(CW-56,dy+25); g.stroke();
+    g.fillStyle='#252528'; rr(HX,HY,HW,HH,12); g.fill();
+    const L=HX+26, Rr=HX+HW-26; g.fillStyle='#fff'; g.font=F(600,19); g.fillText('pitch',L,HY+36);
+    g.textAlign='right'; g.font=F(500,13); g.fillStyle=MUT; g.fillText('all inc.',Rr,HY+35); g.fillText('settings',Rr-70,HY+35); g.fillStyle='#fff'; g.fillText('main',Rr-146,HY+35);
+    const RW=200, LW=Rr-RW-44-L, y1=HY+70;
+    const keys=(lab,list,sel,x,y,w,strong)=>{ g.textAlign='left'; g.fillStyle=MUT; g.font=F(500,12); g.fillText(lab,x,y+11); const kw=(w-(list.length-1)*6)/list.length;
+      list.forEach((k,i)=>{ const kx=x+i*(kw+6); g.fillStyle=i===sel?'#fff':KEY; rr(kx,y+19,kw,38,10); g.fill(); g.fillStyle=i===sel?'#000':'#fff'; g.font=F(strong?600:500,12.5); g.textAlign='center'; g.fillText(k,kx+kw/2,y+43); }); };
+    keys('key',['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'],9,L,y1,LW,true);
+    keys('scale',['major','minor','chromatic'],1,L,y1+72,300,false);
+    const spd=20+100*sm(3.0,5.0,r), bw=(LW-20)/2, by=y1+144;
+    const bar=(lab,val,f,x)=>{ g.textAlign='left'; g.fillStyle=MUT; g.font=F(500,12); g.fillText(lab,x,by+11); g.textAlign='right'; g.fillStyle='#fff'; g.fillText(val,x+bw,by+11);
+      const gx=x+2.5+f*(bw-5); g.fillStyle=KEY; rr(x,by+27,bw,3,1.5); g.fill(); g.fillStyle='#fff'; rr(x,by+27,Math.max(3,gx-x),3,1.5); g.fill(); rr(gx-2.5,by+19,5,19,2.5); g.fill(); return gx; };
+    const gx=bar('retune speed',Math.round(spd)+' ms',Math.sqrt(spd/400),L); bar('humanize','0 %',0,L+bw+20);
+    if(r>2.75&&r<5.3) tap(gx,by+28);
+    const VX=Rr-RW; g.textAlign='left'; g.fillStyle='#fff'; g.font=F(600,66); g.fillText('A',VX,y1+92); g.fillStyle=MUT; g.font=F(500,13); g.fillText('minor',VX+52,y1+92);
+    const dx=VX+RW/2+Math.sin(t*2.3)*Math.sin(t*0.71+1)*(RW/2-12)*0.55, dyv=y1+132;
+    g.fillStyle='#fff'; g.fillRect(VX,dyv-1.5,RW,3);
+    const hg=g.createRadialGradient(dx,dyv,11,dx,dyv,30); hg.addColorStop(0,'rgba(47,107,255,0.3)'); hg.addColorStop(1,'rgba(47,107,255,0)'); g.fillStyle=hg; g.beginPath(); g.arc(dx,dyv,30,0,6.2832); g.fill();
+    g.fillStyle=PB; g.beginPath(); g.arc(dx,dyv,11.5,0,6.2832); g.fill();
+    g.globalAlpha=1;
+  }
+  // one loop, 24 s: Playback (Famous, Next, iClout), Routing (a device opens, channels are patched), Vocals (pitch opens, a setting moves)
+  const SCENES=[[9,0],[7.5,4],[7.5,2]];
+  function draw(t){
+    let r=t%24, i=0; while(r>=SCENES[i][0]){ r-=SCENES[i][0]; i++; }
+    const d=SCENES[i][0];
+    g.setTransform(1,0,0,1,0,0); g.globalAlpha=1; g.fillStyle='#000'; g.fillRect(0,0,PW,PH); g.setTransform(K,0,0,K,0,0);
+    g.save(); rr(0,0,CW,CH,52); g.clip();                        // the display's rounded corners
+    if(i===0) show(6.3+r,t); else if(i===1) routing(r); else vocals(r,t);
+    tabs(SCENES[i][1]);
+    const k=Math.min(sm(0,0.35,r), 1-sm(d-0.35,d,r)); if(k<1){ g.fillStyle='rgba(0,0,0,'+(1-k)+')'; g.fillRect(0,0,CW,CH); }
     g.restore(); tex.needsUpdate=true;
   }
-  draw(0);
+  draw(1);
   return {mat, draw, mesh:null, last:0};
 })();
                                        // the all act show device, beside the dj's decks
@@ -2970,7 +3091,7 @@ box(3.4, 0.4, 2.4, M.black, 0, DECK+0.2, -21.4);
   mk(bx(0.3,0.012,0.22), M.shell, g, 0,1.09,-0.27, 0.3,0,0); mk(bx(0.3,0.2,0.01), M.shell, g, 0,1.2,-0.39, -0.25,0,0);   // laptop
   // the all act show device: an 11-inch tablet at its real size (249.7 x 177.5 x 5.3 mm) on a slim stand at the end of the desk, turned to the dj
   (function(){
-    const BW=0.2497, BH=0.1775, BD=0.0053, SW=0.2328, SH=0.1605, A=0.9;
+    const BW=0.2497, BH=0.1775, BD=0.0053, SW=0.2328, SH=0.1605, A=1.2;
     const round=(w,h,r)=>{ const sh=new THREE.Shape(), x=w/2, y=h/2; sh.moveTo(-x+r,-y); sh.lineTo(x-r,-y); sh.absarc(x-r,-y+r,r,-Math.PI/2,0,false); sh.lineTo(x,y-r); sh.absarc(x-r,y-r,r,0,Math.PI/2,false); sh.lineTo(-x+r,y); sh.absarc(-x+r,y-r,r,Math.PI/2,Math.PI,false); sh.lineTo(-x,-y+r); sh.absarc(-x+r,-y+r,r,Math.PI,Math.PI*1.5,false); return sh; };
     const ec=document.createElement('canvas'); ec.width=256; ec.height=128; const eg=ec.getContext('2d');      // what the metal and glass reflect: a dark room, the rig's light overhead
     const gr=eg.createLinearGradient(0,0,0,128); gr.addColorStop(0,'#8a8782'); gr.addColorStop(0.3,'#4a4846'); gr.addColorStop(0.55,'#2c2b2a'); gr.addColorStop(1,'#1c1b1a'); eg.fillStyle=gr; eg.fillRect(0,0,256,128);
@@ -2978,18 +3099,27 @@ box(3.4, 0.4, 2.4, M.black, 0, DECK+0.2, -21.4);
     const alu=new THREE.MeshStandardMaterial({color:lin(0xc9cacc), metalness:0.72, roughness:0.38, envMap:env, envMapIntensity:1.3});
     const glass=new THREE.MeshStandardMaterial({color:0x020202, metalness:0, roughness:0.12, envMap:env, envMapIntensity:0.35});
     const pad=new THREE.Group(); pad.position.set(1.02,0.945,-0.12); pad.rotation.set(0,Math.PI+0.22,0); g.add(pad);
-    const tilt=new THREE.Group(); tilt.position.set(0,0.13,0); tilt.rotation.x=-(Math.PI/2-A); pad.add(tilt);
+    const SLOT=0.028, FLOOR=0.022;                                // the slot in the base: where the lower edge sits
+    const tilt=new THREE.Group(); tilt.position.set(0,FLOOR+Math.sin(A)*BH/2,SLOT-Math.cos(A)*BH/2); tilt.rotation.x=-(Math.PI/2-A); pad.add(tilt);
     const bev=0.0005, body=new THREE.ExtrudeGeometry(round(BW-2*bev,BH-2*bev,0.018-bev), {depth:BD-2*bev, bevelEnabled:true, bevelThickness:bev, bevelSize:bev, bevelSegments:2, curveSegments:16}).translate(0,0,-(BD-bev));
     mk(body, alu, tilt, 0,0,0);
     mk(new THREE.ShapeGeometry(round(BW-0.0012,BH-0.0012,0.0174),16), glass, tilt, 0,0,0.00012).castShadow=false;
     ACT_SCREEN.mesh=mk(new THREE.PlaneGeometry(SW,SH), ACT_SCREEN.mat, tilt, 0,0,0.00024); ACT_SCREEN.mesh.castShadow=false; ACT_SCREEN.mesh.receiveShadow=false;
     const lens=new THREE.MeshBasicMaterial({color:0x15161a}); mk(new THREE.CircleGeometry(0.0017,20), lens, tilt, 0,BH/2-0.0043,0.0003).castShadow=false;   // front camera, on the long edge
-    // stand: a weighted disc, a slim post, a ball joint and a small plate on the back
-    mk(bx(0.07,0.05,0.003), M.metal, tilt, 0,0,-BD-0.0015); mk(cyl(0.005,0.03,12), M.metal, tilt, 0,0,-BD-0.018, Math.PI/2,0,0); mk(new THREE.SphereGeometry(0.009,16,12), M.metal, tilt, 0,0,-BD-0.034);
-    const d=BD+0.034, by=0.13-d*Math.cos(A), bz=-d*Math.sin(A);
-    mk(cyl(0.0045,by-0.006,12), M.metal, pad, 0,0.006+(by-0.006)/2,bz); mk(cyl(0.06,0.006,40), M.metal, pad, 0,0.003,bz);
+    // the base: one block of aluminium, 30 mm high, the tablet standing in a slot along it; one etherCON cable out of the back
+    const DW=0.21, DD=0.092, DH=0.03, dock=new THREE.ExtrudeGeometry(round(DW-0.002,DD-0.002,0.012), {depth:DH-0.002, bevelEnabled:true, bevelThickness:0.001, bevelSize:0.001, bevelSegments:3, curveSegments:16}).rotateX(-Math.PI/2).translate(0,0.001,0);
+    mk(dock, alu, pad, 0,0,-0.004);
+    mk(bx(DW-0.03,0.0006,0.0075), new THREE.MeshBasicMaterial({color:0x040404}), pad, 0,DH+0.0001,SLOT-0.0052, 0,0,0).castShadow=false;
+    const shell=new THREE.MeshStandardMaterial({color:lin(0xb8b9bb), metalness:0.85, roughness:0.3, envMap:env, envMapIntensity:1.3}), rubber=new THREE.MeshStandardMaterial({color:0x070707, roughness:0.7});
+    const zb=-0.004-DD/2, cyv=0.015, cx=-0.07;
+    mk(cyl(0.0125,0.004,28), shell, pad, cx,cyv,zb-0.002, Math.PI/2,0,0);            // the chassis ring
+    mk(cyl(0.0105,0.034,28), shell, pad, cx,cyv,zb-0.021, Math.PI/2,0,0);            // the plug's metal shell
+    mk(bx(0.006,0.004,0.012), shell, pad, cx,cyv+0.0115,zb-0.012);                   // its latch
+    mk(new THREE.CylinderGeometry(0.0085,0.006,0.03,20), rubber, pad, cx,cyv,zb-0.053, -Math.PI/2,0,0);   // the boot
+    const path=new THREE.CatmullRomCurve3([V(cx,cyv,zb-0.066),V(cx-0.012,0.011,zb-0.098),V(cx-0.05,0.0045,zb-0.125),V(-0.15,0.0042,zb-0.128),V(-0.186,0.003,zb-0.122),V(-0.212,-0.03,zb-0.12),V(-0.216,-0.4,zb-0.12),V(-0.216,-0.94,zb-0.12)]);   // off the end of the desk
+    mk(new THREE.TubeGeometry(path,90,0.0036,10,false), rubber, pad, 0,0,0);
   })();
-  g.updateMatrixWorld(true); ACT_DEV.copy(g.localToWorld(V(1.02,1.07,-0.12)));
+  g.updateMatrixWorld(true); ACT_DEV.copy(g.localToWorld(V(1.02,1.04,-0.12)));
 })();
 (function(){                                                  // tap anywhere on the band -> all act
   const h=new THREE.Mesh(new THREE.BoxGeometry(20,2.6,9), new THREE.MeshBasicMaterial({visible:false}));
@@ -3478,7 +3608,7 @@ function updateMotion(t){
   MOVERS.forEach(m=>moveOne(m,b)); objs.forEach(o=>{ if(o.mover) moveOne(o.mover,b); });
   SCREENS.forEach((m,i)=>m.color.setScalar(0.88+0.12*Math.sin(t*0.12+i*1.7)));
 }
-function updateDerived(t,dt){ if(ACT_SCREEN.mesh && t-ACT_SCREEN.last>0.06 && camera.position.distanceTo(ACT_DEV)<26){ ACT_SCREEN.last=t; ACT_SCREEN.draw(REDUCE?7.5:t); } updateLink(REDUCE?0.31:t); return updateDerivedRest(t,dt); }
+function updateDerived(t,dt){ if(ACT_SCREEN.mesh && t-ACT_SCREEN.last>0.06 && camera.position.distanceTo(ACT_DEV)<26){ ACT_SCREEN.last=t; ACT_SCREEN.draw(REDUCE?1:t); } updateLink(REDUCE?0.31:t); return updateDerivedRest(t,dt); }
 const REDUCE=window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; let movedOnce=false;
 function updateDerivedRest(t,dt){ holo.visible=false; clocks.forEach(c=>{ c.g.visible=false; }); if(!REDUCE || !movedOnce){ movedOnce=true; updateMotion(t); } }   // landing: no antiphon console, no dials
 
@@ -3963,8 +4093,8 @@ window.__twin = {flyTo, povView, V, screen:()=>ACT_SCREEN.mesh, tier:()=>tier, l
     var m = tw.screen(); m.updateWorldMatrix(true, false);
     var e = m.matrixWorld.elements, P = tw.V(e[12], e[13], e[14]), N = tw.V(e[8], e[9], e[10]).normalize(), U = tw.V(e[4], e[5], e[6]).normalize(), R = tw.V(e[0], e[1], e[2]).normalize();
     var upright = innerWidth / innerHeight <= 1 || innerWidth < 700;
-    var pos = P.clone().addScaledVector(N, upright ? 0.62 : 0.52).addScaledVector(U, upright ? -0.3 : -0.27).addScaledVector(R, upright ? -0.1 : -0.18);
-    var dir = P.clone().addScaledVector(R, upright ? 0 : 0.03).addScaledVector(U, upright ? 0.03 : 0.02).sub(pos).normalize();
+    var pos = P.clone().addScaledVector(N, upright ? 0.6 : 0.5).addScaledVector(U, upright ? -0.1 : -0.1).addScaledVector(R, upright ? -0.12 : -0.2);
+    var dir = P.clone().addScaledVector(R, upright ? 0 : 0.02).addScaledVector(U, upright ? 0.0 : -0.005).sub(pos).normalize();
     return { pos: pos, target: pos.clone().addScaledVector(dir, 3.2), fov: upright ? 46 : 34 };
   }
   var wasClose = false;
