@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Privacy policy — all inc.</title>
+<meta name="description" content="How all inc. handles personal data on allinc.fi and in its Meta integrations, your rights in the EU/EEA and the United States, and how to have your data deleted.">
+<meta name="theme-color" content="#e2e3e5">
+<link rel="canonical" href="https://allinc.fi/privacy/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="all inc.">
+<meta property="og:title" content="Privacy policy — all inc.">
+<meta property="og:description" content="How all inc. handles personal data, your rights in the EU/EEA and the United States, and how to have your data deleted.">
+<meta property="og:url" content="https://allinc.fi/privacy/">
+<meta property="og:image" content="https://allinc.fi/logo.png">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/logo.svg" type="image/svg+xml">
+<link rel="preload" href="/inter.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face { font-family: Inter; font-style: normal; font-weight: 400 600; font-display: swap; src: url(/inter.woff2) format('woff2'); }
+:root { --ink: #1d1d1f; --ink2: #47484c; --blue: #2f6bff; --m: clamp(20px, 4.4vw, 60px); }
+* { box-sizing: border-box; }
+html { background: #d8d9db; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0; min-height: 100vh; color: var(--ink);
+  background: linear-gradient(180deg, #e4e5e7 0, #d8d9db 60vh, #d0d1d4 100%);
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 4px; }
+header, main, footer { padding: 0 var(--m); }
+header { display: flex; justify-content: space-between; align-items: center; height: 62px; text-transform: lowercase; font-size: 15px; }
+header a { text-decoration: none; padding: 8px 0; }
+.wordmark { font-weight: 600; letter-spacing: -0.01em; }
+main { max-width: calc(760px + 2 * var(--m)); padding-top: clamp(40px, 9vw, 120px); padding-bottom: 72px; }
+h1 { margin: 0; font-size: clamp(38px, 6vw, 76px); line-height: 1.02; font-weight: 500; letter-spacing: -0.04em; text-transform: lowercase; }
+.meta { margin: 18px 0 0; color: var(--ink2); font-size: 15px; }
+.lead { margin: clamp(28px, 4vw, 48px) 0 0; font-size: clamp(19px, 2vw, 23px); line-height: 1.4; letter-spacing: -0.015em; }
+nav.toc { margin: clamp(28px, 4vw, 44px) 0 0; padding: 18px 0; border-top: 1px solid rgba(29,29,31,.2); border-bottom: 1px solid rgba(29,29,31,.2); font-size: 15px; line-height: 1.9; columns: 2; column-gap: 32px; }
+nav.toc a { display: block; text-decoration: none; }
+nav.toc a:hover { text-decoration: underline; }
+section { padding-top: clamp(40px, 5vw, 64px); scroll-margin-top: 8px; }
+h2 { margin: 0 0 14px; font-size: clamp(24px, 2.8vw, 32px); line-height: 1.12; font-weight: 500; letter-spacing: -0.03em; text-transform: lowercase; }
+h3 { margin: 26px 0 8px; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+p, li { font-size: 17px; line-height: 1.55; color: var(--ink2); }
+p { margin: 0 0 14px; max-width: 66ch; }
+ul { margin: 0 0 14px; padding-left: 1.15em; max-width: 66ch; }
+li { margin-bottom: 6px; }
+strong { color: var(--ink); font-weight: 600; }
+address { font-style: normal; font-size: 17px; line-height: 1.55; color: var(--ink); margin: 0 0 14px; }
+mark { background: #fff; color: var(--ink); padding: 1px 6px; border-radius: 6px; box-shadow: inset 0 0 0 1px rgba(29,29,31,.25); font-size: .92em; }
+.draft { margin: 22px 0 0; font-size: 15px; color: var(--ink); }
+footer { padding-top: 22px; padding-bottom: 34px; display: flex; flex-wrap: wrap; gap: 6px 24px; font-size: 14px; color: var(--ink2); }
+footer a { text-decoration: none; text-transform: lowercase; }
+footer a:hover { text-decoration: underline; }
+@media (max-width: 560px) { nav.toc { columns: 1; } p, li, address { font-size: 16px; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<header>
+  <a class="wordmark" href="/">all inc.</a>
+  <a href="#deletion">delete my data</a>
+</header>
+
+<main>
+  <h1>Privacy policy</h1>
+  <p class="meta">Last updated: 11 November 2026</p>
+  <p class="draft"><mark>Draft</mark> Items shown <mark>[in brackets]</mark> are still to be completed.</p>
+
+  <p class="lead">This website does not use cookies, analytics or advertising trackers, and it has no accounts or forms. This policy explains the little that is processed when you visit, what happens when you connect a Meta account to one of our integrations, and the rights you have.</p>
+
+  <nav class="toc" aria-label="Contents">
+    <a href="#who">1. Who we are</a>
+    <a href="#website">2. This website</a>
+    <a href="#meta">3. Meta integrations</a>
+    <a href="#use">4. How we use data, and the legal bases</a>
+    <a href="#sharing">5. Who receives data</a>
+    <a href="#transfers">6. International transfers</a>
+    <a href="#retention">7. How long we keep data</a>
+    <a href="#eu">8. Your rights in the EU/EEA</a>
+    <a href="#us">9. Your rights in the United States</a>
+    <a href="#deletion">10. Data deletion</a>
+    <a href="#children">11. Children</a>
+    <a href="#security">12. Security</a>
+    <a href="#changes">13. Changes and contact</a>
+  </nav>
+
+  <section id="who">
+    <h2>1. Who we are</h2>
+    <p>The controller of the personal data described here (the "business" under US state laws) is:</p>
+    <address>all inc. <mark>[full legal entity name and registration number]</mark><br>470 Ramona St<br>Palo Alto, California<br>United States</address>
+    <p>Privacy contact: <mark>[privacy email address]</mark></p>
+    <p>Representative in the European Union (GDPR Article 27): <mark>[name and address of EU representative, or a statement that the controller has an establishment in the EU and which entity it is]</mark></p>
+    <p>"We" and "all inc." below mean this controller. This policy covers the website allinc.fi and any app or integration of ours that links to it, including those that use Meta products.</p>
+  </section>
+
+  <section id="website">
+    <h2>2. This website</h2>
+    <p>We do not ask for your name, email address or any other details on this website, and we do not set cookies. Specifically:</p>
+    <ul>
+      <li><strong>Hosting.</strong> The site is served by GitHub Pages (GitHub, Inc., United States). To deliver a page, GitHub and its content delivery network receive your IP address and standard request details such as the page asked for, the time, and your browser type. GitHub keeps these in server logs for security and operations under its own privacy statement. We do not receive or have access to those logs.</li>
+      <li><strong>Fonts.</strong> Some pages load the typeface Inter from Google Fonts (Google LLC). Your browser then contacts Google's servers, which receive your IP address and browser details. This page does not; it serves the font itself.</li>
+      <li><strong>Storage in your browser.</strong> The toolbox on the home page saves your own tool settings and setlists in your browser's local storage, and the home page saves one flag noting that you have tried its touch instrument. This stays on your device, is never sent to us, and can be removed by clearing site data in your browser.</li>
+      <li><strong>Microphone and files.</strong> The tuner asks your browser for microphone access, and the key and tempo tool reads an audio file you pick. Both are processed inside your browser only. No audio leaves your device.</li>
+      <li><strong>No tracking.</strong> There are no analytics tools, advertising pixels, social plug-ins or fingerprinting on this website. We do not respond differently to "Do Not Track" or Global Privacy Control signals because there is no tracking to switch off.</li>
+    </ul>
+  </section>
+
+  <section id="meta">
+    <h2>3. Meta integrations</h2>
+    <p>Some of our apps or services connect to products of Meta Platforms, Inc. or Meta Platforms Ireland Ltd. (such as Facebook or Instagram). When you connect, Meta shows you which permissions are requested, and we receive only the data you approve there.</p>
+    <p>Integration covered by this policy: <mark>[name of the Meta app or integration and what it does]</mark></p>
+    <p>Data we receive from Meta: <mark>[list each data type and permission, for example name, email address, profile picture, Page or Instagram account identifiers, content, insights, messages]</mark></p>
+    <p>Data you give us directly in that integration: <mark>[list, or "none"]</mark></p>
+    <p>We use data received from Meta only for the purposes in section 4, in line with the Meta Platform Terms. We do not sell it, and we do not use it for advertising or share it with data brokers. <mark>[confirm against the integration as built]</mark></p>
+  </section>
+
+  <section id="use">
+    <h2>4. How we use data, and the legal bases</h2>
+    <ul>
+      <li><strong>Delivering and protecting the website.</strong> IP address and request details, processed by our host. Legal basis under the GDPR: legitimate interests (Article 6(1)(f)) in running a secure website.</li>
+      <li><strong>Providing a Meta integration you connect.</strong> <mark>[purposes, for example signing you in, showing your content, publishing on your instruction]</mark>. Legal basis: <mark>[performance of a contract with you, Article 6(1)(b), and/or your consent, Article 6(1)(a)]</mark>.</li>
+      <li><strong>Answering you.</strong> If you write to us, we use your message and contact details to reply. Legal basis: legitimate interests in responding, or steps taken at your request before a contract.</li>
+      <li><strong>Legal obligations.</strong> Where the law requires us to keep or disclose information (Article 6(1)(c)).</li>
+    </ul>
+    <p>We do not make decisions about you by automated means that have legal or similarly significant effects. Where processing rests on consent, you can withdraw it at any time; this does not affect processing already carried out.</p>
+  </section>
+
+  <section id="sharing">
+    <h2>5. Who receives data</h2>
+    <ul>
+      <li><strong>GitHub, Inc.</strong> — hosting of this website.</li>
+      <li><strong>Google LLC</strong> — font delivery on pages that use Google Fonts.</li>
+      <li><strong>Meta</strong> — when you use a Meta integration, Meta processes your use of its own products under its own privacy policy.</li>
+      <li><strong>Other service providers for the Meta integration:</strong> <mark>[list hosting, database, email or other processors, with country, or "none"]</mark></li>
+      <li><strong>Authorities</strong> — where we are legally required to disclose, or to protect rights and safety.</li>
+    </ul>
+    <p>We do not sell personal data, and we do not share it for cross-context behavioural advertising.</p>
+  </section>
+
+  <section id="transfers">
+    <h2>6. International transfers</h2>
+    <p>We are based in the United States, and so are the providers named above. If you are in the EU/EEA, your data is therefore processed outside the EU/EEA. The safeguard we rely on for these transfers is: <mark>[for example the EU–US Data Privacy Framework for certified providers, and/or the European Commission's standard contractual clauses]</mark>. You can ask us for a copy of the safeguards.</p>
+  </section>
+
+  <section id="retention">
+    <h2>7. How long we keep data</h2>
+    <ul>
+      <li><strong>Website.</strong> We keep no visitor data ourselves. Server logs are held by GitHub for the period set in its own policies.</li>
+      <li><strong>Browser storage.</strong> Until you clear it.</li>
+      <li><strong>Data from a Meta integration.</strong> <mark>[retention period for each data type, for example "for as long as the integration is connected, and deleted within N days after you disconnect or ask us to delete"]</mark></li>
+      <li><strong>Correspondence.</strong> <mark>[retention period for emails and requests]</mark></li>
+    </ul>
+  </section>
+
+  <section id="eu">
+    <h2>8. Your rights in the EU/EEA</h2>
+    <p>Under the General Data Protection Regulation you have the right to:</p>
+    <ul>
+      <li>access your personal data and receive a copy;</li>
+      <li>have inaccurate data corrected;</li>
+      <li>have your data erased (see <a href="#deletion">data deletion</a>);</li>
+      <li>restrict or object to processing, including processing based on legitimate interests;</li>
+      <li>receive data you provided in a portable format;</li>
+      <li>withdraw consent at any time;</li>
+      <li>complain to a data protection authority, in particular in the country where you live or work.</li>
+    </ul>
+    <p>To use these rights, write to the privacy contact in section 1. We answer within one month; this can be extended by two further months for complex requests, and we will tell you if so. There is no charge.</p>
+  </section>
+
+  <section id="us">
+    <h2>9. Your rights in the United States</h2>
+    <p>Depending on where you live, state privacy laws may give you rights over your personal information. These include the California Consumer Privacy Act as amended by the California Privacy Rights Act (CCPA/CPRA), and comparable laws in other states such as Colorado, Connecticut, Virginia, Utah and Texas. Where such a law applies to us, you have the right to:</p>
+    <ul>
+      <li><strong>know</strong> what personal information we collect, use and disclose, and receive a copy;</li>
+      <li><strong>delete</strong> personal information we hold about you;</li>
+      <li><strong>correct</strong> inaccurate personal information;</li>
+      <li><strong>opt out</strong> of the sale or sharing of personal information and of targeted advertising — we do neither;</li>
+      <li><strong>limit</strong> the use of sensitive personal information — we do not use it for purposes that would trigger this right;</li>
+      <li><strong>not be treated differently</strong> for using these rights;</li>
+      <li><strong>appeal</strong> a refusal, where your state provides for it, by replying to our decision.</li>
+    </ul>
+    <h3>Categories of personal information</h3>
+    <p>In the past 12 months: internet or network activity (IP address and request details), collected by our host when you visit; and, if you use a Meta integration, <mark>[CCPA categories, for example identifiers, and any others that apply]</mark>. Sources are your device, you, and Meta. Purposes and recipients are set out in sections 4 and 5. We have not sold or shared personal information, including that of anyone under 16.</p>
+    <h3>How to make a request</h3>
+    <p>Write to the privacy contact in section 1. We will confirm who you are using information we already hold, and respond within 45 days; this can be extended once by a further 45 days with notice. You may use an authorised agent, who must show your written permission.</p>
+  </section>
+
+  <section id="deletion">
+    <h2>10. Data deletion</h2>
+    <p>You can ask us to delete the personal data we hold about you at any time, including data received through a Meta integration.</p>
+    <h3>Ask us</h3>
+    <ul>
+      <li>Email <mark>[privacy email address]</mark> with the subject "Delete my data".</li>
+      <li>Include the name of the integration and the account you connected (for example your Facebook or Instagram user name), so we can find your data. Do not send passwords.</li>
+      <li>We confirm receipt, delete the data from our systems and tell you when it is done, within <mark>[number]</mark> days. Data we must keep by law is kept only for that purpose, and we will tell you if that applies.</li>
+    </ul>
+    <h3>Disconnect on Meta</h3>
+    <ul>
+      <li>On Facebook, open Settings &amp; privacy, then Settings, then Apps and websites.</li>
+      <li>Find the app, choose Remove, and confirm. On Instagram, the same list is under Settings, then Website permissions or Apps and websites.</li>
+      <li>Removing the app stops any further access. To have data already received deleted as well, send the email above. <mark>[state whether removal on Meta also triggers automatic deletion on our side]</mark></li>
+    </ul>
+    <h3>Website data</h3>
+    <p>We hold no data about website visitors, so there is nothing for us to delete. To remove the toolbox settings stored in your own browser, clear site data for allinc.fi in your browser settings.</p>
+  </section>
+
+  <section id="children">
+    <h2>11. Children</h2>
+    <p>This website and our integrations are not directed at children under 16, and we do not knowingly collect their personal data. If you believe a child has given us data, contact us and we will delete it.</p>
+  </section>
+
+  <section id="security">
+    <h2>12. Security</h2>
+    <p>This website is available over HTTPS, which encrypts the connection between your browser and the host. For data from Meta integrations we apply: <mark>[technical and organisational measures, for example encryption in transit and at rest, access limited to named staff]</mark>. If a breach is likely to put your rights at risk, we will notify you and the authorities as the law requires.</p>
+  </section>
+
+  <section id="changes">
+    <h2>13. Changes and contact</h2>
+    <p>We will update this page when our practices change and revise the date at the top. For material changes affecting data we already hold, we will tell connected users before the change takes effect.</p>
+    <p>Questions and requests: <mark>[privacy email address]</mark>, or by post to all inc., 470 Ramona St, Palo Alto, California, United States.</p>
+  </section>
+</main>
+
+<footer>
+  <span>© 2027 all inc. 470 Ramona St, Palo Alto</span>
+  <a href="/">all inc.</a>
+  <a href="/privacy/" aria-current="page">privacy</a>
+</footer>
+</body>
+</html>

@@ -1,0 +1,17 @@
+# all inc.
+
+> All Inc. builds software, user interfaces and connectivity for creatives: advanced instruments for the artificial intelligence. Its platform lets an artist perform an arena show from a single device, covering playback, showfiles, vocal processing and visuals.
+
+All Inc. has two offices: All Inc. Audio Ab at Hämeentie 135, Helsinki, Finland, and US & All Inc. at 470 Ramona St., Palo Alto, California, United States.
+
+## Pages
+
+- [Home](https://allinc.fi/): what All Inc. does, its platform, its work (interfaces, plugins and tools, creative ecosystems) and its addresses
+- [Toolbox](https://allinc.fi/#toolbox): free browser tools for musicians — tuner, key and bpm finder, metronome, setlist, delay times, tone generator, transpose, stage timer
+- [Privacy policy](https://allinc.fi/privacy/): how personal data is handled, EU/EEA and US rights
+- [Data deletion](https://allinc.fi/privacy/#deletion): how to have your data deleted
+
+## Notes
+
+- The website sets no cookies and runs no analytics or advertising trackers.
+- The toolbox runs entirely in the browser; audio from the microphone or from files never leaves the device.

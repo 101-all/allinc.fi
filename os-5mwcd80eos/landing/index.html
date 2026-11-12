@@ -81,7 +81,9 @@ h1, h2 { font-size: clamp(34px, 5.1vw, 80px); line-height: 1.02; font-weight: 50
 .tag svg { width: 30px; height: 30px; display: block; flex: none; }
 .places { margin-top: clamp(22px, 2.6vw, 36px); display: grid; grid-template-columns: auto auto; justify-content: start; gap: clamp(24px, 4vw, 56px); font-size: 15px; line-height: 1.5; color: var(--ink2); }
 .places b { display: block; font-weight: 500; color: var(--ink); }
-.copy > footer { margin-top: clamp(22px, 2.6vw, 36px); font-size: 15px; line-height: 1.5; color: var(--ink2); text-transform: none; }
+.copy > footer { margin-top: clamp(22px, 2.6vw, 36px); display: flex; flex-wrap: wrap; gap: 2px 22px; align-items: baseline; font-size: 15px; line-height: 1.5; color: var(--ink2); text-transform: none; }
+.copy > footer a { padding: 8px 0; color: var(--ink); text-transform: lowercase; }
+.copy > footer a:hover { text-decoration: underline; }
 
 /* the menu: a small black display, as on allinc.fi */
 header .right { display: flex; align-items: center; gap: 10px; }
@@ -220,7 +222,7 @@ header .right { display: flex; align-items: center; gap: 10px; }
         <address><b>all inc. audio ab</b>Hämeentie 135<br>Helsinki, Finland</address>
         <address><b>us &amp; all inc.</b>470 Ramona St.<br>Palo Alto, California</address>
       </div>
-      <footer>© 2027 all inc. 470 Ramona St, Palo Alto</footer>
+      <footer>© 2027 all inc. 470 Ramona St, Palo Alto<a href="/privacy/">Privacy</a></footer>
     </div>
   </section>
 </main>
