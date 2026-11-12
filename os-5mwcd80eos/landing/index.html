@@ -61,7 +61,7 @@ header {
   padding: calc(var(--st) + 14px) calc(var(--sr) + var(--m)) 0 calc(var(--sl) + var(--m));
 }
 .wordmark { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; padding: 8px 0; }
-header nav { display: flex; gap: 6px; margin-right: -9px; }
+header nav { display: flex; gap: 6px; }
 header nav a { width: 40px; height: 40px; display: grid; place-items: center; opacity: .32; transition: opacity .4s; }
 header nav a:hover, header nav a[aria-current] { opacity: 1; }
 header nav svg { width: 26px; height: 26px; display: block; fill: currentColor; }
@@ -81,9 +81,27 @@ h1, h2 { font-size: clamp(34px, 5.1vw, 80px); line-height: 1.02; font-weight: 50
 .tag svg { width: 30px; height: 30px; display: block; flex: none; }
 .places { margin-top: clamp(22px, 2.6vw, 36px); display: grid; grid-template-columns: auto auto; justify-content: start; gap: clamp(24px, 4vw, 56px); font-size: 15px; line-height: 1.5; color: var(--ink2); }
 .places b { display: block; font-weight: 500; color: var(--ink); }
-.more { margin-top: clamp(22px, 2.6vw, 36px); display: flex; flex-wrap: wrap; gap: 6px 26px; align-items: baseline; font-size: 15px; color: var(--ink2); }
-.more a { color: var(--ink); padding: 8px 0; border-bottom: 1px solid rgba(29, 29, 31, .28); transition: border-color .25s; }
-.more a:hover { border-color: var(--ink); }
+.copy > footer { margin-top: clamp(22px, 2.6vw, 36px); font-size: 15px; line-height: 1.5; color: var(--ink2); text-transform: none; }
+
+/* the menu: a small black display, as on allinc.fi */
+header .right { display: flex; align-items: center; gap: 10px; }
+#menu-btn { font: inherit; font-size: 15px; font-weight: 500; letter-spacing: -0.01em; text-transform: inherit; color: var(--ink); background: none; border: 0; margin: 0 -10px 0 0; padding: 0 10px; height: 44px; min-width: 62px; text-align: right; cursor: pointer; touch-action: manipulation; }
+#menu-shade { position: fixed; z-index: 3; inset: 0; display: none; }
+.menu-open #menu-shade { display: block; }
+#menu {
+  position: fixed; top: calc(var(--st) + 64px); right: calc(var(--sr) + var(--m)); width: min(300px, calc(100vw - 2 * var(--m)));
+  padding: 10px; background: #000; color: #f5f5f7; border-radius: 24px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .55), 0 1px 0 1px rgba(255, 255, 255, .75), 0 34px 60px -30px rgba(0, 0, 0, .55);
+  transform-origin: 100% 0; opacity: 0; visibility: hidden; transform: translateY(-6px) scale(.98);
+  transition: opacity .22s ease, transform .28s cubic-bezier(.2, .7, .2, 1), visibility 0s .28s;
+}
+.menu-open #menu { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+#menu ul { margin: 0; padding: 0; list-style: none; }
+#menu a, #menu span { display: flex; align-items: center; min-height: 54px; padding: 0 16px; border-radius: 14px; font-size: 22px; font-weight: 500; letter-spacing: -0.025em; }
+#menu a { transition: background .2s; }
+#menu a:hover, #menu a:focus-visible { background: #1c1c1e; }
+#menu a:focus-visible { outline-offset: -2px; }
+#menu span { color: #6e6e73; }
 
 /* words arrive with their scene */
 .js .copy > * { opacity: 0; transform: translateY(12px); transition: opacity .9s ease, transform .9s cubic-bezier(.2, .7, .2, 1); }
@@ -103,7 +121,7 @@ h1, h2 { font-size: clamp(34px, 5.1vw, 80px); line-height: 1.02; font-weight: 50
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-snap-type: none; }
-  .js .copy > *, #stage canvas { transition: none; transform: none; }
+  .js .copy > *, #stage canvas, #menu { transition: none; transform: none; }
 }
 </style>
 </head>
@@ -143,14 +161,24 @@ h1, h2 { font-size: clamp(34px, 5.1vw, 80px); line-height: 1.02; font-weight: 50
   </svg>
 </div>
 <div id="veil"></div>
+<div id="menu-shade"></div>
 
 <header>
   <a class="wordmark" href="#top">all inc.</a>
-  <nav aria-label="lines">
-    <a href="#act" aria-label="act"><svg aria-hidden="true"><use href="#m-act"/></svg></a>
-    <a href="#link" aria-label="link"><svg aria-hidden="true"><use href="#m-link"/></svg></a>
-    <a href="#antiphon" aria-label="antiphon"><svg aria-hidden="true"><use href="#m-antiphon"/></svg></a>
-  </nav>
+  <div class="right">
+    <nav aria-label="lines">
+      <a href="#act" aria-label="act"><svg aria-hidden="true"><use href="#m-act"/></svg></a>
+      <a href="#link" aria-label="link"><svg aria-hidden="true"><use href="#m-link"/></svg></a>
+      <a href="#antiphon" aria-label="antiphon"><svg aria-hidden="true"><use href="#m-antiphon"/></svg></a>
+    </nav>
+    <button id="menu-btn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="menu">menu</button>
+  </div>
+  <div id="menu" role="dialog" aria-modal="true" aria-label="menu"><ul>
+    <li><a href="/#toolbox">Tools</a></li>
+    <li><span aria-disabled="true">Newsroom</span></li>
+    <li><span aria-disabled="true">Team</span></li>
+    <li><a href="#company">Contact</a></li>
+  </ul></div>
 </header>
 
 <main>
@@ -192,7 +220,7 @@ h1, h2 { font-size: clamp(34px, 5.1vw, 80px); line-height: 1.02; font-weight: 50
         <address><b>all inc. audio ab</b>Hämeentie 135<br>Helsinki, Finland</address>
         <address><b>us &amp; all inc.</b>470 Ramona St.<br>Palo Alto, California</address>
       </div>
-      <p class="more"><a href="/#toolbox">toolbox</a><span>© all inc.</span></p>
+      <footer>© 2027 all inc. 470 Ramona St, Palo Alto</footer>
     </div>
   </section>
 </main>
@@ -210,6 +238,29 @@ h1, h2 { font-size: clamp(34px, 5.1vw, 80px); line-height: 1.02; font-weight: 50
     });
   }, { threshold: 0.5 });
   secs.forEach(function (s) { io.observe(s); });
+})();
+</script>
+<script>
+/* the menu: opens under its button, holds focus while open, closes on esc, a tap outside or a choice. */
+(function () {
+  var root = document.documentElement, btn = document.getElementById('menu-btn'), menu = document.getElementById('menu'), shade = document.getElementById('menu-shade');
+  var links = [].slice.call(menu.querySelectorAll('a'));
+  function set(open, refocus) {
+    root.classList.toggle('menu-open', open);
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false'); btn.textContent = open ? 'close' : 'menu';
+    if (open) links[0].focus(); else if (refocus) btn.focus();
+  }
+  function isOpen() { return root.classList.contains('menu-open'); }
+  btn.addEventListener('click', function () { set(!isOpen(), false); });
+  shade.addEventListener('click', function () { set(false, false); });
+  links.forEach(function (a) { a.addEventListener('click', function () { set(false, false); }); });
+  document.addEventListener('keydown', function (e) {
+    if (!isOpen()) return;
+    if (e.key === 'Escape') { e.preventDefault(); set(false, true); return; }
+    var ring = [btn].concat(links), i = ring.indexOf(document.activeElement);
+    if (e.key === 'Tab') { e.preventDefault(); ring[(i + (e.shiftKey ? -1 : 1) + ring.length) % ring.length].focus(); }
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); var j = links.indexOf(document.activeElement); links[(j + (e.key === 'ArrowDown' ? 1 : -1) + links.length) % links.length].focus(); }
+  });
 })();
 </script>
 <script src="three.min.js?r128" defer></script>
