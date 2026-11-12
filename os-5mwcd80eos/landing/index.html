@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-12-landing-3">
+<html lang="en" data-build="2026-11-12-landing-4">
 <head>
 <meta charset="utf-8">
 <script>
@@ -2806,7 +2806,7 @@ const W={hair:wear(0x070707,0.96), ink:wear(0x1f1f1f), coal:wear(0x2f2f2f), slat
 const ACT_DEV=V(0,0,0);
 /* ------------------------------------------------------------------ act on the iPad: the app's own screen (song, transport, pads, mixer), in white on black */
 const ACT_SCREEN=(function(){
-  const CW=1250, CH=900, c=document.createElement('canvas'); c.width=CW; c.height=CH; const g=c.getContext('2d');
+  const PW=LOW?1210:2420, PH=LOW?834:1668, CH=900, K=PH/CH, CW=PW/K, c=document.createElement('canvas'); c.width=PW; c.height=PH; const g=c.getContext('2d');   // the 11-inch panel's own pixels
   const tex=new THREE.CanvasTexture(c); tex.encoding=THREE.sRGBEncoding; tex.anisotropy=renderer.capabilities.getMaxAnisotropy(); tex.generateMipmaps=true; tex.minFilter=THREE.LinearMipmapLinearFilter;
   const mat=new THREE.MeshBasicMaterial({map:tex, toneMapped:false, color:new THREE.Color(0.82,0.82,0.82)});
   const F=(w,px)=>w+' '+px+'px -apple-system, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Inter, sans-serif';
@@ -2827,7 +2827,8 @@ const ACT_SCREEN=(function(){
     let pos = nexted ? Math.min(u,13.2)-9.3 + Math.max(0,u-14.8) : 6+u;
     const fd=-4.5*sm(3.2,5.4,u)*(nexted?0:1);                      // stem 4 comes down 4.5 dB, by hand
     const touch = u>2.9&&u<5.7 ? {k:'fader'} : u>9.0&&u<9.55 ? {k:'next'} : (u>12.95&&u<13.45)||(u>14.55&&u<15.05) ? {k:'play'} : null;
-    g.fillStyle='#000'; g.fillRect(0,0,CW,CH);
+    g.setTransform(1,0,0,1,0,0); g.fillStyle='#000'; g.fillRect(0,0,PW,PH); g.setTransform(K,0,0,K,0,0);
+    g.save(); rr(0,0,CW,CH,52); g.clip();                        // the display's rounded corners
     // top: Edit, the tab's name, settings
     g.fillStyle='rgba(255,255,255,0.1)'; rr(22,22,78,46,23); g.fill(); g.beginPath(); g.arc(CW-45,45,23,0,6.2832); g.fill();
     g.fillStyle='#fff'; g.font=F(500,21); g.textAlign='center'; g.textBaseline='middle'; g.fillText('Edit',61,46);
@@ -2845,7 +2846,7 @@ const ACT_SCREEN=(function(){
     g.fillStyle='#fff'; tri(tx[0]-7,ty,13,-1); tri(tx[0]+7,ty,13,-1); tri(tx[2]-7,ty,13,1); tri(tx[2]+7,ty,13,1);
     if(paused) tri(tx[1]+2,ty,20,1); else bars(tx[1],ty,17);
     // pads: Previous, Play/Pause, Next
-    const px=640, pw=188, ph=236, pg=12, py=96, names=['Previous','Play/Pause','Next'];
+    const px=CW-26-588, pw=188, ph=236, pg=12, py=96, names=['Previous','Play/Pause','Next'];
     for(let i=0;i<3;i++){
       const x=px+i*(pw+pg), hit=touch && ((touch.k==='next'&&i===2));
       g.fillStyle=hit?'rgba(255,255,255,0.3)':'rgba(255,255,255,0.075)'; rr(x,py,pw,ph,26); g.fill();
@@ -2877,7 +2878,7 @@ const ACT_SCREEN=(function(){
       if(touch&&touch.k==='fader'&&i===3){ g.fillStyle='rgba(255,255,255,0.22)'; g.beginPath(); g.arc(x+mw/2,ly+34,26,0,6.2832); g.fill(); }
       g.fillStyle=db===0?'#fff':'rgba(255,255,255,0.7)'; g.font=F(500,16); g.textAlign='center'; g.fillText(db===0?'0.0':db.toFixed(1).replace('-','−'),x+mw/2,my+mh+26);
     }
-    tex.needsUpdate=true;
+    g.restore(); tex.needsUpdate=true;
   }
   draw(0);
   return {mat, draw, mesh:null, last:0};
@@ -2967,15 +2968,28 @@ box(3.4, 0.4, 2.4, M.black, 0, DECK+0.2, -21.4);
   mk(bx(0.32,0.08,0.38), M.inst, g, 0,0.98,0);                // mixer: knobs and faders
   for(let i=0;i<4;i++){ mk(bx(0.014,0.014,0.07), M.keys, g, -0.1+i*0.066,1.027,0.09); for(let j=0;j<3;j++) mk(cyl(0.013,0.02,8), M.keys, g, -0.1+i*0.066,1.03,-0.12+j*0.055); }
   mk(bx(0.3,0.012,0.22), M.shell, g, 0,1.09,-0.27, 0.3,0,0); mk(bx(0.3,0.2,0.01), M.shell, g, 0,1.2,-0.39, -0.25,0,0);   // laptop
-  // the all act show device: an iPad on a low stand at the end of the desk, turned to the dj; its screen runs act
+  // the all act show device: an 11-inch tablet at its real size (249.7 x 177.5 x 5.3 mm) on a slim stand at the end of the desk, turned to the dj
   (function(){
+    const BW=0.2497, BH=0.1775, BD=0.0053, SW=0.2328, SH=0.1605, A=0.9;
+    const round=(w,h,r)=>{ const sh=new THREE.Shape(), x=w/2, y=h/2; sh.moveTo(-x+r,-y); sh.lineTo(x-r,-y); sh.absarc(x-r,-y+r,r,-Math.PI/2,0,false); sh.lineTo(x,y-r); sh.absarc(x-r,y-r,r,0,Math.PI/2,false); sh.lineTo(-x+r,y); sh.absarc(-x+r,y-r,r,Math.PI/2,Math.PI,false); sh.lineTo(-x,-y+r); sh.absarc(-x+r,-y+r,r,Math.PI,Math.PI*1.5,false); return sh; };
+    const ec=document.createElement('canvas'); ec.width=256; ec.height=128; const eg=ec.getContext('2d');      // what the metal and glass reflect: a dark room, the rig's light overhead
+    const gr=eg.createLinearGradient(0,0,0,128); gr.addColorStop(0,'#8a8782'); gr.addColorStop(0.3,'#4a4846'); gr.addColorStop(0.55,'#2c2b2a'); gr.addColorStop(1,'#1c1b1a'); eg.fillStyle=gr; eg.fillRect(0,0,256,128);
+    const env=new THREE.CanvasTexture(ec); env.mapping=THREE.EquirectangularReflectionMapping; env.encoding=THREE.sRGBEncoding;
+    const alu=new THREE.MeshStandardMaterial({color:lin(0xc9cacc), metalness:0.72, roughness:0.38, envMap:env, envMapIntensity:1.3});
+    const glass=new THREE.MeshStandardMaterial({color:0x020202, metalness:0, roughness:0.12, envMap:env, envMapIntensity:0.35});
     const pad=new THREE.Group(); pad.position.set(1.02,0.945,-0.12); pad.rotation.set(0,Math.PI+0.22,0); g.add(pad);
-    const tilt=new THREE.Group(); tilt.position.set(0,0.085,0); tilt.rotation.x=-(Math.PI/2-0.72); pad.add(tilt);
-    mk(bx(0.262,0.192,0.007), M.shell, tilt, 0,0,-0.0045);
-    ACT_SCREEN.mesh=mk(new THREE.PlaneGeometry(0.25,0.18), ACT_SCREEN.mat, tilt, 0,0,0.0002); ACT_SCREEN.mesh.castShadow=false; ACT_SCREEN.mesh.receiveShadow=false;
-    mk(bx(0.16,0.012,0.12), M.inst, pad, 0,0.006,-0.03); mk(bx(0.02,0.13,0.02), M.inst, pad, 0,0.066,-0.062, -0.5,0,0);
+    const tilt=new THREE.Group(); tilt.position.set(0,0.13,0); tilt.rotation.x=-(Math.PI/2-A); pad.add(tilt);
+    const bev=0.0005, body=new THREE.ExtrudeGeometry(round(BW-2*bev,BH-2*bev,0.018-bev), {depth:BD-2*bev, bevelEnabled:true, bevelThickness:bev, bevelSize:bev, bevelSegments:2, curveSegments:16}).translate(0,0,-(BD-bev));
+    mk(body, alu, tilt, 0,0,0);
+    mk(new THREE.ShapeGeometry(round(BW-0.0012,BH-0.0012,0.0174),16), glass, tilt, 0,0,0.00012).castShadow=false;
+    ACT_SCREEN.mesh=mk(new THREE.PlaneGeometry(SW,SH), ACT_SCREEN.mat, tilt, 0,0,0.00024); ACT_SCREEN.mesh.castShadow=false; ACT_SCREEN.mesh.receiveShadow=false;
+    const lens=new THREE.MeshBasicMaterial({color:0x15161a}); mk(new THREE.CircleGeometry(0.0017,20), lens, tilt, 0,BH/2-0.0043,0.0003).castShadow=false;   // front camera, on the long edge
+    // stand: a weighted disc, a slim post, a ball joint and a small plate on the back
+    mk(bx(0.07,0.05,0.003), M.metal, tilt, 0,0,-BD-0.0015); mk(cyl(0.005,0.03,12), M.metal, tilt, 0,0,-BD-0.018, Math.PI/2,0,0); mk(new THREE.SphereGeometry(0.009,16,12), M.metal, tilt, 0,0,-BD-0.034);
+    const d=BD+0.034, by=0.13-d*Math.cos(A), bz=-d*Math.sin(A);
+    mk(cyl(0.0045,by-0.006,12), M.metal, pad, 0,0.006+(by-0.006)/2,bz); mk(cyl(0.06,0.006,40), M.metal, pad, 0,0.003,bz);
   })();
-  g.updateMatrixWorld(true); ACT_DEV.copy(g.localToWorld(V(1.02,1.0,-0.18)));
+  g.updateMatrixWorld(true); ACT_DEV.copy(g.localToWorld(V(1.02,1.07,-0.12)));
 })();
 (function(){                                                  // tap anywhere on the band -> all act
   const h=new THREE.Mesh(new THREE.BoxGeometry(20,2.6,9), new THREE.MeshBasicMaterial({visible:false}));
@@ -3464,7 +3478,7 @@ function updateMotion(t){
   MOVERS.forEach(m=>moveOne(m,b)); objs.forEach(o=>{ if(o.mover) moveOne(o.mover,b); });
   SCREENS.forEach((m,i)=>m.color.setScalar(0.88+0.12*Math.sin(t*0.12+i*1.7)));
 }
-function updateDerived(t,dt){ if(ACT_SCREEN.mesh && t-ACT_SCREEN.last>0.045 && camera.position.distanceTo(ACT_DEV)<26){ ACT_SCREEN.last=t; ACT_SCREEN.draw(REDUCE?7.5:t); } updateLink(REDUCE?0.31:t); return updateDerivedRest(t,dt); }
+function updateDerived(t,dt){ if(ACT_SCREEN.mesh && t-ACT_SCREEN.last>0.06 && camera.position.distanceTo(ACT_DEV)<26){ ACT_SCREEN.last=t; ACT_SCREEN.draw(REDUCE?7.5:t); } updateLink(REDUCE?0.31:t); return updateDerivedRest(t,dt); }
 const REDUCE=window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; let movedOnce=false;
 function updateDerivedRest(t,dt){ holo.visible=false; clocks.forEach(c=>{ c.g.visible=false; }); if(!REDUCE || !movedOnce){ movedOnce=true; updateMotion(t); } }   // landing: no antiphon console, no dials
 
@@ -3949,8 +3963,8 @@ window.__twin = {flyTo, povView, V, screen:()=>ACT_SCREEN.mesh, tier:()=>tier, l
     var m = tw.screen(); m.updateWorldMatrix(true, false);
     var e = m.matrixWorld.elements, P = tw.V(e[12], e[13], e[14]), N = tw.V(e[8], e[9], e[10]).normalize(), U = tw.V(e[4], e[5], e[6]).normalize(), R = tw.V(e[0], e[1], e[2]).normalize();
     var upright = innerWidth / innerHeight <= 1 || innerWidth < 700;
-    var pos = P.clone().addScaledVector(N, upright ? 0.6 : 0.44).addScaledVector(U, upright ? -0.46 : -0.4).addScaledVector(R, upright ? 0 : -0.07);
-    var dir = P.clone().addScaledVector(R, upright ? 0.012 : 0.075).addScaledVector(U, upright ? 0.05 : 0.035).sub(pos).normalize();
+    var pos = P.clone().addScaledVector(N, upright ? 0.62 : 0.52).addScaledVector(U, upright ? -0.3 : -0.27).addScaledVector(R, upright ? -0.1 : -0.18);
+    var dir = P.clone().addScaledVector(R, upright ? 0 : 0.03).addScaledVector(U, upright ? 0.03 : 0.02).sub(pos).normalize();
     return { pos: pos, target: pos.clone().addScaledVector(dir, 3.2), fov: upright ? 46 : 34 };
   }
   var wasClose = false;
