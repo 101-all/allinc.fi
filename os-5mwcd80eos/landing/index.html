@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-12-landing-2">
+<html lang="en" data-build="2026-11-12-landing-3">
 <head>
 <meta charset="utf-8">
 <script>
@@ -2810,8 +2810,9 @@ const ACT_SCREEN=(function(){
   const tex=new THREE.CanvasTexture(c); tex.encoding=THREE.sRGBEncoding; tex.anisotropy=renderer.capabilities.getMaxAnisotropy(); tex.generateMipmaps=true; tex.minFilter=THREE.LinearMipmapLinearFilter;
   const mat=new THREE.MeshBasicMaterial({map:tex, toneMapped:false, color:new THREE.Color(0.82,0.82,0.82)});
   const F=(w,px)=>w+' '+px+'px -apple-system, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Inter, sans-serif';
-  const SONGS=[{name:'song 1', len:40, stems:['01 drums','02 bass','03 other','04 vocals','05 drums 2','06 bass 2','07 other 2','08 vocals 2']},
-               {name:'song 2', len:40, stems:['01 drums','02 bass','03 other','04 vocals']}];
+  const SONGS=[{name:'Famous', len:40, stems:['01 drums','02 bass','03 other','04 vocals','05 drums 2','06 bass 2','07 other 2','08 vocals 2']},
+               {name:'iClout', len:40, stems:['01 drums','02 bass','03 other','04 vocals']}];
+  const SET=['Famous','iClout','Molemmat','Vyyhti'];           // the setlist, in order; the loop plays Famous, then Next to iClout
   const rr=(x,y,w,h,r)=>{ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); };
   const clock=s=>{ s=Math.max(0,Math.floor(s)); return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60); };
   const sm=(a,b,x)=>{ const t=Math.min(1,Math.max(0,(x-a)/(b-a))); return t*t*(3-2*t); };
@@ -2821,7 +2822,7 @@ const ACT_SCREEN=(function(){
   // one loop, 18 s: the song plays; a fader comes down; Next; pause and play
   function draw(t){
     const T=18, cyc=Math.floor(t/T), u=t-cyc*T;
-    const nexted=u>=9.3, si=(cyc+(nexted?1:0))%2, song=SONGS[si], other=SONGS[1-si];
+    const nexted=u>=9.3, si=nexted?1:0, song=SONGS[si];
     const paused=u>=13.2 && u<14.8;
     let pos = nexted ? Math.min(u,13.2)-9.3 + Math.max(0,u-14.8) : 6+u;
     const fd=-4.5*sm(3.2,5.4,u)*(nexted?0:1);                      // stem 4 comes down 4.5 dB, by hand
@@ -2836,6 +2837,8 @@ const ACT_SCREEN=(function(){
     g.textAlign='left'; g.fillStyle='#fff'; g.font=F(700,58); g.textBaseline='alphabetic'; g.fillText(song.name,26,158);
     const bx0=26, bw=560, by=188; g.fillStyle='rgba(255,255,255,0.14)'; rr(bx0,by,bw,5,2.5); g.fill(); g.fillStyle='#fff'; rr(bx0,by,Math.max(5,bw*pos/song.len),5,2.5); g.fill();
     g.fillStyle='rgba(255,255,255,0.5)'; g.font=F(400,17); g.fillText(clock(pos),bx0,by+30); g.textAlign='right'; g.fillText(clock(song.len),bx0+bw,by+30);
+    // the setlist beside the transport, the playing song in white
+    g.textAlign='left'; g.font=F(500,19); SET.forEach((nm,i)=>{ g.fillStyle=i===si?'#fff':'rgba(255,255,255,0.42)'; g.fillText('0'+(i+1)+'  '+nm,330,258+i*24); });
     // transport
     const ty=288, tx=[58,144,230], tr=[30,40,30];
     for(let i=0;i<3;i++){ g.fillStyle = i===1&&touch&&touch.k==='play' ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.11)'; g.beginPath(); g.arc(tx[i],ty,tr[i],0,6.2832); g.fill(); }
