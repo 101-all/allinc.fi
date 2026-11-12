@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>all inc.</title>
-<meta name="description" content="Perform an arena show from a single device. All Inc. builds software, interfaces and connectivity for the people on stage.">
+<meta name="description" content="All Inc. builds software, user interfaces and connectivity for creatives.">
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#e2e3e5">
@@ -14,6 +14,7 @@
 /* the model needs webgl. without it the page shows the drawn plan instead. */
 (function () {
   var d = document.documentElement; d.classList.add('js');
+  addEventListener('error', function () { if (!d.classList.contains('ready')) d.classList.remove('gl'); });
   try { var c = document.createElement('canvas'); if (window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl'))) d.classList.add('gl'); } catch (e) {}
 })();
 </script>
@@ -49,7 +50,7 @@ h1, h2, p, address { margin: 0; font-weight: inherit; font-size: inherit; font-s
 .ready #stage canvas { opacity: 1; }
 html:not(.gl) #stage canvas { display: none; }
 /* the page's own ground, laid back over the model where the words sit */
-#veil { -webkit-mask-image: linear-gradient(90deg, #000 20%, transparent 54%); mask-image: linear-gradient(90deg, #000 20%, transparent 54%); }
+#veil { -webkit-mask-image: linear-gradient(90deg, #000 31%, transparent 47%); mask-image: linear-gradient(90deg, #000 31%, transparent 47%); }
 
 /* the drawn plan: shown when there is no webgl */
 .plan { position: absolute; right: 4vw; top: 50%; width: min(50vw, 62vh); transform: translateY(-50%); display: block; }
@@ -74,11 +75,16 @@ main { position: relative; z-index: 2; }
   display: flex; align-items: flex-end;
   padding: calc(var(--st) + 80px) calc(var(--sr) + var(--m)) calc(var(--sb) + clamp(40px, 9vh, 96px)) calc(var(--sl) + var(--m));
 }
-.copy { width: min(41vw, 620px); }
+.copy { width: min(38vw, 620px); }
 h1, h2 { font-size: clamp(34px, 5.1vw, 80px); line-height: 1.02; font-weight: 500; letter-spacing: -0.04em; text-wrap: balance; }
 .copy > p { margin-top: clamp(14px, 1.6vw, 24px); max-width: 23em; font-size: clamp(16px, 1.45vw, 20px); line-height: 1.4; letter-spacing: -0.011em; color: var(--ink2); text-wrap: pretty; }
-.copy > p.tag { margin: 0 0 clamp(14px, 1.5vw, 22px); display: flex; align-items: center; gap: 11px; font-size: clamp(17px, 1.5vw, 21px); font-weight: 500; letter-spacing: -0.02em; color: var(--ink); }
-.tag svg { width: 30px; height: 30px; display: block; flex: none; }
+h2 { display: flex; align-items: center; gap: .26em; }
+h2 svg { width: .78em; height: .78em; display: block; flex: none; }
+.copy > p.line { max-width: 26em; color: var(--ink); text-transform: none; }
+.copy > p.status { margin-top: 10px; font-size: clamp(14px, 1.15vw, 16px); color: var(--ink2); text-transform: none; font-variant-numeric: tabular-nums; }
+.copy > p.mail { color: var(--ink); }
+.mail a { border-bottom: 1px solid rgba(29, 29, 31, .3); padding-bottom: 2px; }
+.mail a:hover { border-color: var(--ink); }
 .places { margin-top: clamp(22px, 2.6vw, 36px); display: grid; grid-template-columns: auto auto; justify-content: start; gap: clamp(24px, 4vw, 56px); font-size: 15px; line-height: 1.5; color: var(--ink2); }
 .places b { display: block; font-weight: 500; color: var(--ink); }
 .copy > footer { margin-top: clamp(22px, 2.6vw, 36px); display: flex; flex-wrap: wrap; gap: 2px 22px; align-items: baseline; font-size: 15px; line-height: 1.5; color: var(--ink2); text-transform: none; }
@@ -99,11 +105,11 @@ header .right { display: flex; align-items: center; gap: 10px; }
 }
 .menu-open #menu { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
 #menu ul { margin: 0; padding: 0; list-style: none; }
-#menu a, #menu span { display: flex; align-items: center; min-height: 54px; padding: 0 16px; border-radius: 14px; font-size: 22px; font-weight: 500; letter-spacing: -0.025em; }
+#menu a { display: flex; align-items: center; min-height: 54px; padding: 0 16px; border-radius: 14px; font-size: 22px; font-weight: 500; letter-spacing: -0.025em; }
 #menu a { transition: background .2s; }
 #menu a:hover, #menu a:focus-visible { background: #1c1c1e; }
 #menu a:focus-visible { outline-offset: -2px; }
-#menu span { color: #6e6e73; }
+#menu p { margin: 6px 0 0; padding: 12px 16px 8px; border-top: 1px solid rgba(255, 255, 255, .14); font-size: 14px; line-height: 1.5; color: #98989d; text-transform: none; }
 
 /* words arrive with their scene */
 .js .copy > * { opacity: 0; transform: translateY(12px); transition: opacity .9s ease, transform .9s cubic-bezier(.2, .7, .2, 1); }
@@ -114,7 +120,7 @@ header .right { display: flex; align-items: center; gap: 10px; }
 
 /* upright screens: the model above, the words below */
 @media (max-aspect-ratio: 1/1), (max-width: 699px) {
-  #veil { -webkit-mask-image: linear-gradient(0deg, #000 24%, transparent 50%); mask-image: linear-gradient(0deg, #000 24%, transparent 50%); }
+  #veil { -webkit-mask-image: linear-gradient(0deg, #000 33%, transparent 46%); mask-image: linear-gradient(0deg, #000 33%, transparent 46%); }
   .s { padding-bottom: calc(var(--sb) + clamp(34px, 6vh, 72px)); }
   .copy { width: min(100%, 560px); }
   h1, h2 { font-size: clamp(34px, 8.6vw, 68px); }
@@ -137,7 +143,7 @@ header .right { display: flex; align-items: center; gap: 10px; }
   <symbol id="i-antiphon" viewBox="0 0 100 100"><rect width="100" height="100" rx="22.5"/><use href="#m-antiphon" fill="#fff" color="#fff"/></symbol>
 </svg>
 
-<a class="skip" href="#act">skip to act</a>
+<a class="skip" href="#act">skip to all act</a>
 
 <div id="ground"></div>
 <div id="stage" aria-hidden="true">
@@ -177,50 +183,51 @@ header .right { display: flex; align-items: center; gap: 10px; }
   </div>
   <div id="menu" role="dialog" aria-modal="true" aria-label="menu"><ul>
     <li><a href="/tools/">Tools</a></li>
-    <li><span aria-disabled="true">Newsroom</span></li>
-    <li><span aria-disabled="true">Team</span></li>
-    <li><a href="#company">Contact</a></li>
-  </ul></div>
+    <li><a href="/newsroom/">Newsroom</a></li>
+    <li><a href="mailto:us@allinc.fi">Contact</a></li>
+  </ul>
+  <p>us@allinc.fi<br>470 Ramona St, Palo Alto</p></div>
 </header>
 
 <main>
   <section class="s in" id="top" aria-label="all inc.">
     <div class="copy">
-      <h1>perform an arena show from a single device.</h1>
-      <p>all inc. builds software, interfaces and connectivity for the people on stage.</p>
+      <h1>advanced instruments for the artificial intelligence.</h1>
+      <p>all inc. builds software, user interfaces and connectivity for creatives.</p>
     </div>
   </section>
 
-  <section class="s" id="act" aria-label="act">
+  <section class="s" id="act" aria-label="all act">
     <div class="copy">
-      <p class="tag"><svg aria-hidden="true"><use href="#i-act"/></svg>act</p>
-      <h2>runs the show.</h2>
-      <p>playback, showfiles, vocal processing and visuals, on one device.</p>
+      <h2><svg aria-hidden="true"><use href="#i-act"/></svg>act</h2>
+      <p class="line">all act runs the whole show from one device: playback, vocal chain and in-ear mix, digital end to end.</p>
+      <p class="status">EU pilot · 500+ shows · EU + US H1 2027</p>
     </div>
   </section>
 
-  <section class="s" id="link" aria-label="link">
+  <section class="s" id="link" aria-label="all link">
     <div class="copy">
-      <p class="tag"><svg aria-hidden="true"><use href="#i-link"/></svg>link</p>
-      <h2>keeps it connected.</h2>
-      <p>connectivity, from the stage to the desk.</p>
+      <h2><svg aria-hidden="true"><use href="#i-link"/></svg>link</h2>
+      <p class="line">all link carries stage audio on light: next-generation optical wireless, with no radio spectrum to coordinate.</p>
+      <p class="status">6 patents + licensing · H2 2027</p>
     </div>
   </section>
 
-  <section class="s" id="antiphon" aria-label="antiphon">
+  <section class="s" id="antiphon" aria-label="all antiphon">
     <div class="copy">
-      <p class="tag"><svg aria-hidden="true"><use href="#i-antiphon"/></svg>antiphon</p>
-      <h2>reads the room.</h2>
-      <p>the show calls. the room answers.</p>
+      <h2><svg aria-hidden="true"><use href="#i-antiphon"/></svg>antiphon</h2>
+      <p class="line">all antiphon reads the room: an AI-supported model that measures the show and mixes it remotely or on its own, over AoIP.</p>
+      <p class="status">H2 2027</p>
     </div>
   </section>
 
-  <section class="s" id="company" aria-labelledby="h-company">
+  <section class="s" id="company" aria-label="contact">
     <div class="copy">
-      <h2 id="h-company">helsinki and palo alto.</h2>
+      <h2>contact</h2>
+      <p class="mail"><a href="mailto:us@allinc.fi">us@allinc.fi</a></p>
       <div class="places">
-        <address><b>all inc. audio ab</b>Hämeentie 135<br>Helsinki, Finland</address>
-        <address><b>us &amp; all inc.</b>470 Ramona St.<br>Palo Alto, California</address>
+        <address><b>all inc. audio ab</b>Hämeentie 135<br>Helsinki, Uusimaa<br>Finland</address>
+        <address><b>us &amp; all inc.</b>470 Ramona St.<br>Palo Alto, California<br>United States</address>
       </div>
       <footer>© 2027 all inc. 470 Ramona St, Palo Alto<a href="/privacy/">Privacy</a></footer>
     </div>
@@ -266,6 +273,6 @@ header .right { display: flex; align-items: center; gap: 10px; }
 })();
 </script>
 <script src="three.min.js?r128" defer></script>
-<script src="scene.js?1" defer></script>
+<script src="scene.js?2" defer></script>
 </body>
 </html>
