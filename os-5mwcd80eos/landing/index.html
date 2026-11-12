@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-12-landing-26">
+<html lang="en" data-build="2026-11-12-landing-27">
 <head>
 <meta charset="utf-8">
 <link rel="preload" as="image" type="image/avif" href="intro-port.avif?v=2" media="(max-aspect-ratio: 1/1), (max-width: 699px)">
@@ -201,7 +201,7 @@ main{position:relative;z-index:3;pointer-events:none}
   window.__heroFit(h);
   if(reduce){ h.poster='hero-'+m+'.jpg'; h.classList.add('on'); window.__film.state='still'; return; }
   document.documentElement.classList.add('film');
-  i.poster='intro-'+m+'.avif?v=2'; i.src='intro-'+m+'.mp4?v=2'; i.classList.add('on'); window.__film.state='intro';
+  i.style.background="#000 url('intro-"+m+".avif?v=2') center / 100% 100% no-repeat"; i.src='intro-'+m+'.mp4?v=2';   /* the first frame as a picture behind the film, so it is there before any video data */ i.classList.add('on'); window.__film.state='intro';
   var p=i.play(); if(p&&p.catch) p.catch(function(){});
 })();
 </script>
