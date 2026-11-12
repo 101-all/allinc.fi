@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-12-landing-5">
+<html lang="en" data-build="2026-11-12-landing-6">
 <head>
 <meta charset="utf-8">
 <script>
@@ -15,7 +15,7 @@ window.ALLINC = {
   title: 'all inc.',
   lines: {
     act:      {name:'all act',      short:'act',      line:'all act runs the whole show from one device: playback, vocal chain and in-ear mix, digital end to end.', status:['EU pilot · 500+ shows', 'EU + US H1 2027']},
-    link:     {name:'all link',     short:'link',     line:'all link carries stage audio on light: next-generation optical wireless, with no radio spectrum to coordinate.', status:['6 patents + licensing', 'H2 2027']},
+    link:     {name:'all link',     short:'link',     line:'Wireless technology stack for studio to stage', status:['Coming 06 / 2028']},
     antiphon: {name:'all antiphon', short:'antiphon', line:'all antiphon reads the room: an AI-supported model that measures the show and mixes it remotely or on its own, over AoIP.', status:['H2 2027']}
   },
   clocks: ['Europe/Helsinki', 'America/Los_Angeles'],   // remote mixing, two time zones
@@ -154,6 +154,8 @@ main{position:relative;z-index:3;pointer-events:none}
 .copy h2{font-size:22px;font-weight:600;letter-spacing:-.02em;margin:0;line-height:1.2}
 .copy p.ds{margin:8px 0 0;max-width:30em;font-size:15px;line-height:1.4;color:rgba(255,255,255,.9)}
 .copy p.fn{margin:6px 0 0;font-size:12.5px;line-height:1.35;color:rgba(255,255,255,.6);letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.partners{margin-top:26px;display:flex;flex-wrap:nowrap;width:max-content;align-items:center;gap:14px 30px;opacity:.36;filter:blur(2.4px);-webkit-filter:blur(2.4px);pointer-events:none;-webkit-user-select:none;user-select:none}
+.partners svg{display:block;flex:none}
 .places{margin-top:10px;display:grid;grid-template-columns:auto auto;justify-content:start;gap:28px;font-size:15px;line-height:1.4;color:rgba(255,255,255,.9)}
 .places address{font-style:normal}
 .places b{display:block;font-weight:600}
@@ -162,6 +164,7 @@ main{position:relative;z-index:3;pointer-events:none}
 .copy footer{margin-top:22px;display:flex;flex-wrap:wrap;gap:4px 16px;font-size:11px;line-height:16px;color:var(--mute)}
 .copy footer a{color:var(--ink)}
 @media (max-aspect-ratio:1/1),(max-width:699px){ .s{padding-bottom:calc(var(--sb) + clamp(34px,6vh,72px))} .copy{width:min(100%,560px)} }
+@media (max-width:699px){ .partners{flex-wrap:wrap;width:auto;gap:12px 22px} .partners svg{height:17px;width:auto} }
 @media (max-width:640px){ .copy h2{font-size:19px} .copy p.ds{font-size:14px} .places{gap:20px;font-size:14px} }
 @media (prefers-reduced-motion:reduce){ html{scroll-snap-type:none;scroll-behavior:auto} .copy{transition:none;transform:none} }
 </style>
@@ -200,9 +203,10 @@ main{position:relative;z-index:3;pointer-events:none}
   </section>
   <section class="s" id="act-device" data-line="act" data-view="ipad" data-mark="act" aria-label="all act on the iPad"></section>
   <section class="s" id="link" data-line="link" aria-label="all link">
-    <div class="copy"><div class="pi"><img src="../brand/link-icon.svg" alt=""><h2>link</h2></div>
-      <p class="ds">all link carries stage audio on light: next-generation optical wireless, with no radio spectrum to coordinate.</p>
-      <p class="fn">6 patents + licensing · H2 2027</p></div>
+    <div class="copy"><div class="pi"><img src="../brand/link-icon.svg" alt=""><h2>All Link</h2></div>
+      <p class="ds">Wireless technology stack for studio to stage</p>
+      <p class="fn">Coming 06 / 2028</p>
+      <div class="partners" aria-hidden="true"><svg viewBox="0 0 96 22" width="96" height="22" fill="#fff" aria-hidden="true"><circle cx="11" cy="11" r="8" fill="none" stroke="#fff" stroke-width="3.5"/><rect x="30" y="4" width="9" height="14" rx="2"/><rect x="43" y="4" width="12" height="14" rx="2"/><rect x="59" y="4" width="5" height="14" rx="2"/><rect x="68" y="8" width="11" height="10" rx="2"/><rect x="83" y="4" width="9" height="14" rx="2"/></svg><svg viewBox="0 0 86 22" width="86" height="22" fill="#fff" aria-hidden="true"><circle cx="8" cy="11" r="7"/><circle cx="17" cy="11" r="7" fill="none" stroke="#fff" stroke-width="2.5"/><rect x="30" y="4" width="14" height="14" rx="2"/><rect x="48" y="8" width="6" height="10" rx="2"/><rect x="58" y="8" width="10" height="10" rx="2"/><rect x="72" y="4" width="10" height="14" rx="2"/></svg><svg viewBox="0 0 106 22" width="106" height="22" fill="#fff" aria-hidden="true"><path d="M11 2l10 18H1z"/><rect x="30" y="4" width="7" height="14" rx="2"/><rect x="41" y="4" width="7" height="14" rx="2"/><rect x="52" y="8" width="13" height="10" rx="2"/><rect x="69" y="8" width="9" height="10" rx="2"/><rect x="82" y="4" width="6" height="14" rx="2"/><rect x="92" y="8" width="10" height="10" rx="2"/></svg><svg viewBox="0 0 72 22" width="72" height="22" fill="#fff" aria-hidden="true"><rect x="4" y="4" width="14" height="14" transform="rotate(45 11 11)"/><rect x="30" y="4" width="11" height="14" rx="2"/><rect x="45" y="8" width="11" height="10" rx="2"/><rect x="60" y="4" width="8" height="14" rx="2"/></svg><svg viewBox="0 0 96 22" width="96" height="22" fill="#fff" aria-hidden="true"><path d="M2 16a9 9 0 0 1 18 0z"/><rect x="2" y="18" width="18" height="2.5" rx="1"/><rect x="30" y="4" width="6" height="14" rx="2"/><rect x="40" y="8" width="12" height="10" rx="2"/><rect x="56" y="8" width="12" height="10" rx="2"/><rect x="72" y="4" width="7" height="14" rx="2"/><rect x="83" y="8" width="9" height="10" rx="2"/></svg><svg viewBox="0 0 85 22" width="85" height="22" fill="#fff" aria-hidden="true"><circle cx="4" cy="11" r="3.2"/><circle cx="12" cy="11" r="3.2"/><circle cx="20" cy="11" r="3.2"/><rect x="30" y="4" width="13" height="14" rx="2"/><rect x="47" y="4" width="9" height="14" rx="2"/><rect x="60" y="8" width="11" height="10" rx="2"/><rect x="75" y="8" width="6" height="10" rx="2"/></svg></div></div>
   </section>
   <section class="s" id="antiphon" data-line="antiphon" aria-label="all antiphon">
     <div class="copy"><div class="pi"><img src="../brand/antiphon-icon.svg" alt=""><h2>antiphon</h2></div>
@@ -3325,8 +3329,7 @@ function buildItem(it){
       proxy = new THREE.Mesh(B(1.6,1.2,1.4), proxyMat); proxy.position.y=top;
       break; }
     case 'link':                                 // two quiet points at the downstage corners
-      [-1,1].forEach(s=>{ P(B(0.035,3.05,0.035),s*9.6,1.525,0,0,'dark'); P(new THREE.OctahedronGeometry(0.17,0),s*9.6,3.2,0,0,'glow'); });
-      proxy = new THREE.Mesh(B(1.4,1.4,1.4), proxyMat); proxy.position.set(-9.6,3.2,0);
+      proxy = new THREE.Mesh(B(1.4,1.4,1.4), proxyMat); proxy.position.set(0,2.6,-7);   // landing: no towers, the beams are the picture
       break;
     default: { // block
       const sh = it.shape||'box';
@@ -3372,11 +3375,11 @@ function refreshSelection(){ S.items.forEach(styleItem); }
 /* derived: all link. short streaks of light between each device and its nearest link tower; quiet by default, dense when all link is chosen */
 const LK={speed:170, burst:2, gap:0.04, r:0.011, slots:5};
 const lkMat=reg('link', new THREE.MeshBasicMaterial(Object.assign({color:lit('link').multiplyScalar(0.85), opacity:0.7, toneMapped:false}, ADD)));
-const lkGeo=new THREE.CylinderGeometry(1,0.12,1,6,1).rotateX(Math.PI/2).translate(0,0,-0.5);   // head at 0, tail at -1
+const lkGeo=new THREE.CylinderGeometry(1,1,1,6,1).rotateX(Math.PI/2).translate(0,0,-0.5);   // head at 0, tail at -1
 const lkRoutes=[], LK_MAX=((collars.length+sources.length+4)*2+2)*LK.slots*LK.burst;
 const lkMesh=new THREE.InstancedMesh(lkGeo, lkMat, LK_MAX); lkMesh.frustumCulled=false; lkMesh.raycast=noop;
 lkMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); scene.add(lkMesh);
-for(let i=0;i<LK_MAX;i++) lkMesh.setColorAt(i, new THREE.Color().setScalar(1-(i%LK.burst)*0.28));
+for(let i=0;i<LK_MAX;i++) lkMesh.setColorAt(i, new THREE.Color().setScalar(1));
 const _d=new THREE.Object3D(), _h=V(0,0,0), _t=V(0,0,0), _dir=V(0,0,0), _w=V(0,0,0);
 let lkSeed=0;
 function lkRoute(list,a,b,main){ const r=lkRoutes[list.n] || (lkRoutes[list.n]={a:V(0,0,0), b:V(0,0,0), period:0.95+((lkSeed++*0.618)%1)*0.4, phase:(lkSeed*0.377)%1}); r.a.copy(a); r.b.copy(b); r.main=!!main; list.n++; }
@@ -3387,35 +3390,15 @@ function viaTower(list,p,main){ const w=p.distanceTo(towers[0])<=p.distanceTo(to
 function updateLink(t){
   const lk=S.items.find(i=>i.kind==='link'), on=!!lk && !isHidden('link') && !window.__closeup; lkMesh.visible=on;   // no streaks through the lens in the close view
   if(!on) return;
-  const tl=devicePoint('link',-9.6,3.2,0), tr=devicePoint('link',9.6,3.2,0); towers[0].copy(tl); towers[1].copy(tr);
-  const ai=S.items.find(i=>i.kind==='act'), vo=ai&&objs.get(ai.id), foh=devicePoint('antiphon',0,0.97,0), list={n:0};
-  if(vo && vo.mic){ vo.mic.getWorldPosition(_w); viaTower(list,_w,true); }    // the vocalist's handheld mic
-  if(vo && vo.ear){ vo.ear.getWorldPosition(_w); viaTower(list,_w,false); }   // and in-ears
-  if(vo) viaTower(list,ACT_DEV,true);                                        // the show device by the decks
-  if(foh) viaTower(list,foh,true);                                           // foh
-  collars.forEach(c=>viaTower(list,_w.copy(c).setY(c.y+0.22),false));       // each player's in-ears
-  sources.forEach(c=>viaTower(list,c,false));                                // instruments
-  lkRoute(list,towers[0],towers[1],true); lkRoute(list,towers[1],towers[0],true);   // tower to tower
-  // quiet by default: the main paths, one pulse each; with all link chosen every path runs, several pulses each
-  const h=lineH.link, slots=1+Math.round(h*(LK.slots-1));
+  const h=lineH.link; lkMat.opacity=0.3*h; if(h<0.02){ lkMesh.count=0; return; }
+  const ai=S.items.find(i=>i.kind==='act'), vo=ai&&objs.get(ai.id), foh=devicePoint('antiphon',0,0.97,0), ends=[];
+  collars.forEach(c=>ends.push(_w.copy(c).setY(c.y+0.22).clone()));         // each player
+  if(vo && vo.ear){ vo.ear.getWorldPosition(_w); ends.push(_w.clone()); }    // the artist
+  if(foh) ends.push(foh);                                                    // foh
   let k=0;
-  for(let i=0;i<list.n;i++){
-    const r=lkRoutes[i]; if(!r.main && h<0.3) continue;
-    const len=r.a.distanceTo(r.b), travel=Math.max(0.09, len/LK.speed), L=Math.min(0.8, len*0.12);
-    _dir.subVectors(r.b,r.a).normalize();
-    for(let s2=0;s2<slots;s2++){
-      const tc=((t+r.phase*r.period+s2*r.period/slots)%r.period);
-      for(let j=0;j<LK.burst;j++,k++){
-        const tk=tc-j*LK.gap, head=Math.min(len, tk/travel*len), tail=Math.max(0, tk/travel*len-L);
-        if(tk<0 || tail>=len){ _d.scale.set(0,0,0); _d.position.set(0,-99,0); }
-        else {
-          _h.copy(r.a).addScaledVector(_dir, head);
-          _d.position.copy(_h); _d.lookAt(_t.copy(_h).add(_dir)); _d.scale.set(LK.r, LK.r, Math.max(0.001, head-tail));
-        }
-        _d.updateMatrix(); lkMesh.setMatrixAt(k, _d.matrix);
-      }
-    }
-  }
+  ends.forEach(b=>{ if(b.distanceTo(ACT_DEV)<1.5) return;                    // not the dj's own collar, an arm's length away
+    _dir.subVectors(b,ACT_DEV); const len=_dir.length(); _dir.normalize();
+    _d.position.copy(b); _d.lookAt(_t.copy(b).add(_dir)); _d.scale.set(0.006,0.006,len); _d.updateMatrix(); lkMesh.setMatrixAt(k++, _d.matrix); });
   lkMesh.count=k; lkMesh.instanceMatrix.needsUpdate=true;
 }
 
