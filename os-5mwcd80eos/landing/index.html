@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-12-landing-9">
+<html lang="en" data-build="2026-11-12-landing-10">
 <head>
 <meta charset="utf-8">
 <script>
@@ -2407,7 +2407,8 @@ const M = {
   floor:  new THREE.MeshStandardMaterial({color:0x090909, roughness:0.95}),
   wall:   new THREE.MeshStandardMaterial({color:0x0c0c0c, roughness:1, side:THREE.BackSide}),
   deck:   new THREE.MeshStandardMaterial({color:0x0b0b0b, roughness:0.55, metalness:0.1}),
-  black:  new THREE.MeshStandardMaterial({color:0x161616, roughness:0.6}),
+  black:  new THREE.MeshStandardMaterial({color:0x0a0a0a, roughness:0.6}),
+  desk:   new THREE.MeshStandardMaterial({color:0x040404, roughness:0.24}),      // the dj's table: deep charcoal, a little gloss
   grey:   new THREE.MeshStandardMaterial({color:0x3a3a3a, roughness:0.8}),
   crowd:  new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.95}),
   seat:   new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.95}),
@@ -3083,18 +3084,18 @@ box(3.4, 0.4, 2.4, M.black, 0, DECK+0.2, -21.4);
 (function(){
   const g=at(0, DECK+0.4, -21.4, 0);
   ACT_SCREEN.dj=collar(dance(person(g, {top:W.coal, bottom:W.ink, shoe:W.white, skin:W.skin2, hat:W.ink, inner:W.bone, gear:M.inst}, {z:-0.45, top:'bomber', phones:'half', lean:0.16, look:-0.28, tilt:0.1, girth:1.05, arms:[[2.1,2.4,0.6],[0.45,0.95,0.12]]}),0.9), 1.4);
-  mk(bx(2.3,0.9,0.7), M.inst, g, 0,0.45,0, 0,0,0, true);
-  mk(bx(2.4,0.04,0.8), M.inst, g, 0,0.92,0, 0,0,0, true);
-  // the all act show device: an 11-inch tablet at its real size (249.7 x 177.5 x 5.3 mm) lying low on a wedge in front of the dj, in playing position
+  mk(bx(2.3,0.9,0.7), M.desk, g, 0,0.45,0, 0,0,0, true);
+  mk(bx(2.4,0.04,0.8), M.desk, g, 0,0.92,0, 0,0,0, true);
+  // the all act show device: an 11-inch tablet at its real size (249.7 x 177.5 x 5.3 mm) standing at a steep tilt at the end of the table, turned to the dj; nothing under it
   (function(){
-    const BW=0.2497, BH=0.1775, BD=0.0053, SW=0.2328, SH=0.1605, A=0.4;
+    const BW=0.2497, BH=0.1775, BD=0.0053, SW=0.2328, SH=0.1605, A=1.2;
     const round=(w,h,r)=>{ const sh=new THREE.Shape(), x=w/2, y=h/2; sh.moveTo(-x+r,-y); sh.lineTo(x-r,-y); sh.absarc(x-r,-y+r,r,-Math.PI/2,0,false); sh.lineTo(x,y-r); sh.absarc(x-r,y-r,r,0,Math.PI/2,false); sh.lineTo(-x+r,y); sh.absarc(-x+r,y-r,r,Math.PI/2,Math.PI,false); sh.lineTo(-x,-y+r); sh.absarc(-x+r,-y+r,r,Math.PI,Math.PI*1.5,false); return sh; };
     const ec=document.createElement('canvas'); ec.width=256; ec.height=128; const eg=ec.getContext('2d');      // what the metal and glass reflect: a dark room, the rig's light overhead
     const gr=eg.createLinearGradient(0,0,0,128); gr.addColorStop(0,'#8a8782'); gr.addColorStop(0.3,'#4a4846'); gr.addColorStop(0.55,'#2c2b2a'); gr.addColorStop(1,'#1c1b1a'); eg.fillStyle=gr; eg.fillRect(0,0,256,128);
     const env=new THREE.CanvasTexture(ec); env.mapping=THREE.EquirectangularReflectionMapping; env.encoding=THREE.sRGBEncoding;
     const alu=new THREE.MeshStandardMaterial({color:lin(0xc9cacc), metalness:0.72, roughness:0.38, envMap:env, envMapIntensity:1.3});
     const glass=new THREE.MeshStandardMaterial({color:0x020202, metalness:0, roughness:0.12, envMap:env, envMapIntensity:0.35});
-    const pad=new THREE.Group(); pad.position.set(0.62,0.941,-0.1); pad.rotation.set(0,Math.PI+0.2,0); g.add(pad);
+    const pad=new THREE.Group(); pad.position.set(1.02,0.941,-0.12); pad.rotation.set(0,Math.PI+0.22,0); g.add(pad);
     const Z0=0.085, Y0=0.001;                                     // the lower edge, nearest the dj, almost on the table
     const tilt=new THREE.Group(); tilt.position.set(0,Y0+Math.sin(A)*BH/2+Math.cos(A)*BD,Z0-Math.cos(A)*BH/2+Math.sin(A)*BD); tilt.rotation.x=-(Math.PI/2-A); pad.add(tilt);
     const bev=0.0005, body=new THREE.ExtrudeGeometry(round(BW-2*bev,BH-2*bev,0.018-bev), {depth:BD-2*bev, bevelEnabled:true, bevelThickness:bev, bevelSize:bev, bevelSegments:2, curveSegments:16}).translate(0,0,-(BD-bev));
@@ -3103,7 +3104,22 @@ box(3.4, 0.4, 2.4, M.black, 0, DECK+0.2, -21.4);
     ACT_SCREEN.mesh=mk(new THREE.PlaneGeometry(SW,SH), ACT_SCREEN.mat, tilt, 0,0,0.00024); ACT_SCREEN.mesh.castShadow=false; ACT_SCREEN.mesh.receiveShadow=false;
     const lens=new THREE.MeshBasicMaterial({color:0x15161a}); mk(new THREE.CircleGeometry(0.0017,20), lens, tilt, 0,BH/2-0.0043,0.0003).castShadow=false;   // front camera, on the long edge
   })();
-  g.updateMatrixWorld(true); ACT_DEV.copy(g.localToWorld(V(0.62,0.99,-0.1)));
+  (function(){
+    const geo=new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(12),3)); geo.setAttribute('uv', new THREE.BufferAttribute(new Float32Array([0,0, 1,0, 1,1, 0,1]),2)); geo.setIndex([0,1,2, 0,2,3]);
+    const m=new THREE.Mesh(geo, new THREE.MeshBasicMaterial({map:ACT_SCREEN.mat.map, transparent:true, opacity:0.085, depthWrite:false, toneMapped:false, side:THREE.DoubleSide}));
+    m.frustumCulled=false; m.raycast=noop; m.renderOrder=2; scene.add(m);
+    g.updateMatrixWorld(true); const e0=g.localToWorld(V(-1.2,0,-0.4)), e1=g.localToWorld(V(1.2,0,0.4));   // the reflection ends where the table does
+    m.material.clippingPlanes=[new THREE.Plane(V(0,0,1),-e0.z), new THREE.Plane(V(0,0,-1),e1.z), new THREE.Plane(V(1,0,0),-e0.x), new THREE.Plane(V(-1,0,0),e1.x)]; renderer.localClippingEnabled=true;
+    const c=[[-0.1164,-0.08025],[0.1164,-0.08025],[0.1164,0.08025],[-0.1164,0.08025]], v=V(0,0,0);
+    ACT_SCREEN.mirror=function(){
+      const sc=ACT_SCREEN.mesh, yt=ACT_SCREEN.tableY, cam=camera.position;
+      m.visible = cam.y>yt+0.03 && cam.distanceTo(ACT_DEV)<3; if(!m.visible) return;
+      const pa=geo.attributes.position;
+      for(let i=0;i<4;i++){ v.set(c[i][0],c[i][1],0); sc.localToWorld(v); const my=2*yt-v.y, k=(yt-cam.y)/(my-cam.y); pa.setXYZ(i, cam.x+(v.x-cam.x)*k, yt+0.0006, cam.z+(v.z-cam.z)*k); }
+      pa.needsUpdate=true;
+    };
+  })();
+  g.updateMatrixWorld(true); ACT_SCREEN.tableY=g.localToWorld(V(0,0.94,0)).y; ACT_DEV.copy(g.localToWorld(V(1.02,1.03,-0.12)));
 })();
 (function(){                                                  // tap anywhere on the band -> all act
   const h=new THREE.Mesh(new THREE.BoxGeometry(20,2.6,9), new THREE.MeshBasicMaterial({visible:false}));
@@ -3588,7 +3604,8 @@ function updateMotion(t){
   MOVERS.forEach(m=>moveOne(m,b)); objs.forEach(o=>{ if(o.mover) moveOne(o.mover,b); });
   SCREENS.forEach((m,i)=>m.color.setScalar(0.88+0.12*Math.sin(t*0.12+i*1.7)));
 }
-function updateDerived(t,dt){ if(ACT_SCREEN.mesh && t-ACT_SCREEN.last>0.06 && camera.position.distanceTo(ACT_DEV)<26){ ACT_SCREEN.last=t; ACT_SCREEN.draw(REDUCE?1:t); } updateLink(REDUCE?0.31:t); return updateDerivedRest(t,dt); }
+function updateDerived(t,dt){ if(ACT_SCREEN.mirror) ACT_SCREEN.mirror();
+  if(ACT_SCREEN.mesh && t-ACT_SCREEN.last>0.06 && camera.position.distanceTo(ACT_DEV)<26){ ACT_SCREEN.last=t; ACT_SCREEN.draw(REDUCE?1:t); } updateLink(REDUCE?0.31:t); return updateDerivedRest(t,dt); }
 const REDUCE=window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; let movedOnce=false;
 function updateDerivedRest(t,dt){ holo.visible=false; clocks.forEach(c=>{ c.g.visible=false; }); if(!REDUCE || !movedOnce){ movedOnce=true; updateMotion(t); } }   // landing: no antiphon console, no dials
 
@@ -4073,10 +4090,9 @@ window.__twin = {flyTo, povView, V, screen:()=>ACT_SCREEN.mesh, tier:()=>tier, l
     var m = tw.screen(); m.updateWorldMatrix(true, false);
     var e = m.matrixWorld.elements, P = tw.V(e[12], e[13], e[14]), N = tw.V(e[8], e[9], e[10]).normalize(), U = tw.V(e[4], e[5], e[6]).normalize(), R = tw.V(e[0], e[1], e[2]).normalize();
     var upright = innerWidth / innerHeight <= 1 || innerWidth < 700;
-    var A = 0.4, back = upright ? 0.6 : 0.5, up = upright ? 0.19 : 0.15;   /* back along the table towards the dj, a little above it */
-    var pos = P.clone().addScaledVector(N, back * Math.sin(A) + up * Math.cos(A)).addScaledVector(U, -back * Math.cos(A) + up * Math.sin(A)).addScaledVector(R, upright ? -0.06 : -0.12);
-    var dir = P.clone().addScaledVector(N, 0.035).addScaledVector(R, upright ? 0 : 0.02).sub(pos).normalize();
-    return { pos: pos, target: pos.clone().addScaledVector(dir, 3.2), fov: upright ? 48 : 38 };
+    var pos = P.clone().addScaledVector(N, upright ? 0.6 : 0.5).addScaledVector(U, -0.1).addScaledVector(R, upright ? -0.12 : -0.2);
+    var dir = P.clone().addScaledVector(R, upright ? 0 : 0.02).addScaledVector(U, upright ? 0.0 : -0.005).sub(pos).normalize();
+    return { pos: pos, target: pos.clone().addScaledVector(dir, 3.2), fov: upright ? 46 : 34 };
   }
   var wasClose = false;
   function pick(sec) {
