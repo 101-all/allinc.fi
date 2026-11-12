@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>team — all inc.</title>
+<meta name="description" content="all inc. is founded by artists and producers who have found their own way to make it work.">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/logo.svg" type="image/svg+xml">
+<style>
+:root { color-scheme: light dark; --bg: #f2f2f7; --label: #000; --label2: rgba(60, 60, 67, .68); --fill: rgba(120, 120, 128, .16); --blue: #007aff; --m: clamp(20px, 5vw, 44px); }
+@media (prefers-color-scheme: dark) { :root { --bg: #000; --label: #fff; --label2: rgba(235, 235, 245, .64); --fill: rgba(120, 120, 128, .28); --blue: #0a84ff; } }
+* { box-sizing: border-box; }
+html { background: var(--bg); -webkit-text-size-adjust: 100%; }
+body { margin: 0; color: var(--label); text-transform: lowercase; font: 17px/1.35 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; touch-action: manipulation; text-transform: inherit; }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; border-radius: 8px; }
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 calc(var(--m) + env(safe-area-inset-right)) 0 calc(var(--m) + env(safe-area-inset-left)); }
+header.bar { display: flex; justify-content: space-between; align-items: center; height: 56px; margin-top: env(safe-area-inset-top); font-size: 15px; }
+.bar .wordmark { font-weight: 600; padding: 10px 0; }
+.bar span { color: var(--label2); }
+h1 { margin: 0; padding: clamp(36px, 9vw, 96px) 0 clamp(32px, 6vw, 64px); font-size: clamp(32px, 6.4vw, 56px); line-height: 1.06; font-weight: 700; letter-spacing: -0.035em; text-wrap: balance; }
+
+/* the grid runs edge to edge */
+.grid { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; }
+@media (min-width: 600px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1100px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+.grid button { display: block; width: 100%; aspect-ratio: 1; background: var(--fill); overflow: hidden; }
+.grid button:focus-visible { outline-offset: -3px; border-radius: 0; }
+.grid img { display: block; width: 100%; height: 100%; object-fit: cover; transition: opacity .2s; }
+.grid button:active img { opacity: .8; }
+
+footer { padding-top: clamp(40px, 7vw, 80px); padding-bottom: calc(28px + env(safe-area-inset-bottom)); display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 13px; color: var(--label2); }
+footer span { text-transform: none; }
+footer a:hover { text-decoration: underline; }
+
+/* one photo large; swipe sideways for the next */
+dialog { width: 100vw; height: 100vh; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: #000; color: #fff; overflow: hidden; }
+dialog::backdrop { background: #000; }
+dialog[open] { animation: in .25s ease; }
+@keyframes in { from { opacity: 0; } }
+.strip { display: flex; width: 100%; height: 100%; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.strip::-webkit-scrollbar { display: none; }
+.strip figure { flex: 0 0 100%; width: 100%; height: 100%; margin: 0; scroll-snap-align: center; scroll-snap-stop: always; display: grid; place-items: center; padding: calc(56px + env(safe-area-inset-top)) 0 calc(44px + env(safe-area-inset-bottom)); }
+.strip img { display: block; max-width: 100%; max-height: calc(100vh - 100px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); max-height: calc(100dvh - 100px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); width: auto; height: auto; object-fit: contain; }
+.top { position: absolute; left: 0; right: 0; top: env(safe-area-inset-top); height: 56px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 8px 0 16px; font-size: 15px; }
+.top output { grid-column: 2; color: rgba(235, 235, 245, .7); font-variant-numeric: tabular-nums; }
+.top button { grid-column: 3; justify-self: end; min-width: 60px; height: 44px; padding: 0 10px; font-size: 17px; font-weight: 600; color: #0a84ff; border-radius: 10px; }
+.cap { position: absolute; left: 0; right: 0; bottom: env(safe-area-inset-bottom); padding: 0 20px 14px; margin: 0; text-align: center; font-size: 13px; color: rgba(235, 235, 245, .7); text-transform: none; }
+@media (prefers-reduced-motion: reduce) { dialog[open] { animation: none; } .grid img { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="bar"><a class="wordmark" href="/">all inc.</a><span>team</span></header>
+  <h1>all inc. is founded by artists and producers who have found their own way to make it work.</h1>
+</div>
+
+<main><ul class="grid" id="grid" aria-label="photos"></ul></main>
+
+<div class="wrap">
+  <footer><span>© 2027 all inc. 470 Ramona St, Palo Alto</span><a href="/">all inc.</a><a href="/privacy/">privacy</a></footer>
+</div>
+
+<dialog id="view" aria-label="photo">
+  <div class="strip" id="strip" tabindex="0"></div>
+  <div class="top"><output id="count" aria-live="polite"></output><button type="button" id="done">done</button></div>
+  <p class="cap" id="cap"></p>
+</dialog>
+
+<script>
+/* photos come from photos.json: [{ "name": "file-name", "alt": "who and where", "w": 2000, "h": 1333 }]
+   with photos/NAME-800 and photos/NAME-2000 as .avif and .jpg. a photo without alt text is not shown. */
+(function () {
+  var grid = document.getElementById('grid'), view = document.getElementById('view'), strip = document.getElementById('strip');
+  var count = document.getElementById('count'), cap = document.getElementById('cap'), items = [], from = null, at = -1;
+  function picture(p, size, sizes, eager) {
+    var pic = document.createElement('picture'), s = document.createElement('source'), img = document.createElement('img');
+    s.type = 'image/avif'; s.srcset = 'photos/' + p.name + '-800.avif 800w, photos/' + p.name + '-2000.avif 2000w'; s.sizes = sizes;
+    img.srcset = 'photos/' + p.name + '-800.jpg 800w, photos/' + p.name + '-2000.jpg 2000w'; img.sizes = sizes;
+    img.src = 'photos/' + p.name + '-' + size + '.jpg'; img.alt = p.alt; img.width = p.w; img.height = p.h;
+    img.decoding = 'async'; if (!eager) img.loading = 'lazy';
+    pic.appendChild(s); pic.appendChild(img); return pic;
+  }
+  function show(i) { if (i === at) return; at = i; count.textContent = (i + 1) + ' / ' + items.length; cap.textContent = items[i].alt; }
+  function go(i, smooth) { i = Math.max(0, Math.min(items.length - 1, i)); strip.scrollTo({ left: i * strip.clientWidth, behavior: smooth ? 'smooth' : 'auto' }); show(i); }
+  function open(i, btn) {
+    from = btn;
+    if (!strip.firstChild) items.forEach(function (p) { var f = document.createElement('figure'); f.appendChild(picture(p, 2000, '100vw', false)); strip.appendChild(f); });
+    view.showModal ? view.showModal() : view.setAttribute('open', '');
+    at = -1; go(i, false); strip.focus();
+  }
+  function close() { view.close ? view.close() : view.removeAttribute('open'); }
+  strip.addEventListener('scroll', function () { show(Math.round(strip.scrollLeft / (strip.clientWidth || 1))); }, { passive: true });
+  view.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight') { e.preventDefault(); go(at + 1, true); } if (e.key === 'ArrowLeft') { e.preventDefault(); go(at - 1, true); } });
+  view.addEventListener('close', function () { if (from) from.focus(); });
+  document.getElementById('done').addEventListener('click', close);
+  addEventListener('resize', function () { if (view.open && at >= 0) strip.scrollTo({ left: at * strip.clientWidth }); });
+
+  fetch('photos.json', { cache: 'no-cache' }).then(function (r) { return r.json(); }).then(function (list) {
+    items = list.filter(function (p) { return p && p.name && p.alt && p.alt.trim(); });
+    items.forEach(function (p, i) {
+      var li = document.createElement('li'), b = document.createElement('button');
+      b.type = 'button'; b.setAttribute('aria-label', 'view photo: ' + p.alt);
+      b.appendChild(picture(p, 800, '(min-width: 1100px) 25vw, (min-width: 600px) 34vw, 50vw', i < 4));
+      b.addEventListener('click', function () { open(i, b); });
+      li.appendChild(b); grid.appendChild(li);
+    });
+  }).catch(function () {});
+})();
+</script>
+</body>
+</html>
