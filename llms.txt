@@ -8,8 +8,7 @@ All Inc. has two offices: All Inc. Audio Ab at Hämeentie 135, Helsinki, Finland
 
 - [Home](https://allinc.fi/): what All Inc. does, its platform, its work (interfaces, plugins and tools, creative ecosystems) and its addresses
 - [Toolbox](https://allinc.fi/#toolbox): free browser tools for musicians — tuner, key and bpm finder, metronome, setlist, delay times, tone generator, transpose, stage timer
-- [Privacy policy](https://allinc.fi/privacy/): how personal data is handled, EU/EEA and US rights
-- [Data deletion](https://allinc.fi/privacy/#deletion): how to have your data deleted
+- [Privacy policy](https://allinc.fi/privacy/): how personal data is handled on the site and in the apps, EU/EEA and US rights, and how to request access or deletion
 
 ## Notes
 
