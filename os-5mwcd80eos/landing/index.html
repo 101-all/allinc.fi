@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-12-landing-27">
+<html lang="en" data-build="2026-11-12-landing-28">
 <head>
 <meta charset="utf-8">
 <link rel="preload" as="image" type="image/avif" href="intro-port.avif?v=2" media="(max-aspect-ratio: 1/1), (max-width: 699px)">
@@ -202,6 +202,7 @@ main{position:relative;z-index:3;pointer-events:none}
   if(reduce){ h.poster='hero-'+m+'.jpg'; h.classList.add('on'); window.__film.state='still'; return; }
   document.documentElement.classList.add('film');
   i.style.background="#000 url('intro-"+m+".avif?v=2') center / 100% 100% no-repeat"; i.src='intro-'+m+'.mp4?v=2';   /* the first frame as a picture behind the film, so it is there before any video data */ i.classList.add('on'); window.__film.state='intro';
+  i.addEventListener('canplaythrough',function(){ if(!h.getAttribute('src')){ h.preload='auto'; h.poster='hero-'+m+'.jpg'; h.src='hero-'+m+'.mp4?v=6'; h.load(); } },{once:true});
   var p=i.play(); if(p&&p.catch) p.catch(function(){});
 })();
 </script>
@@ -4258,18 +4259,21 @@ window.__twin = {fog:()=>scene.fog, frame:()=>{ if(finish) finish.uniforms.uAmt.
     if (film.state !== 'intro') return; film.state = 'done'; document.documentElement.classList.remove('film'); intro.classList.remove('on'); try { intro.pause(); } catch (e) {}
   }
   if (film.state === 'intro') {
-    heroMode = film.mode; hero.preload = 'auto'; hero.poster = 'hero-' + film.mode + '.jpg'; hero.src = 'hero-' + film.mode + '.mp4?v=6'; hero.load();
+    heroMode = film.mode; if (!hero.getAttribute('src')) { hero.preload = 'auto'; hero.poster = 'hero-' + film.mode + '.jpg'; hero.src = 'hero-' + film.mode + '.mp4?v=6'; hero.load(); }
     var landed = false;
     intro.addEventListener('timeupdate', function () { if (!landed && intro.duration && intro.currentTime > intro.duration - 1.0) { landed = true; document.documentElement.classList.remove('film'); } });
-    intro.addEventListener('ended', function () {
+    var introEnded = function () {
       if (film.state !== 'intro') return;
       var fin = function () { if (film.state !== 'intro') return; hero.style.transition = 'none'; hero.classList.add('on'); void hero.offsetWidth; hero.style.transition = ''; setTimeout(function () { intro.classList.remove('on'); film.state = 'done'; document.documentElement.classList.remove('film'); }, 150); };
       var go = function () { if (hero.requestVideoFrameCallback) hero.requestVideoFrameCallback(function () { fin(); }); else setTimeout(fin, 80); };
       try { hero.currentTime = 0; } catch (e) {}
       var pr = hero.play(); if (pr && pr.then) pr.then(go).catch(function () { introBail(); if (window.__closeup) heroOn(); }); else go();
-    });
+    };
+    intro.addEventListener('ended', introEnded);
+    if (intro.duration && intro.currentTime > intro.duration - 1.0) { landed = true; document.documentElement.classList.remove('film'); }
+    if (intro.ended) introEnded();
     intro.addEventListener('error', function () { introBail(); if (window.__closeup) heroOn(); });
-    setTimeout(function () { if (film.state === 'intro' && intro.currentTime < 0.2) { introBail(); if (window.__closeup) heroOn(); } }, 7000);
+    setTimeout(function () { if (film.state === 'intro' && intro.currentTime < 0.2) { introBail(); if (window.__closeup) heroOn(); } }, 9000);
   }
   addEventListener('resize', function () { window.__heroFit(intro); if (film.state === 'intro') introBail(); if (window.__closeup) heroOn(); });
   var heroTok = 0, heroStill = 0;
@@ -4328,7 +4332,9 @@ window.__twin = {fog:()=>scene.fog, frame:()=>{ if(finish) finish.uniforms.uAmt.
 <script>
 /* the scene's code starts after the first paint, so the film's first frame is on screen at once */
 (function(){ var ran=false; function run(){ if(ran) return; ran=true; var l=document.querySelectorAll('script.late'); for(var i=0;i<l.length;i++){ var s=document.createElement('script'); s.text=l[i].textContent; document.body.appendChild(s); } }
-  requestAnimationFrame(function(){ setTimeout(run,40); }); setTimeout(run,500); })();
+  var f=window.__film||{}, i=document.getElementById('intro');
+  if(f.state==='intro'){ var go=function(){ setTimeout(run,250); }; i.addEventListener('playing',go,{once:true}); i.addEventListener('error',run,{once:true}); setTimeout(run,2500); }
+  else { requestAnimationFrame(function(){ setTimeout(run,40); }); setTimeout(run,500); } })();
 </script>
 </body>
 </html>
