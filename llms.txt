@@ -4,15 +4,15 @@
 
 ## Products
 
-- all act: Digital live performance system.
-- all antiphon: Remote mixing and show control system.
-- all link: Next generation wireless. Coming to CES 2028.
+- act: Digital live performance system.
+- antiphon: Remote mixing and show control system.
+- link: Next generation wireless. Coming to CES 2028.
 
 US & All Inc. is at 470 Ramona St., Palo Alto, California, United States.
 
 ## Pages
 
-- [Home](https://allinc.fi/): all act, all antiphon and all link, and how to reach All Inc.
+- [Home](https://allinc.fi/): act, antiphon and link, and how to reach All Inc.
 - [Privacy policy](https://allinc.fi/privacy/): how personal data is handled on the site and in the apps, EU/EEA and US rights, and how to request access or deletion
 
 ## Notes
