@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-13-landing-36">
+<html lang="en" data-build="2026-11-13-landing-37">
 <head>
 <meta charset="utf-8">
 <link rel="preload" as="image" type="image/avif" href="/os-5mwcd80eos/landing/intro-port.avif?v=5" media="(max-aspect-ratio: 1/1), (max-width: 699px) and (max-aspect-ratio: 6/5)">
@@ -4305,6 +4305,8 @@ window.__twin = {fog:()=>scene.fog, frame:()=>{ if(finish) finish.uniforms.uAmt.
   function place() {
     if (!tw || !tw.camera) return;
     var g = window.__heroGeo(), W = g.W, H = g.H, cx = g.sx * W, cy = g.sy * H;
+    var ac = document.querySelector('#act .copy');                /* wide: the words end before the phone in the picture begins */
+    if (ac) ac.style.maxWidth = g.up ? '' : Math.max(140, cx + (0.395 - g.d.fx) * g.d.W0 * g.k - 16 - ac.getBoundingClientRect().left) + 'px';
     tw.camera.setViewOffset(W, H, W / 2 - cx, H / 2 - cy, W, H); tw.camera.updateProjectionMatrix();
   }
   /* the act close view as a rendered film: the same camera, frame for frame, laid over the realtime picture once it rests */
