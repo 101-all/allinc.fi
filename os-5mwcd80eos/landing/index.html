@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-12-landing-30">
+<html lang="en" data-build="2026-11-12-landing-31">
 <head>
 <meta charset="utf-8">
-<link rel="preload" as="image" type="image/avif" href="intro-port.avif?v=3" media="(max-aspect-ratio: 1/1), (max-width: 699px)">
-<link rel="preload" as="image" type="image/avif" href="intro-land.avif?v=3" media="(min-aspect-ratio: 1001/1000) and (min-width: 700px)">
+<link rel="preload" as="image" type="image/avif" href="intro-port.avif?v=4" media="(max-aspect-ratio: 1/1), (max-width: 699px)">
+<link rel="preload" as="image" type="image/avif" href="intro-land.avif?v=4" media="(min-aspect-ratio: 1001/1000) and (min-width: 700px)">
 <script>
 /* build 2026-11-03-console: if a cached copy is showing, fetch the page fresh once and reload */
 (function(){ try{ var b=document.documentElement.getAttribute('data-build');
@@ -201,8 +201,8 @@ main{position:relative;z-index:3;pointer-events:none}
   window.__heroFit(h);
   if(reduce){ h.poster='hero-'+m+'.jpg'; h.classList.add('on'); window.__film.state='still'; return; }
   document.documentElement.classList.add('film');
-  i.style.background="#000 url('intro-"+m+".avif?v=3') center / 100% 100% no-repeat"; i.src='intro-'+m+'.mp4?v=3';   /* the first frame as a picture behind the film, so it is there before any video data */ i.classList.add('on'); window.__film.state='intro';
-  i.addEventListener('canplaythrough',function(){ if(!h.getAttribute('src')){ h.preload='auto'; h.poster='hero-'+m+'.jpg'; h.src='hero-'+m+'.mp4?v=7'; h.load(); } },{once:true});
+  i.style.background="#000 url('intro-"+m+".avif?v=4') center / 100% 100% no-repeat"; i.src='intro-'+m+'.mp4?v=4';   /* the first frame as a picture behind the film, so it is there before any video data */ i.classList.add('on'); window.__film.state='intro';
+  i.addEventListener('canplaythrough',function(){ if(!h.getAttribute('src')){ h.preload='auto'; h.poster='hero-'+m+'.jpg'; h.src='hero-'+m+'.mp4?v=8'; h.load(); } },{once:true});
   var p=i.play(); if(p&&p.catch) p.catch(function(){});
 })();
 </script>
@@ -2444,7 +2444,7 @@ const M = {
   crowd:  new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.95}),
   seat:   new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.95}),
   tier:   new THREE.MeshStandardMaterial({color:0x111111, roughness:0.85}),
-  figure: new THREE.MeshStandardMaterial({color:lin(0x2b2b2b), roughness:0.95}),      // crew: dark clothes, in the shadows
+  figure: new THREE.MeshStandardMaterial({color:lin(0x060606), roughness:1}),      // crew: dark clothes, in the shadows
   pa:     new THREE.MeshStandardMaterial({color:0x191919, roughness:0.7, metalness:0.1}),
   lamp:   new THREE.MeshBasicMaterial({color:new THREE.Color(1.15,1.12,1.06), toneMapped:false}),
   glow:   new THREE.MeshBasicMaterial({color:lin(0x26282b), toneMapped:false}),
@@ -2746,7 +2746,7 @@ const SEATED=merge([[lathe([[0.001,0],[0.15,0],[0.17,0.25],[0.2,0.62],[0.205,0.7
   [[-10.3,-24.6],[10.4,-24.2]].forEach(([x,z])=>pts.push([x,DECK,z,x<0?0.9:-0.9]));
   for(let x=-10;x<=10;x+=4) if(Math.abs(x)>3) pts.push([x,0,-12.2,0]);
   [[-2.6,33.6],[-1.2,33.4],[1.6,33.5],[3,33.4],[-0.4,35.6],[2.2,35.4]].forEach(([x,z])=>pts.push([x,0.6,z,Math.PI]));
-  const mh=new THREE.MeshStandardMaterial({color:lin(0x4a4a4a), roughness:0.9, vertexColors:true});
+  const mh=new THREE.MeshStandardMaterial({color:lin(0x0a0a0a), roughness:1, vertexColors:true});
   pts.forEach(([x,y,z,r],i)=>{
     const b=new THREE.Mesh(CREW_BODY[i%3], M.figure), h=new THREE.Mesh(CROWD_HEAD[(i*3+1)%4], mh), s=0.92+((i*0.618)%1)*0.14;
     b.position.set(x,y,z); b.rotation.y=r; b.scale.set(s,1.48*s,s); h.position.set(x,y+(1.48+0.135)*s,z); h.rotation.y=r; h.scale.setScalar(s*1.06);
@@ -2840,7 +2840,8 @@ function moveOne(m,b){
   }
 }
 // what the band wears: neutral greys only; on focus they take a faint all act blue
-const wear=(hex,r)=>{ const m=reg('act', new THREE.MeshStandardMaterial({color:lin(hex), emissive:lin(COL.act), roughness:r||0.86}), 0, 0.05); m.transparent=false; m.userData.solid=true; m.emissiveIntensity=0; return m; };
+const rimLit=(m,k,p)=>{ m.onBeforeCompile=sh=>{ sh.fragmentShader=sh.fragmentShader.replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\ntotalEmissiveRadiance+=vec3(1.0,0.9,0.78)*pow(1.0-abs(dot(normalize(vNormal),normalize(vViewPosition))),'+p.toFixed(1)+')*'+k.toFixed(3)+';'); }; return m; };
+const wear=(hex,r)=>{ const m=reg('act', rimLit(new THREE.MeshStandardMaterial({color:lin(0x040404), emissive:lin(COL.act), roughness:1}),0.75,4), 0, 0); m.transparent=false; m.userData.solid=true; m.emissiveIntensity=0; return m; };   // every player a silhouette, whatever they wear
 const W={hair:wear(0x070707,0.96), ink:wear(0x1f1f1f), coal:wear(0x2f2f2f), slate:wear(0x4a4a4a), ash:wear(0x9a9a9a), bone:wear(0xd0cec9,0.8), white:wear(0xe6e6e4,0.7),
   skin1:wear(0xa29d98,0.7), skin2:wear(0x86807a,0.7), skin3:wear(0xbcb6b0,0.7)};
 const ACT_DEV=V(0,0,0);
@@ -3233,15 +3234,15 @@ box(5.6, 0.85, 0.9, M.black, 0.4, 0.6+0.425, 34.6);
 })();
 
 /* ------------------------------------------------------------------ audience: instanced people, soft clothing, phones, a few hands up */
-const CLOTH=['#1a1a1a','#202020','#262626','#2c2c2c','#323232','#383838','#3e3e3e','#464646','#4e4e4e','#585858','#2a2a2a','#363636'].map(lin);
-const SKIN=['#4a4a4a','#545454','#5e5e5e','#686868','#424242'].map(lin);
+const CLOTH=['#0a0a0a','#0c0c0c','#0e0e0e','#101010','#121212','#141414','#161616','#191919','#1c1c1c','#202020','#0f0f0f','#131313'].map(lin);
+const SKIN=['#1a1a1a','#1e1e1e','#222222','#262626','#181818'].map(lin);
 const pickOf=a=>a[(Math.random()*a.length)|0];
 // the crowd moves on the gpu: each person sways with the bar and lifts a little on the beat, pivoting at the feet
 const SWAY={value:0}, WAVE={value:0}, WAVEK={value:0};          // antiphon: one device at foh, its reading of the room as a pulse through the audience
 function swayMat(mat){
   mat.onBeforeCompile=sh=>{
     sh.uniforms.uT=SWAY; sh.uniforms.uWt=WAVE; sh.uniforms.uWk=WAVEK;
-    sh.fragmentShader='varying float vWave;\n'+sh.fragmentShader.replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\ntotalEmissiveRadiance+=vec3(0.16,0.4,1.0)*vWave;\ntotalEmissiveRadiance+=vec3(1.0,0.88,0.74)*pow(1.0-abs(dot(normalize(vNormal),normalize(vViewPosition))),3.0)*0.085;');
+    sh.fragmentShader='varying float vWave;\n'+sh.fragmentShader.replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\ntotalEmissiveRadiance+=vec3(0.16,0.4,1.0)*vWave;\ntotalEmissiveRadiance+=vec3(1.0,0.88,0.74)*pow(1.0-abs(dot(normalize(vNormal),normalize(vViewPosition))),3.0)*0.11;');
     sh.vertexShader='uniform float uT;\nuniform float uWt;\nuniform float uWk;\nvarying float vWave;\nattribute float aPh;\n'+sh.vertexShader.replace('#include <project_vertex>',
       'vec4 ip=vec4(transformed,1.0);\n#ifdef USE_INSTANCING\nip=instanceMatrix*ip;\n#endif\n'+
       'float hh=max(ip.y,0.0), amp=0.5+fract(aPh*7.31);\n'+
@@ -4271,7 +4272,7 @@ window.__twin = {fog:()=>scene.fog, frame:()=>{ if(finish) finish.uniforms.uAmt.
     if (film.state !== 'intro') return; film.state = 'done'; document.documentElement.classList.remove('film'); intro.classList.remove('on'); try { intro.pause(); } catch (e) {}
   }
   if (film.state === 'intro') {
-    heroMode = film.mode; if (!hero.getAttribute('src')) { hero.preload = 'auto'; hero.poster = 'hero-' + film.mode + '.jpg'; hero.src = 'hero-' + film.mode + '.mp4?v=7'; hero.load(); }
+    heroMode = film.mode; if (!hero.getAttribute('src')) { hero.preload = 'auto'; hero.poster = 'hero-' + film.mode + '.jpg'; hero.src = 'hero-' + film.mode + '.mp4?v=8'; hero.load(); }
     var landed = false;
     intro.addEventListener('timeupdate', function () { if (!landed && intro.duration && intro.currentTime > intro.duration - 1.0) { landed = true; document.documentElement.classList.remove('film'); } });
     var introEnded = function () {
@@ -4307,7 +4308,7 @@ window.__twin = {fog:()=>scene.fog, frame:()=>{ if(finish) finish.uniforms.uAmt.
       if (tok !== heroTok) return;
       if (!window.__closeup) return heroOff();
       var m = heroFit(); if (!m) { hero.classList.remove('on'); return; }
-      if (m !== heroMode) { heroMode = m; asked = false; hero.classList.remove('on'); hero.preload = 'auto'; hero.poster = 'hero-' + m + '.jpg'; hero.src = 'hero-' + m + '.mp4?v=7'; hero.load(); }
+      if (m !== heroMode) { heroMode = m; asked = false; hero.classList.remove('on'); hero.preload = 'auto'; hero.poster = 'hero-' + m + '.jpg'; hero.src = 'hero-' + m + '.mp4?v=8'; hero.load(); }
       heroStill = tw.settled() ? heroStill + 1 : 0;
       if (asked || heroStill < 4 || hero.readyState < 3) return;                           /* the camera at rest for half a second, the film buffered */
       asked = true; heroShow(tok);
