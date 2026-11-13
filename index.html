@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en" data-build="2026-11-12-landing-34">
+<html lang="en" data-build="2026-11-13-landing-35">
 <head>
 <meta charset="utf-8">
-<link rel="preload" as="image" type="image/avif" href="/os-5mwcd80eos/landing/intro-port.avif?v=5" media="(max-aspect-ratio: 1/1), (max-width: 699px)">
-<link rel="preload" as="image" type="image/avif" href="/os-5mwcd80eos/landing/intro-land.avif?v=5" media="(min-aspect-ratio: 1001/1000) and (min-width: 700px)">
+<link rel="preload" as="image" type="image/avif" href="/os-5mwcd80eos/landing/intro-port.avif?v=5" media="(max-aspect-ratio: 1/1), (max-width: 699px) and (max-aspect-ratio: 6/5)">
+<link rel="preload" as="image" type="image/avif" href="/os-5mwcd80eos/landing/intro-land.avif?v=5" media="(min-aspect-ratio: 1001/1000) and (min-width: 700px), (min-aspect-ratio: 1201/1000)">
 <script>
 /* build 2026-11-03-console: if a cached copy is showing, fetch the page fresh once and reload */
 (function(){ try{ var b=document.documentElement.getAttribute('data-build');
@@ -92,6 +92,8 @@ body.ready .chrome{opacity:1}
 body.quiet #brand,body.quiet #bBuild,body.quiet #labels{opacity:0;pointer-events:none}
 #hero{position:fixed;left:0;top:0;pointer-events:none;opacity:0;transition:opacity .3s linear;background:#000;object-fit:fill}
 #hero.on{opacity:1}
+#still{position:fixed;left:0;top:0;pointer-events:none;opacity:0;transition:opacity .3s linear;background:#000 center / 100% 100% no-repeat}
+#still.on{opacity:1}
 #intro{position:fixed;left:0;top:0;pointer-events:none;opacity:0;transition:opacity .25s linear;background:#000;object-fit:fill}
 #intro.on{opacity:1}
 html.film .s .copy{opacity:0!important;transform:translateY(10px)!important}
@@ -206,11 +208,11 @@ main{position:relative;z-index:3;pointer-events:none}
 .mail a{border-bottom:.5px solid rgba(255,255,255,.6)}
 .copy footer{margin-top:22px;display:flex;flex-wrap:wrap;gap:4px 16px;font-size:11px;line-height:16px;color:var(--mute)}
 .copy footer a{color:var(--ink)}
-@media (max-aspect-ratio:1/1),(max-width:699px){ .s{padding-bottom:calc(var(--sb) + clamp(34px,6vh,72px))} .copy{width:min(100%,560px)} }
+@media (max-aspect-ratio:1/1),(max-width:699px) and (max-aspect-ratio:6/5){ .s{padding-bottom:calc(var(--sb) + clamp(34px,6vh,72px))} .copy{width:min(100%,560px)} }
 .s[data-line] .copy h2{font-size:40px;font-weight:600;letter-spacing:-.03em;line-height:1.08}
 .s[data-line] .copy{width:min(48vw,720px)}
 .s[data-line] .copy p.ds{max-width:none}
-@media (max-aspect-ratio:1/1),(max-width:699px){ .s[data-line] .copy{width:min(100%,640px)} }
+@media (max-aspect-ratio:1/1),(max-width:699px) and (max-aspect-ratio:6/5){ .s[data-line] .copy{width:min(100%,640px)} }
 .s[data-line] .copy .pi{gap:12px}
 .s[data-line] .copy .pi img{width:34px;height:34px}
 .s[data-line] .copy p.ds{margin-top:10px;font-size:21px;font-weight:400;letter-spacing:-.012em;line-height:1.25;color:rgba(255,255,255,.86)}
@@ -222,13 +224,18 @@ main{position:relative;z-index:3;pointer-events:none}
 <body class="quiet">
 <div id="view"></div>
 <video id="hero" muted playsinline webkit-playsinline loop preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1"></video>
+<div id="still" aria-hidden="true"></div>
 <video id="intro" muted playsinline webkit-playsinline preload="auto" disablepictureinpicture aria-hidden="true" tabindex="-1"></video>
 <script>
 /* the opening: a rendered film of the move in over the arena, shown from its first frame at once; it lands on the act view, where a second film loops */
 (function(){
-  var HERO={land:{W0:1340,H0:820,cx:924.6,cy:410},port:{W0:900,H0:1180,cx:450,cy:393.8}};
-  window.__heroFit=function(el){ var W=innerWidth,H=innerHeight,up=W/H<=1||W<700,m=up?'port':'land',d=HERO[m],k=H/d.H0,cx=up?W/2:W*0.69,cy=up?56+(H*0.56-56)/2+H*0.03:H/2,left=cx-d.cx*k,top=cy-d.cy*k,w=d.W0*k,h=d.H0*k;
-    if(left>0.5||left+w<W-0.5||Math.abs(top)>12) return null; el.style.left=left+'px'; el.style.top=top+'px'; el.style.width=w+'px'; el.style.height=h+'px'; return m; };
+  /* the film covers any window: the master for the layout, scaled until it fills, held by the point the camera looks through; the realtime camera closes in by the same factor (z) */
+  var HERO={land:{W0:1340,H0:820,fx:0.69,fy:0.5},port:{W0:900,H0:1180,fx:0.5,fy:393.8/1180}};
+  window.__heroGeo=function(){ var W=innerWidth,H=innerHeight,A=W/H,up=A<=1||(W<700&&A<=1.2),m=up?'port':'land',d=HERO[m],z=Math.max(1,A/(d.W0/d.H0)),sy=up?d.fy:Math.min(0.5,1-0.45*z);
+    return {m:m,up:up,z:z,sx:d.fx,sy:sy,k:z*H/d.H0,d:d,W:W,H:H}; };
+  window.__heroFit=function(el){ var g=window.__heroGeo(),d=g.d; el.style.left=(g.sx*g.W-d.fx*d.W0*g.k)+'px'; el.style.top=(g.sy*g.H-d.fy*d.H0*g.k)+'px'; el.style.width=(d.W0*g.k)+'px'; el.style.height=(d.H0*g.k)+'px'; return g.m; };
+  /* the rendered still of the act view: shown when the film may not play by itself (low power mode) or is slow to come */
+  window.__heroStill=function(on){ var e=document.getElementById('still'); if(!on){ e.classList.remove('on'); return; } var m=window.__heroFit(e); e.style.backgroundImage='url("'+'/os-5mwcd80eos/landing/hero-'+m+'.jpg")'; e.classList.add('on'); };
   var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches, i=document.getElementById('intro'), h=document.getElementById('hero');
   var m=window.__heroFit(i); window.__film={mode:m,state:'none'};
   if(!m||!i.canPlayType||!i.canPlayType('video/mp4; codecs="avc1.640033"')||location.hash.length>1) return;
@@ -237,7 +244,7 @@ main{position:relative;z-index:3;pointer-events:none}
   document.documentElement.classList.add('film');
   i.style.background="#000 url('/os-5mwcd80eos/landing/intro-"+m+".avif?v=5') center / 100% 100% no-repeat"; i.src='/os-5mwcd80eos/landing/intro-'+m+'.mp4?v=5';   /* the first frame as a picture behind the film, so it is there before any video data */ i.classList.add('on'); window.__film.state='intro';
   i.addEventListener('canplaythrough',function(){ if(!h.getAttribute('src')){ h.preload='auto'; h.poster='/os-5mwcd80eos/landing/hero-'+m+'.jpg'; h.src='/os-5mwcd80eos/landing/hero-'+m+'.mp4?v=9'; h.load(); } },{once:true});
-  var p=i.play(); if(p&&p.catch) p.catch(function(){});
+  var p=i.play(); if(p&&p.catch) p.catch(function(e){ if(e&&e.name==='NotAllowedError'&&window.__film.state==='intro'){ window.__film.state='blocked'; window.__heroStill(true); document.documentElement.classList.remove('film'); i.classList.remove('on'); } });
 })();
 </script>
 <div id="vig"></div>
@@ -4262,10 +4269,10 @@ window.__twin = {fog:()=>scene.fog, frame:()=>{ if(finish) finish.uniforms.uAmt.
   function ipadView() {
     var m = tw.screen(); m.updateWorldMatrix(true, false);
     var e = m.matrixWorld.elements, P = tw.V(e[12], e[13], e[14]), N = tw.V(e[8], e[9], e[10]).normalize(), U = tw.V(e[4], e[5], e[6]).normalize(), R = tw.V(e[0], e[1], e[2]).normalize();
-    var upright = innerWidth / innerHeight <= 1 || innerWidth < 700;
+    var g = window.__heroGeo(), upright = g.up, zf = function (f) { return 2 * Math.atan(Math.tan(f * Math.PI / 360) / g.z) * 180 / Math.PI; };
     var pos = P.clone().addScaledVector(N, upright ? 0.62 : 0.5).addScaledVector(U, -0.085).addScaledVector(R, upright ? -0.2 : -0.3);
     var dir = P.clone().addScaledVector(R, upright ? -0.07 : -0.1).addScaledVector(U, upright ? 0.0 : 0.02).sub(pos).normalize();
-    return { pos: pos, target: pos.clone().addScaledVector(dir, 3.2), fov: upright ? 46 : 34 };
+    return { pos: pos, target: pos.clone().addScaledVector(dir, 3.2), fov: zf(upright ? 46 : 34) };
   }
   var wasClose = false, curLine = null;
   function pick(sec) {
@@ -4296,12 +4303,12 @@ window.__twin = {fog:()=>scene.fog, frame:()=>{ if(finish) finish.uniforms.uAmt.
   /* the scene sits in the upper part (upright) or to the right (wide), leaving the words their room */
   function place() {
     if (!tw || !tw.camera) return;
-    var W = innerWidth, H = innerHeight, upright = W / H <= 1 || W < 700, cx, cy;
-    if (upright) { var rh = H * 0.56; cx = W / 2; cy = 56 + (rh - 56) / 2 + H * 0.03; } else { cx = W * 0.69; cy = H * 0.5; }
+    var g = window.__heroGeo(), W = g.W, H = g.H, cx = g.sx * W, cy = g.sy * H;
     tw.camera.setViewOffset(W, H, W / 2 - cx, H / 2 - cy, W, H); tw.camera.updateProjectionMatrix();
   }
   /* the act close view as a rendered film: the same camera, frame for frame, laid over the realtime picture once it rests */
-  var hero = document.getElementById('hero'), intro = document.getElementById('intro'), film = window.__film || { state: 'none' }, heroMode = null, heroT = 0;
+  var hero = document.getElementById('hero'), intro = document.getElementById('intro'), film = window.__film || { state: 'none' }, heroMode = null, heroT = 0, still = document.getElementById('still'), blocked = film.state === 'blocked';
+  if (blocked) film.state = 'done';
   function heroFit() { return window.__heroFit(hero); }
   function introBail() {                       /* the opening is cut short (a scroll away, an error, a stall): the realtime picture is underneath */
     if (film.state !== 'intro') return; film.state = 'done'; document.documentElement.classList.remove('film'); intro.classList.remove('on'); try { intro.pause(); } catch (e) {}
@@ -4323,13 +4330,13 @@ window.__twin = {fog:()=>scene.fog, frame:()=>{ if(finish) finish.uniforms.uAmt.
     intro.addEventListener('error', function () { introBail(); if (window.__closeup) heroOn(); });
     setTimeout(function () { if (film.state === 'intro' && intro.currentTime < 0.2) { introBail(); if (window.__closeup) heroOn(); } }, 9000);
   }
-  addEventListener('resize', function () { window.__heroFit(intro); if (film.state === 'intro') introBail(); if (window.__closeup) heroOn(); });
+  addEventListener('resize', function () { window.__heroFit(intro); window.__heroFit(hero); if (still.classList.contains('on')) window.__heroStill(true); if (film.state === 'intro') introBail(); if (window.__closeup) heroOn(); });
   var heroTok = 0, heroStill = 0;
-  function heroOff() { introBail(); heroTok++; clearInterval(heroT); hero.classList.remove('on'); try { hero.pause(); } catch (e) {} }
+  function heroOff() { introBail(); heroTok++; clearInterval(heroT); window.__heroStill(false); hero.classList.remove('on'); try { hero.pause(); } catch (e) {} }
   function heroShow(tok) {
-    var go = function () { if (tok === heroTok && window.__closeup) hero.classList.add('on'); };
+    var go = function () { if (tok === heroTok && window.__closeup) { hero.classList.add('on'); setTimeout(function () { if (hero.classList.contains('on')) window.__heroStill(false); }, 400); } };
     var started = function () { if (hero.requestVideoFrameCallback) hero.requestVideoFrameCallback(function () { requestAnimationFrame(go); }); else setTimeout(go, 120); };
-    var play = function () { if (tok !== heroTok) return; var pr = hero.play(); if (pr && pr.then) pr.then(started).catch(function () {}); else hero.addEventListener('playing', started, { once: true }); };
+    var play = function () { if (tok !== heroTok) return; var pr = hero.play(); if (pr && pr.then) pr.then(started).catch(function (e) { if (tok !== heroTok || !window.__closeup) return; if (e && e.name === 'NotAllowedError') blocked = true; window.__heroStill(true); }); else hero.addEventListener('playing', started, { once: true }); };
     var t = ((performance.now() / 1000 + 0.12 - 2) % 24 + 24) % 24;                       /* the film opens two seconds into the screens' cycle */                                       /* the moment of the loop the realtime screens will be showing */
     if (Math.abs(hero.currentTime - t) < 0.05) play();
     else { hero.addEventListener('seeked', play, { once: true }); try { hero.currentTime = t; } catch (e) { play(); } }
@@ -4342,13 +4349,29 @@ window.__twin = {fog:()=>scene.fog, frame:()=>{ if(finish) finish.uniforms.uAmt.
     heroT = setInterval(function () {
       if (tok !== heroTok) return;
       if (!window.__closeup) return heroOff();
-      var m = heroFit(); if (!m) { hero.classList.remove('on'); return; }
+      var m = heroFit();
       if (m !== heroMode) { heroMode = m; asked = false; hero.classList.remove('on'); hero.preload = 'auto'; hero.poster = '/os-5mwcd80eos/landing/hero-' + m + '.jpg'; hero.src = '/os-5mwcd80eos/landing/hero-' + m + '.mp4?v=9'; hero.load(); }
       heroStill = tw.settled() ? heroStill + 1 : 0;
+      if (!asked && heroStill === 12 && hero.readyState < 3) window.__heroStill(true);       /* a second and a half at rest and no film yet: the still meanwhile */
       if (asked || heroStill < 4 || hero.readyState < 3) return;                           /* the camera at rest for half a second, the film buffered */
       asked = true; heroShow(tok);
     }, 130);
   }
+  /* the film may need a touch to start (low power mode): the first one starts it, from the moment the screens are at */
+  function kick() {
+    if (reduce || !window.__closeup || film.state === 'intro' || !hero.getAttribute('src') || !hero.paused || hero.classList.contains('on')) return false;
+    if (!blocked && !still.classList.contains('on')) return false;
+    var tok = ++heroTok; clearInterval(heroT); blocked = false;
+    var show = function () { if (tok === heroTok && window.__closeup) { hero.classList.add('on'); setTimeout(function () { if (hero.classList.contains('on')) window.__heroStill(false); }, 400); } };
+    var ok = function () {
+      if (tok !== heroTok) return;
+      hero.addEventListener('seeked', function () { if (hero.requestVideoFrameCallback) hero.requestVideoFrameCallback(function () { requestAnimationFrame(show); }); else setTimeout(show, 120); }, { once: true });
+      try { hero.currentTime = ((performance.now() / 1000 + 0.2 - 2) % 24 + 24) % 24; } catch (e) { show(); }
+    };
+    var pr = hero.play(); if (pr && pr.then) pr.then(ok).catch(function () { blocked = true; }); else ok();
+    return true;
+  }
+  addEventListener('touchend', kick, { passive: true }); addEventListener('click', kick); addEventListener('keydown', kick);
   function refit() { if (window.__closeup) tw.flyTo(ipadView(), 600); else if (curLine === 'antiphon') tw.flyTo(tw.topView(), 600); }   /* the twin refits to its own views on a resize; these two are the landing's */
   place(); addEventListener('resize', function () { place(); setTimeout(refit, 40); });
   addEventListener('orientationchange', function () { setTimeout(function () { place(); refit(); }, 280); });
@@ -4371,6 +4394,7 @@ window.__twin = {fog:()=>scene.fog, frame:()=>{ if(finish) finish.uniforms.uAmt.
   var down = null;
   addEventListener('pointerdown', function (e) { down = { x: e.clientX, y: e.clientY, t: Date.now() }; }, { passive: true });
   addEventListener('pointerup', function (e) {
+    if (kick()) { down = null; return; }
     if (!down || Date.now() - down.t > 350 || Math.abs(e.clientX - down.x) + Math.abs(e.clientY - down.y) > 10) { down = null; return; }
     down = null;
     if (e.target.closest && e.target.closest('a, button, .copy')) return;
